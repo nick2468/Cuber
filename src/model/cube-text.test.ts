@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { blank, solved } from './cube'
+import { CENTRES, blank, solved } from './cube'
 import { fromText, toText } from './cube-text'
 import { FIXED_SCRAMBLE, applyMoves } from './moves'
 
@@ -12,7 +12,7 @@ describe('the remembered form of the cube', () => {
     )
     const text = toText(blank())
     expect(text).toHaveLength(54)
-    expect([4, 13, 22, 31, 40, 49].map((index) => text[index]).join('')).toBe('wrgyob')
+    expect(CENTRES.map((index) => text[index]).join('')).toBe('wrgyob')
     expect(text.replaceAll('-', '')).toBe('wrgyob')
   })
 

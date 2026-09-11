@@ -77,8 +77,14 @@ function tooMany(cube: Cube): Problem | null {
 
 /** The corners, then the edges, with the words each kind is named by. */
 const KINDS = [
-  { pieces: CORNERS, a: 'A corner', that: 'That corner', colours: 'three', plural: 'corners' },
-  { pieces: EDGES, a: 'An edge', that: 'That edge', colours: 'two', plural: 'edges' },
+  {
+    pieces: CORNERS,
+    a: 'A corner',
+    that: 'That corner',
+    colours: 'three',
+    twice: 'Two corners have the same three colours.',
+  },
+  { pieces: EDGES, a: 'An edge', that: 'That edge', colours: 'two', twice: 'Two edges have the same two colours.' },
 ] as const
 
 /** A piece's colours on a solved cube in this scheme, in its stickers' order. */
@@ -177,11 +183,10 @@ function wholeRules(cube: Cube): Problem | null {
     return kind.pieces.map((piece) => readPiece(piece.stickers.map((index) => cube[index]!), real)!)
   })
 
-  const same = ['Two corners have the same three colours.', 'Two edges have the same two colours.']
   for (const [k, reads] of [corners, edges].entries()) {
     const pieces = reads.map((read) => read.piece)
-    const twice = KINDS[k].pieces.filter((_, i) => pieces.indexOf(pieces[i]) !== pieces.lastIndexOf(pieces[i]))
-    if (twice.length > 0) return { message: same[k], stickers: twice.flatMap((piece) => piece.stickers) }
+    const doubled = KINDS[k].pieces.filter((_, i) => pieces.indexOf(pieces[i]) !== pieces.lastIndexOf(pieces[i]))
+    if (doubled.length > 0) return { message: KINDS[k].twice, stickers: doubled.flatMap((piece) => piece.stickers) }
   }
 
   const turns = (reads: typeof corners) => reads.reduce((sum, read) => sum + read.turn, 0)
