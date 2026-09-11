@@ -236,10 +236,12 @@ under twenty seconds. No screenshot: nothing changed on screen.
 both views, see the counts and the validation sentences, reset, and find the cube
 still there after a reload.**
 
-Read first: spec 4, 5 and 6.4; `../Conquest/src/ui/styles.css` (safe-area padding,
-the 900 px breakpoint, touch rules), `../Conquest/src/ui/taps.ts` (how a long press
-is told from a tap); `../London/src/ui/Play.tsx` for the button row styles;
-`../London/src/ui/Diagnostics.tsx` for the dev-only pattern.
+Read first: spec 4, 5 and 6.4; `../Conquest/src/ui/styles.css` (safe-area padding
+on `.board-page`, the 900 px breakpoint, `touch-action: manipulation`);
+`../London/src/ui/Play.tsx` for the button row styles. (Version 1 of this plan
+named Conquest's `taps.ts` as a long-press helper. It is not one: it decides what
+a tap means in that game. Corrected at gate 1. The long-press helper is this app's
+own, box 2.3.)
 
 - [ ] 2.1 `src/ui/cube-context.tsx`: the provider. State: `cube`, `view`, `selected`
       (the picker colour), `problem` (from `checkPartial`), `viewChanging`
@@ -262,8 +264,9 @@ is told from a tap); `../London/src/ui/Play.tsx` for the button row styles;
       border; a sticker in `problem.stickers` has a red outline.
 - [ ] 2.3 `src/ui/Sticker.tsx`: left click paints with `selected`; `contextmenu`
       opens `ColourMenu` at the pointer; a pointer held 500 ms without moving more
-      than 8 px opens the same menu (Conquest's `taps.ts` shape, copied as one
-      function with an origin line). `src/ui/ColourMenu.tsx`: six swatches and
+      than 8 px opens the same menu (`src/ui/long-press.ts`, a small pure state
+      machine fed explicit times, string-tested without fake timers).
+      `src/ui/ColourMenu.tsx`: six swatches and
       "Clear", closes on choice, Escape or outside click; greyed swatches for
       used-up colours; one component for both openers.
 - [ ] 2.4 `src/ui/fit.ts`: `sceneSize(viewportWidth, viewportHeight)` per spec 4.1
