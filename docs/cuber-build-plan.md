@@ -208,14 +208,14 @@ outside the repository (do not `npm install` it), and read `lib/cube.js` lines 1
       sentences (spec 5.2), as data. Test: C19 item 6.
 - [x] 1.10 `src/model/cube-text.ts`: `toText(cube)` (54 characters, `wyrobg-`) and
       `fromText(text)` returning the cube or null for anything else. Test: C19 item 7.
-- [ ] 1.11 `src/solver/solver.ts`: `createSolver()` per spec 7.2 with the worker
+- [x] 1.11 `src/solver/solver.ts`: `createSolver()` per spec 7.2 with the worker
       started through `new Worker(new URL('./worker.ts', import.meta.url), { type:
       'module' })`; `src/solver/worker.ts`. `src/test/fake-solver.ts`: answers
       `ready` at once and `solve` with a fixed list (the inverse of the spec's fixed
       scramble, reversed, so the scrambled scene's fake solution really solves it).
       String test of the adapter's message handling with a hand-made fake worker
       object (no real `Worker`).
-- [ ] 1.12 `src/storage/prefs.ts`: the trainer's `read`, `write`, `readOneOf`,
+- [x] 1.12 `src/storage/prefs.ts`: the trainer's `read`, `write`, `readOneOf`,
       `useRemembered` (identical text, origin line) and two hooks: `useSpeed`
       (`slow | normal | fast`, default `normal`) and `useRememberedCube` (reads with
       `fromText`, writes with `toText`). `src/storage/paths.ts`: `isDesktop` and
