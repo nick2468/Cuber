@@ -1,36 +1,25 @@
 import { useCallback, useEffect, useState } from 'react'
+import { readOneOf, write } from '../storage/prefs'
 
 /**
- * Origin: London src/ui/theme.ts, adapted: the storage key, and the comment (the trainer's spoke of its progress file).
+ * Origin: London src/ui/theme.ts, adapted: the storage key, the comment (the trainer's spoke of its progress file), and storage read and written through src/storage/prefs.ts.
  * Dark or light, remembered between sessions.
  *
  * The choice is a display preference, kept in `localStorage` like every other
- * setting (spec section 10). Losing it costs one click.
+ * setting (spec section 10). Losing it costs one click. `read` and `write`
+ * catch a browser that refuses storage, so the app opens dark and just forgets.
  */
 
 export type Theme = 'dark' | 'light'
 
 const KEY = 'cuber.theme'
 
-function saved(): Theme {
-  try {
-    return localStorage.getItem(KEY) === 'light' ? 'light' : 'dark'
-  } catch {
-    // Private windows and locked-down profiles can refuse storage entirely.
-    return 'dark'
-  }
-}
-
 export function useTheme(): { theme: Theme; toggle: () => void } {
-  const [theme, setTheme] = useState<Theme>(saved)
+  const [theme, setTheme] = useState<Theme>(() => readOneOf(KEY, ['dark', 'light'] as const, 'dark'))
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme
-    try {
-      localStorage.setItem(KEY, theme)
-    } catch {
-      // Not worth telling anyone about: the theme just will not be remembered.
-    }
+    write(KEY, theme)
   }, [theme])
 
   const toggle = useCallback(() => {
