@@ -111,5 +111,10 @@ the theme toggle, the two test projects) built 2026-09-11. Phase 1 is next.
   once and conclude. The trainer met this twice.
 - **Simple Chess's dev server may be running on 5185.** Confirm the served page shows
   this app's version before trusting any live check.
+- **Never run `npm install --prefix <path>` with this folder's path.** npm takes the
+  path as a package too: it added `"cuber": "file:"` to `dependencies` and made
+  `node_modules/cuber` a link back to the repository, and a recursive delete through
+  that link would have deleted the repository. Run npm from the folder itself. The
+  `--prefix` in `.claude/launch.json` is safe because it comes before `run`.
 - **The uninstall hook deletes a folder.** Its guard is copied from Tauri's own block
   and is not optional. `scripts/check-uninstall-hook.mjs` proves all four cases.

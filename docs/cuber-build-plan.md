@@ -45,6 +45,13 @@ phase.
    app in the pane, screenshots the scenes, and records the layout probe's output in
    its notes. Watch `scrollWidth` against `innerWidth`: a page that scrolls sideways is
    a regression, whatever else went right.
+   **No screenshot files are required** (ruled at Simple Chess's gate 0, carried here
+   at Cuber's gate 0). The pane's screenshot is looked at by the session and writes no
+   file; the phase notes say what was seen and give the measured numbers. Never start
+   a headless browser on this machine to make one: Edge signed a scratch profile into
+   Nick's account when Simple Chess tried. The only screenshot file in this project is
+   `packaged-eval.mjs --shot` against the Tauri window in phase 5, which has its own
+   WebView2 profile.
 8. **Tests with the code.** `npx vitest run` green and `tsc -b` clean before every
    commit. A regression test is shown red before its fix. No snapshots, no fake
    timers, no worker in the DOM suite (`docs/testing.md`).
@@ -593,3 +600,22 @@ with Cuber's words, which is the copy rule (C16), not duplication inside this ap
 Nothing to refactor.
 
 **Left.** Nothing in phase 0. For the orchestrator: the screenshot-file ruling above.
+
+### Gate 0 findings (orchestrator, 2026-09-11)
+
+- **Verified from the repository, not from the notes.** `npx vitest run`: 4 passed,
+  2 skipped, 1.5 seconds. `tsc -b` clean, `npx oxlint` silent, `npm run build` 18
+  modules with `dist/index.html`. Every file the notes call identical diffs clean
+  against its origin with the `Origin:` line removed (`main.tsx` differs by the blank
+  line after its comment, the same two-line form Simple Chess's gate accepted). Every
+  adapted file's diff against Simple Chess is exactly the change its origin line
+  names. No em dashes under `src/`. `package.json` and the lock file carry no
+  `file:` entry and `node_modules/cuber` is gone, so the `--prefix` incident is
+  cleaned up. `../London`, `../Conquest` and `../SimpleChess` are untouched.
+- **Both commits carry the trailer** naming Claude Opus 5, with bodies that say why.
+- **The screenshot-file ruling is carried into rule 7** above. Future chips ask for
+  what was seen and the numbers, never for file names.
+- **The `--prefix` hazard is now in CLAUDE.md's standing hazards.** The builder's
+  own record of it is the reason: a recursive delete through that link would have
+  deleted the repository, and only a prompt stopped it.
+- **Passed.** Phase 1 is next; its chip follows this gate.
