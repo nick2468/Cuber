@@ -1,0 +1,46 @@
+You are Claude Fable 5.1 with high effort set.
+
+## The brief
+We are going to build a Rubiks Cube solver called Cuber in this folder. You will spec, plan and review the build but not do the coding, that will be done in another Claude Opus 5 High effort session.
+
+We have saved a photo of the layout my son has made. The user will hold the cube showing three sides and then use the colour picker shown to fill in the colours using a mouse. 
+
+In addition allow a right-click on each cube square for picking from the six colours.
+
+Validate the colours as they are entered.
+
+An enhancement we may like to do if it is possible is to pass a photo of a scrambled cube.
+
+You will give instructions in the box below for how to solve it. You probably need some sort of move shorthand too, I think there are well known standards for that.
+
+It will be a windows app, but in the future we may like it on an ipad.
+
+You should offer and recommend an appropriate technology stack.
+
+You may review other gaming repos on this machine, the latest are ../SimpleChess, ../Conquest and ../London for house standards for documents, e.g. specs, claude.md files etc for guidance and style. Make your own claude.md
+
+## Start by writing the spec
+To do this prompt me for questions that need answering upfront
+
+The builder will be a less powerful model so provide extra detail rather than allow a lot of room for on the fly build time decisions. However the build session is allowed to ask me questions for non-specified matters rather than guess what I would want.
+
+## Consider writing a build plan
+Unless it can all be done in one shot from the spec, write a phased build plan which should have completion check boxes so that I can track progress.
+
+Use Standard Technical English STE100 with no jargon for documentation and questions for me
+
+## Code quality (applies from the first line, don't defer to a later pass)
+The build will strictly adhere to development best practice, using code reuse where appropriate avoiding duplication and ensuring human developer maintainability. The build session is to follow this best practice from the start with reviews and tests as the build progresses. 
+
+On return to this orchestrator sessions, we will end each build phase with a code-review that this session will do and raise any necessary follow-up refactors.
+
+### Guidelines:
+- One implementation per algorithm
+- Never fork a second copy of techniques
+- give any new repeated snippet a single home the moment it appears twice.
+- Close every phase with a short reuse and duplication review of the new code, and refactor on the spot before the phase commit. A repeat build done this way needs no separate refactor sweep.
+
+## UX:
+* Make it attractive with a nice representation of the cube and colour picker.
+* There should be stepping forward and back buttons and a play button to animate the solution
+ 
