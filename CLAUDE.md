@@ -107,8 +107,8 @@ with nothing new on screen. Phase 2 is next.
 - **The library's facelet order is not the screen's order.** A sticker index is a
   library index. Any "which sticker is this" question goes through `geometry.ts`, and
   C19 item 1 pins the table against the library's own piece tables.
-- **`initSolver` takes four to five seconds.** It runs in the worker, never on the
-  main thread, and never in more than one test.
+- **`initSolver` takes about a second here, and longer on an iPad.** It runs in the
+  worker, never on the main thread, and never in more than one test.
 - **A hidden browser pane throttles React.** Poll for the DOM to change; do not read
   once and conclude. The trainer met this twice.
 - **Simple Chess's dev server may be running on 5185.** Confirm the served page shows

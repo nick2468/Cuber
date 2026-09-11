@@ -6,8 +6,8 @@ import './vendor/solve.js'
 
 /**
  * The one slow test (spec C5, C19 item 8), and the only one that calls
- * `initSolver`, which spends four to five seconds building the solver's
- * tables. It proves the vendored files load as ES modules and really solve:
+ * `initSolver`, which spends about a second building the solver's tables
+ * (measured at phase 1; the library's README says four to five). It proves the vendored files load as ES modules and really solve:
  * each solution is applied with the library's own `move` and the result is
  * checked with its own `isSolved`.
  */

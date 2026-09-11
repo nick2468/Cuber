@@ -1,6 +1,7 @@
 # Cuber - build plan
 
-Version 1. Written 2026-09-11. Status: **Active**, phase 0 built 2026-09-11.
+Version 1. Written 2026-09-11. Status: **Active**, phases 0 and 1 built and passed
+their gates, 2026-09-11 and 2026-09-12.
 
 Read [the specification](cuber-spec.md) first. It says what the app does. This
 document says what gets built, in what order, and how we know each part is finished.
@@ -751,3 +752,32 @@ DOM test passes unchanged.
 
 **Left.** Nothing in phase 1. For the orchestrator: C5's two edit descriptions and its
 "five members", and the `initSolver` time in spec C10 and CLAUDE.md's standing hazard.
+
+### Gate 1 findings (orchestrator, 2026-09-12)
+
+- **Verified from the repository, not from the notes.** `npx vitest run`: 15 files,
+  95 passed, 2 skipped, 2.3 seconds warm (15 seconds on the first cold run, all of
+  it jsdom starting, as `testing.md` warns). `tsc -b` clean, `npx oxlint` silent,
+  `npm run build` 24 modules with no warning. No em dashes under `src/`. All seven
+  commits carry the trailer and a body that says why.
+- **The vendored files diff against the `npm pack` tarball exactly as the notes
+  say**: two lines in `cube.js` (the exported wrapper and `return Cube;`), three in
+  `solve.js` (the origin line, the `CubeLibrary` import and its assignment).
+  `LICENSE` is byte-identical.
+- **Both findings the builder raised were right, and are now corrected.** Spec C5's
+  edit descriptions could not have compiled; C5 now describes the edits that do,
+  and says seven members, not five. The start-up time is about a second here, not
+  four to five: spec C5, C10 and 7.2, CLAUDE.md's hazard, `cube.d.ts` and
+  `vendor.test.ts` now say so. The worker stays, for the reason the builder gave.
+- **Read as code.** The validator's twelve rules match spec 6.4 sentence for
+  sentence, and its orientation reading (clockwise steps from the Up-or-Down
+  sticker; the first-named face for a middle edge) is the library's own, which is
+  why the 200-cube property test can pass. `applyMoves` validating before every
+  library call is stricter than the chip asked and is the right reading of rule 13.
+  Pieces carrying their names as data is better than the plan's comments: the
+  validator and the tests both read them. The `R` direction test pins the animation's
+  reference for phase 3.
+- **One thing to watch, not a fault.** `useRemembered` keeps the trainer's `show`
+  helper and nothing uses it. If phase 3 does not use it, phase 3's reuse review
+  removes it.
+- **Passed.** Phase 2 is next; its chip follows this gate.

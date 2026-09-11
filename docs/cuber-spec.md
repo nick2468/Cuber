@@ -468,26 +468,35 @@ does not load as an ES module in a Vite worker without help. So they live at
 `src/solver/vendor/cube.js` and `src/solver/vendor/solve.js` beside the library's
 `LICENSE`, each with an `Origin:` line naming cubejs 1.3.2 and the edit made:
 
-- `cube.js`: the closing globals block (`if (typeof module ...) module.exports =
-  Cube; else this.Cube = Cube;`) is replaced by `export default Cube`.
-- `solve.js`: `Cube = this.Cube || require('./cube');` becomes an `import Cube from
-  './cube.js'` at the top of the file, assigned inside the wrapper.
+- `cube.js`: the outer wrapper `(function() { ... }).call(this)` is exported,
+  `export default (function() {`, and its closing globals block (`if (typeof module
+  ...) module.exports = Cube; else this.Cube = Cube;`) becomes `return Cube;`. The
+  block sits inside the wrapper, where `Cube` is a local and an `export` would be
+  a syntax error, so the wrapper itself is what the module exports. (Corrected at
+  gate 1: version 1 of this document said the block was replaced by `export default
+  Cube`, which cannot compile.)
+- `solve.js`: `import CubeLibrary from './cube.js';` at the top of the file, and
+  `Cube = this.Cube || require('./cube');` inside the wrapper becomes `Cube =
+  CubeLibrary;`. The import cannot be named `Cube` because the wrapper's own `var`
+  list declares a `Cube` that would shadow it.
 
-Nothing else changes. `src/solver/vendor/cube.d.ts` declares the five members the
+Nothing else changes. `src/solver/vendor/cube.d.ts` declares the seven members the
 app uses: `Cube.fromString`, `Cube.random`, `Cube.initSolver`, and the instance
 methods `asString`, `move`, `solve` and `isSolved`. The vendor folder is excluded
-from oxlint and from `tsc`'s checking of JavaScript.
+from oxlint, and `tsc` parses it without checking it (`allowJs` without `checkJs`).
 
 One test proves the vendored files run: it calls `Cube.initSolver()`, solves one
 fixed scrambled cube and one random one, applies each solution to its cube with
-`move`, and asserts `isSolved()`. It takes four to six seconds and is the only test
-allowed to do so.
+`move`, and asserts `isSolved()`. It takes about a second on this machine (measured
+at phase 1: 1.1 seconds for the tables and both solves) and is the only test
+allowed to call `initSolver`.
 
 ### 7.2 The worker
 
 **C10. The solver runs in a web worker and warms up when the app opens.**
-`Cube.initSolver()` takes four to five seconds and would freeze the screen if it ran
-on the main thread. `src/solver/worker.ts` imports the vendored files, runs
+`Cube.initSolver()` takes about a second on this machine (measured at phase 1; the
+library's README says four to five on the hardware of its day, and an iPad will be
+slower) and would freeze the screen for that long if it ran on the main thread. `src/solver/worker.ts` imports the vendored files, runs
 `initSolver` on start and posts `{ type: 'ready' }`. On `{ type: 'solve', facelets }`
 it posts `{ type: 'solution', moves }` with the moves as an array of strings, or
 `{ type: 'failed' }` if the library returns nothing for a cube that is not solved
@@ -504,7 +513,7 @@ A cube that is already solved is not sent to the worker. `solve` returns an empt
 list and the status line says "Your cube is already solved."
 
 Before the worker is ready the Solve and Hint buttons are disabled and their title
-says "Getting ready...". The wait is a few seconds after opening, once.
+says "Getting ready...". The wait is about a second after opening, once.
 
 The moves come back exactly as the library writes them: face letter, then nothing,
 `2` or `'`. The library calls `solve()` with its default depth of 22.

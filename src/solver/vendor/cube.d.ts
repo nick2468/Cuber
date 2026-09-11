@@ -11,7 +11,7 @@ declare class Cube {
   static fromString(facelets: string): Cube
   /** A random cube that is always solvable. Needs no `initSolver`. */
   static random(): Cube
-  /** Builds the solver's tables. Four to five seconds. Added by `solve.js`. */
+  /** Builds the solver's tables. About a second on this machine. Added by `solve.js`. */
   static initSolver(): void
   asString(): string
   /** Applies moves written in Singmaster notation, separated by spaces. */
