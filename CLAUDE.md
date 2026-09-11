@@ -11,7 +11,9 @@ the settings helpers, the installer and the testing rules are copied from those 
 Current state: specified and planned 2026-09-11. Phase 0 (the scaffold: the header,
 the theme toggle, the two test projects) built 2026-09-11. Phase 1 (the model, the
 validator, the vendored solver with its worker, the storage helpers) built 2026-09-12,
-with nothing new on screen. Phase 2 is next.
+with nothing new on screen. Phase 2 (the cube drawn in CSS 3D, the picker, the colour
+menu, the validation sentences, Reset and the two views) built 2026-09-12. Phase 3 is
+next: Solve, Hint, the box and the layer animation.
 
 ## Documents
 

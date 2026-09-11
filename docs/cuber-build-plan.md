@@ -243,7 +243,7 @@ named Conquest's `taps.ts` as a long-press helper. It is not one: it decides wha
 a tap means in that game. Corrected at gate 1. The long-press helper is this app's
 own, box 2.3.)
 
-- [ ] 2.1 `src/ui/cube-context.tsx`: the provider. State: `cube`, `view`, `selected`
+- [x] 2.1 `src/ui/cube-context.tsx`: the provider. State: `cube`, `view`, `selected`
       (the picker colour), `problem` (from `checkPartial`), `viewChanging`
       (`null` or the movement in progress). Actions: `paint(index, colour | null)`
       (the one home for painting; refuses a tenth of a colour; runs `checkPartial`;
@@ -251,7 +251,7 @@ own, box 2.3.)
       `durations` (the view movement and pause, and later the turn, in ms; tests
       pass zeros), `createSolver` (phase 3). The remembered cube is read once on
       mount through `useRememberedCube`.
-- [ ] 2.2 `src/ui/Scene.tsx` and `scene.css`: `.scene` (square, `perspective: 1200px`)
+- [x] 2.2 `src/ui/Scene.tsx` and `scene.css`: `.scene` (square, `perspective: 1200px`)
       holding `.cube` (`transform-style: preserve-3d`) holding 26 `.cubie` elements
       positioned by `translate3d` from `positionOf`, each holding its outside
       `.sticker` elements rotated on to their faces with `data-sticker="<index>"`
@@ -262,47 +262,47 @@ own, box 2.3.)
       on top, orange front-left, blue front-right with the standard scheme).
       Stickers use `hexOf`; a blank sticker is the body colour with a dotted
       border; a sticker in `problem.stickers` has a red outline.
-- [ ] 2.3 `src/ui/Sticker.tsx`: left click paints with `selected`; `contextmenu`
+- [x] 2.3 `src/ui/Sticker.tsx`: left click paints with `selected`; `contextmenu`
       opens `ColourMenu` at the pointer; a pointer held 500 ms without moving more
       than 8 px opens the same menu (`src/ui/long-press.ts`, a small pure state
       machine fed explicit times, string-tested without fake timers).
       `src/ui/ColourMenu.tsx`: six swatches and
       "Clear", closes on choice, Escape or outside click; greyed swatches for
       used-up colours; one component for both openers.
-- [ ] 2.4 `src/ui/fit.ts`: `sceneSize(viewportWidth, viewportHeight)` per spec 4.1
+- [x] 2.4 `src/ui/fit.ts`: `sceneSize(viewportWidth, viewportHeight)` per spec 4.1
       with the numbers it subtracts as named constants beside the layout numbers
       they come from; `cubieSize(sceneSize)` = floor(scene / 3.67). A hook
       `useSceneSize()` re-measures on resize and orientation change. String test
       with the three viewports of spec 15.2: 440, 440, about 300; never under 280.
-- [ ] 2.5 `src/ui/Picker.tsx`: the bordered box, "Colours", six swatches in the
+- [x] 2.5 `src/ui/Picker.tsx`: the bordered box, "Colours", six swatches in the
       drawing's order with the count `n/9`, a ring on the selected, greyed at nine.
-- [ ] 2.6 The view change (spec 5.2): `changeView` runs the two movements one after
+- [x] 2.6 The view change (spec 5.2): `changeView` runs the two movements one after
       the other, each a transition of the `.cube` transform over the movement
       duration, with the pause between, setting the status line's sentence for
       each, then the "Check the centres" sentence for two seconds. The button under
       the scene reads "Show the other side" or "Show the first side" and is
       disabled while `viewChanging`. Stickers ignore clicks while it plays.
-- [ ] 2.7 `src/ui/StatusLine.tsx`: the fill-in count, the problem sentence, the view
+- [x] 2.7 `src/ui/StatusLine.tsx`: the fill-in count, the problem sentence, the view
       sentences, "Ready. Press Solve." (spec 4). `src/ui/HeaderButtons.tsx`: Reset
       cube with its two-press guard (spec 5.4); Solve and Hint present and disabled
       until phase 3.
-- [ ] 2.8 `src/ui/Screen.tsx`: the column of spec 4 without the box (a placeholder
+- [x] 2.8 `src/ui/Screen.tsx`: the column of spec 4 without the box (a placeholder
       `.box` of the minimum height saying "Press Solve and the steps appear here.").
       `App.tsx` wraps `<Screen />` in the provider. Safe-area padding, the narrow
       rules, buttons at least 36 px, `touch-action: manipulation` on the scene.
-- [ ] 2.9 DOM tests (C19 items 9, 10, 14, 15 for the cube, 16): stickers found by
+- [x] 2.9 DOM tests (C19 items 9, 10, 14, 15 for the cube, 16): stickers found by
       `[data-sticker]`; the right-click menu through `user-event`'s `pointer` with
       `{ keys: '[MouseRight]' }`; the long press is a string-tested function, not a
       DOM test; the view test reads `data-face` of the three centre stickers whose
       cubies are at the slots (or `viewFaces` through a `data-view` attribute on
       `.cube`), with the durations at 0.
-- [ ] 2.10 Drive in the pane: paint a full valid cube from a real scramble (apply
+- [x] 2.10 Drive in the pane: paint a full valid cube from a real scramble (apply
       the spec's fixed scramble on a physical cube, or read the `scrambled` scene
       once phase 4 exists; until then paint by hand), watch the counts, make a
       mirrored corner and see the outline and the sentence, fix it and see "Ready".
       Play the view change and confirm the far view's centres. Screenshots at 800
       by 1000 in both themes and both views. Record the probe.
-- [ ] 2.11 Reuse review and commit.
+- [x] 2.11 Reuse review and commit.
 
 **Done when:** a complete valid cube can be entered in the pane and survives a reload,
 and every validation sentence of spec 6.4 rules 2 to 5 has been seen on screen.
@@ -495,7 +495,7 @@ only build config. The iPad phase is parked by ruling.
 |---|---|
 | 0 - the scaffold | Done, 2026-09-11 |
 | 1 - the model, the validator and the solver | Done, 2026-09-12 |
-| 2 - the cube on screen, and entering the colours | Not started |
+| 2 - the cube on screen, and entering the colours | Done, 2026-09-12 |
 | 3 - Solve, Hint, the box and the animation | Not started |
 | 4 - scenes, the probe and the layout pass | Not started |
 | 5 - the Windows app and the installer | Not started |
@@ -784,3 +784,120 @@ DOM test passes unchanged.
   helper and nothing uses it. If phase 3 does not use it, phase 3's reuse review
   removes it.
 - **Passed.** Phase 2 is next; its chip follows this gate.
+
+### Phase 2 - builder notes (2026-09-12)
+
+**What is on screen.** The header (the name and version, Reset cube, Solve, the Hint
+bulb, the theme toggle), the picker at the top right, the cube corner-on with its
+centres filled in, "Show the other side" under it, the status line, and the box
+saying "Press Solve and the steps appear here." Solve and Hint are there and
+disabled, so the status line can say "Ready. Press Solve." while Solve does nothing.
+That is one phase long, as the chip says.
+
+**The view angles.** The chip's `rotateX(-28deg) rotateY(-38deg)` was kept: in the
+pane the near view shows white on top, green at the front-left and red at the
+front-right. The far view adds `rotateY(-90deg) rotateZ(180deg)` and shows yellow,
+orange and blue. Read from the screen with `elementFromPoint`: D33 at the top, L40 at
+the front-left, B49 at the front-right, which is `viewFaces('far')`.
+
+**The cube did not fit its scene, so the divisor changed. This contradicts spec 4.1.**
+Spec 4.1 says the cubie is the scene divided by 3.67. Measured in the pane at 800 by
+1000, the cube's silhouette was 552 by 571 inside a 440 scene, 1.26 and 1.30 times too
+big: it covered the view button and the status line. 3.67 is three cubies and their
+gaps laid flat; turned corner-on behind a 1200 px perspective the cube needs about 30%
+more. The divisor is now 4.8, which is 3.67 times that 1.30, and the cube measures 418
+by 433 inside the 440 scene with 14 px clear above the view button. A 440 scene gives
+a 91 px cubie, not spec 4.1's 120, and 91 px is still far more than the 36 px a finger
+needs. The orchestrator should rule on spec 4.1's two numbers.
+
+**The cube also hung low in its box**, by 22 px at a 91 px cubie: the tilt brings the
+bottom corner towards the viewer and the perspective magnifies it. `Scene.tsx` lifts
+the cube by a quarter of a cubie (`HANGS_LOW`) so the silhouette sits in the middle.
+Both numbers carry their measurement in their comment.
+
+**Measured in the pane.** The dev server on 5190, the header reading v0.1.0, so it was
+this folder's code.
+
+| Viewport | Scene | Cubie | scrollWidth against innerWidth |
+|---|---|---|---|
+| 800 by 1000 | 440 | 91 | 785 against 800 |
+| 820 by 1180 | 440 | 91 | 820 against 820 |
+| 1180 by 820 | 300 | 62 | 1180 against 1180 |
+
+C20's two numbers hold at all three: nothing scrolls sideways and the scene is square
+and never under 280. At 1180 by 820 the page is 846 tall against an 820 window, so it
+scrolls down a little, which spec 4.1 allows.
+
+**What was driven, with real clicks.** Painting with the picker and watching the
+swatch counts; the mirrored URF corner (white on U9, green on R1, red on F3) showing
+"That corner is not a real piece. Check its three colours." with those three stickers
+outlined, and coming right when repainted; the right-click menu opening at the
+pointer, painting blue, and closing; Escape closing it with nothing painted; a reload
+keeping all four painted stickers and their counts; Reset arming to "Press again to
+clear" with the cube untouched, then clearing to the blank cube with its centres, back
+in the near view; the two movements with their sentences, the view button and the
+stickers disabled while they played, then "Check the centres: they should match your
+cube."; both themes. Screenshots were looked at in the pane, no files (rule 7). The
+pane's storage was cleared afterwards and the viewport reset.
+
+**A hazard met, and CLAUDE.md already names it.** The Browser pane was hidden, and a
+hidden pane throttles animation. The first far-view check read the near view's faces
+3.2 seconds in, and two screenshots half a second apart showed the cube in different
+poses, although the provider's state and its sentences were right the whole time.
+Fronting the tab and polling gave the right answer immediately. Nothing in the code
+changed. For phase 3: the layer-turn animation cannot be judged in a hidden pane.
+
+**The pane does not dispatch `resize` to the page.** Its viewport emulation changes the
+window without one, so the scene kept its old size until a reload, which is why
+1180 by 820 first measured 440. `useSceneSize` is right: a hand-dispatched
+`window.dispatchEvent(new Event('resize'))` took the scene from 440 to 300 at once, and
+a reload at that viewport gives 300 with a 62 px cubie. A later phase measuring the fit
+rule in the pane must reload after resizing.
+
+**Decided (code shape).**
+
+- **The provider is two files.** `cube-state.ts` holds the durations, the shape of the
+  state, the context and `useCube`; `cube-context.tsx` holds only `CubeProvider`. One
+  file exporting both a component and a hook makes oxlint's `only-export-components`
+  warn, and the chip's bar is a silent oxlint.
+- **The problem, the status sentence and the outlined stickers are worked out during
+  the render**, not held in state as the chip's 2.1 has them. They are a reading of the
+  cube, and a stored reading can drift from the cube it describes.
+- **`durations` gained `arm`** (3000 ms), so the reset test can watch the arming lapse
+  without a fake timer.
+- **A complete cube that breaks a whole-cube rule shows that rule's sentence**, not the
+  count, which would say "48 of 48 done" and mean nothing. Its stickers are outlined
+  from the same verdict.
+- **Stickers are buttons**: they take a click, a right click and a long press, they are
+  disabled while the view turns, and each is named "the top face, row 3, column 3,
+  white" for a test and a screen reader.
+- **Painting happens on the click, not on pointer-up.** Every browser and jsdom agree
+  about clicks; the pointer events only notice a long press, and a press that opened
+  the menu sets a flag that skips the click behind it.
+- **The colour menu has no shadow.** A shadow colour would be a seventh colour, and
+  `index.css` is a byte-identical copy this app must not add variables to (C16). A
+  strong border does the same work.
+- **The picker's "Colours" is a `<legend>`** at the top of the fieldset. The drawing has
+  the word at the bottom right of the box; a legend is how a group of controls is
+  named for a screen reader, and the chip asks for a fieldset.
+
+**What jsdom could not test.** It has no layout and no CSS, so nothing about how the
+cube looks is in the DOM tests: they drive the state and read the attributes
+(`data-sticker`, `data-face`, `data-view`, `data-stage`, the accessible names, the
+disabled flags). The transform strings are string-tested, the fit rule is string-tested
+with the three viewports, and the look was checked in the pane. The long press is a
+string-tested state machine; the DOM tests cover the right-click menu, which opens the
+same component.
+
+**Asked of Nick.** Nothing.
+
+**Reuse review.** One `paint`, in the provider, reached by the click, the menu and the
+long press alike. One `ColourMenu` for both openers. One `cubieTransform`, one
+`stickerTransform` and one `viewTransform`, all in `transforms.ts`, with the
+face-to-transform table written once. Colour literals live only in `index.css` (the
+copy), `hexOf` and its test, and `--cube-body` in `scene.css`, which is the one new
+literal the chip allows. No em dashes under `src/`. The review's find was the
+provider file exporting a hook and a component together, split as above. Nothing else.
+
+**Left.** For the orchestrator: spec 4.1's cubie divisor and its "cubie 120" line, now
+measured wrong; and whether the picker's label should sit where the drawing has it.
