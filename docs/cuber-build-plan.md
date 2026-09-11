@@ -220,7 +220,7 @@ outside the repository (do not `npm install` it), and read `lib/cube.js` lines 1
       (`slow | normal | fast`, default `normal`) and `useRememberedCube` (reads with
       `fromText`, writes with `toText`). `src/storage/paths.ts`: `isDesktop` and
       `LOCAL_FOLDER = 'Cuber Data'` only.
-- [ ] 1.13 Reuse review: nothing in `src/model` or `src/solver` imports React or
+- [x] 1.13 Reuse review: nothing in `src/model` or `src/solver` imports React or
       touches `window` or `document` (the worker in `solver.ts` is the one exception).
       Say so in the notes.
 
@@ -490,7 +490,7 @@ only build config. The iPad phase is parked by ruling.
 | Phase | State |
 |---|---|
 | 0 - the scaffold | Done, 2026-09-11 |
-| 1 - the model, the validator and the solver | Not started |
+| 1 - the model, the validator and the solver | Done, 2026-09-12 |
 | 2 - the cube on screen, and entering the colours | Not started |
 | 3 - Solve, Hint, the box and the animation | Not started |
 | 4 - scenes, the probe and the layout pass | Not started |
@@ -621,3 +621,133 @@ Nothing to refactor.
   own record of it is the reason: a recursive delete through that link would have
   deleted the repository, and only a prompt stopped it.
 - **Passed.** Phase 1 is next; its chip follows this gate.
+
+### Phase 1 - builder notes (2026-09-12)
+
+**Measured.**
+
+- `initSolver`: 1,045 to 1,070 ms over three runs, timed in node by a scratch script
+  that imports the vendored files. The slow test (`src/solver/vendor.test.ts`, both
+  solves included) took 1.10 to 1.12 seconds over three runs. **Spec C10, CLAUDE.md's
+  standing hazard and `testing.md` all said four to five seconds; this machine takes
+  about one.** `testing.md` now gives the measured figure. The spec and the hazard are
+  the orchestrator's to reword. The worker is still right: a second on the main thread
+  is a frozen screen, and an iPad will be slower.
+- Solutions: the fixed scramble solves in 19 moves, `D R' U2 F2 R2 U' R D L2 B2 U2 R2
+  L2 U F2 U R2 B2 U2`, in 7 to 9 ms; random cubes in 20 to 22 moves, in 5 to 24 ms.
+- The suite warm: 15 files, 95 passed and 2 skipped (the Tauri version tests), 1.9
+  seconds. `tsc -b` clean, `npx oxlint` silent.
+- `npm run build`: 18 modules, the same as phase 0, because nothing the app runs
+  imports the solver yet, so the worker is not in the app's bundle. So the worker's
+  bundling was checked separately. A scratch Vite build (config and output in the
+  session scratchpad, nothing in the repository) took `src/solver/solver.ts` as its
+  entry: 6 modules, a 40.32 kB worker chunk and a 2.60 kB solver chunk, and **no
+  warning of any kind**, CommonJS and `this` included. The built worker chunk, loaded
+  in node with a stand-in `self`, posted `ready` after 1,041 ms and answered the fixed
+  scramble with the 19 moves above 12 ms later. Phase 3 box 3.6 confirms it in the
+  pane.
+- The property tests passed on their first run: all 200 random library cubes validate
+  with facelets equal to the library's own string, and all 100 cubes with two
+  differently coloured stickers swapped are refused. No counterexample to spec 6.4.
+- The library agrees with spec 6.1. `cornerFacelet` and `edgeFacelet` in `cube.js`
+  (lines 42 to 90) match all 8 corners and 12 edges of the spec's table, and the
+  geometry test proves it against the library on 200 random cubes.
+
+**The vendoring edits, exactly.** `diff` against the `npm pack` output shows these and
+nothing else. `LICENSE` is byte-identical.
+
+- `cube.js`: line 1, `(function() {`, became two lines, the origin comment and
+  `export default (function() {`. The globals block inside the wrapper,
+  `if (typeof module !== "undefined" && module !== null) { module.exports = Cube; }
+  else { this.Cube = Cube; }`, became `return Cube;`. Its `//# Globals` comment stays.
+- `solve.js`: two lines before line 1, the origin comment and
+  `import CubeLibrary from './cube.js';`. Line 5, `Cube = this.Cube || require('./cube');`,
+  became `Cube = CubeLibrary;`.
+
+**A contradiction in spec C5, decided.** C5 says the globals block "is replaced by
+`export default Cube`". It cannot be: the block is inside the outer
+`(function() {...}).call(this)` wrapper, where an `export` is a syntax error and `Cube`
+is a local. The smallest edit that works is the one above: the wrapper is exported and
+returns `Cube`. For `solve.js`, C5's `import Cube from './cube.js'` cannot use the name
+`Cube`, because the wrapper's `var` list declares its own `Cube`, which would shadow the
+import. So the import is `CubeLibrary`, assigned inside the wrapper as C5 says. Both
+wrappers still end `.call(this)`; `this` is undefined in an ES module and neither
+wrapper reads it any more. The orchestrator may want C5's wording to match. C5 also
+says `cube.d.ts` "declares the five members" and then lists seven; the plan and chip
+say seven, and seven are declared.
+
+**Decided (code shape).**
+
+- **Pieces carry their names as data**, `{ name, stickers }`, where plan 1.3 said names
+  as comments. A piece's name gives its solved colours (each letter is the face of the
+  sticker in that place), which the validator uses, and the tests compare the library's
+  cubes against the names rather than a retyped table. Each entry is written as spec
+  6.1 writes it, `piece('URF', 'U9 R1 F3')`, and `sticker('U9')` is exported for the
+  tests.
+- **`applyMoves` runs `validate`**, not only `toFacelets`, before the library. The chip
+  asked for a throw when `toFacelets` is null. This throws then too, and also for a
+  complete but impossible cube, which plan rule 13 says must never reach the library.
+  The cost is one validation per move. `applyMove` is `applyMoves` with one move.
+- **`FIXED_SCRAMBLE` and `undo(moves)` live in `moves.ts`**, shared by the slow test,
+  the moves test, the fake solver and, from phase 4, the scenes.
+- **The validator's order.** `validate` runs rules 2 to 5, then 6 to 12. Rule 1 runs
+  only in `checkPartial`. On a complete cube, any colour off nine means one is over
+  nine, so rule 1 first would make rule 7 unreachable. Rule 1's guard sentence comes
+  from the same function as rule 7's: "There are ten red stickers. A cube has nine of
+  each." It outlines every sticker of that colour.
+- **Rule 4 names the two colours in the order of `FACES`** (U before D, R before L, F
+  before B): "white and yellow", "red and orange", "green and blue".
+- **Rule 7 lists the colours over nine first, then those under**, each group in the
+  picker order, with counts as words up to twenty.
+- **Rules 6, 7, 10, 11 and 12 outline no stickers** (`stickers: []`). No single sticker
+  is wrong, and 48 red outlines on a blank cube would be noise. Rules 8 and 9 outline
+  every place holding a doubled piece. Phase 2 decides what the screen does with them.
+- **Rule 5 can never fire for an edge.** Once rules 3 and 4 pass, any two different,
+  non-opposite colours are a real edge. The edge sentence is there because the spec
+  has it; its test is the corner case.
+- **The sticker colours live in `colours.ts`** (`hexOf`, plan 1.1), not in `index.css`.
+  Its comment says why: they belong to the cube, not the theme. Phase 0's review said
+  every colour is in `index.css`, and that is no longer true, on purpose.
+- **`Speed` and `SPEEDS` are in a new `src/model/speeds.ts`**, the file phase 3 box 3.4
+  fills with the speeds table.
+- **`prefs.ts` exports the four helpers**, which the trainer keeps private, so
+  `theme.ts` can use them. `useRemembered`'s `show` is kept, with its comment reworded
+  (it spoke of a resumed chess game). Nothing uses `show` yet. The hooks return
+  `{ speed, setSpeed }` and `{ cube, setCube }`, the trainer's hook shape.
+- **The solver adapter** pairs replies with requests first in, first out, because a
+  worker handles one message at a time. A solved cube resolves to `[]` without being
+  sent, and `failed` rejects with "The solver found no solution." `solve` stays
+  `Promise<string[]>` as spec 7.2 says; the provider turns the strings into moves in
+  phase 3.
+- **`worker.ts` reads `self`**, the worker's own global. Spec C17 names only
+  `solver.ts`'s `Worker` as the exception; the worker file is the other side of it.
+- **The tsconfig is unchanged.** `allowJs` without `checkJs` means `tsc` parses the
+  vendored JavaScript and checks none of it, and `cube.d.ts` beside `cube.js` is what
+  TypeScript imports read.
+
+**The gate 0 follow-up** landed as its own commit, "Read and write the theme through
+the storage helpers". `theme.ts` reads with `readOneOf(KEY, ['dark', 'light'], 'dark')`
+and writes with `write`, so anything but `light` is still dark, as before. The shell
+DOM test passes unchanged.
+
+**Reuse review.**
+
+- The piece tables exist once, in `geometry.ts`. The validator imports them, and the
+  tests compare against their names.
+- The colour letters exist once (`colours.ts`, used only by `cube-text.ts`). The face
+  letters come from the scheme in one place (`facelets.ts`, through `faceOf`). The
+  scramble is in `moves.ts` only, the solved facelets in `facelets.ts` only.
+- **Two finds, fixed in their own commit.** `cube-text.test.ts` retyped the centre
+  indices, and now imports `CENTRES`. (`cube.test.ts` keeps the literal numbers on
+  purpose: it pins the spec's.) In `validate.ts` the two "same piece twice" sentences
+  sat in an array beside `KINDS`, which also carried an unused `plural` field. The
+  sentences moved into `KINDS` and `plural` went.
+- Box 1.13: nothing in `src/model` imports React or touches `window`, `document` or
+  storage (searched). In `src/solver` the only browser globals are `solver.ts`'s
+  `new Worker` and `worker.ts`'s `self`.
+- No em dashes under `src/`, the vendored files included.
+
+**Asked of Nick.** Nothing.
+
+**Left.** Nothing in phase 1. For the orchestrator: C5's two edit descriptions and its
+"five members", and the `initSolver` time in spec C10 and CLAUDE.md's standing hazard.

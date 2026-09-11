@@ -51,10 +51,10 @@ so it has the rig from the first phase.
 
 **The solver.** The cube's provider (`src/ui/cube-context.tsx`, from phase 2) takes an
 optional `createSolver`, defaulting to the real one, which starts a web worker and spends
-four to five seconds in `initSolver` (spec C10). Tests pass `fakeSolver` from
-`src/test/fake-solver.ts` (phase 1), which is ready at once and answers `solve` with a
-fixed list of moves. A real solver in the DOM suite would mean a worker per test and five
-seconds before the first click. From phase 3 one DOM test puts a throwing stub on
+about a second in `initSolver` on this machine (spec C10 estimated four to five). Tests
+pass `fakeSolver` from `src/test/fake-solver.ts` (phase 1), which is ready at once and
+answers `solve` with a fixed list of moves. A real solver in the DOM suite would mean a
+worker per test and a second's wait before the first click. From phase 3 one DOM test puts a throwing stub on
 `globalThis.Worker` and asserts it was never constructed, so this cannot rot quietly.
 
 **The animations.** Not faked, but shortened. The provider takes its durations (the view
@@ -77,8 +77,9 @@ screen are the code that ships.
   seconds and the next DOM file would have crossed it: a rule that blocks a better app
   is the wrong rule. The number is a ceiling, not a target.
 - **One slow test, and only one.** The string test that proves the vendored solver runs
-  (spec C5, from phase 1) calls the real `Cube.initSolver()`, which takes four to six
-  seconds, and then solves two cubes. It is the one exception to "fast because cheap",
+  (spec C5, `src/solver/vendor.test.ts`) calls the real `Cube.initSolver()` and then
+  solves two cubes. It took 1.1 seconds on this machine in phase 1 (the spec allowed
+  four to six). It is the one exception to "fast because cheap",
   and it counts inside the twenty seconds. No other test calls `initSolver`: the
   validator's property tests use `Cube.random()`, which needs no initialisation.
 - **A regression test is shown red first.** Write it against the commit before the fix,

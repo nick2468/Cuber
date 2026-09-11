@@ -9,7 +9,9 @@ later, as an iPad Home Screen app (a PWA on Cloudflare Pages, like Conquest in
 the settings helpers, the installer and the testing rules are copied from those apps.
 
 Current state: specified and planned 2026-09-11. Phase 0 (the scaffold: the header,
-the theme toggle, the two test projects) built 2026-09-11. Phase 1 is next.
+the theme toggle, the two test projects) built 2026-09-11. Phase 1 (the model, the
+validator, the vendored solver with its worker, the storage helpers) built 2026-09-12,
+with nothing new on screen. Phase 2 is next.
 
 ## Documents
 
