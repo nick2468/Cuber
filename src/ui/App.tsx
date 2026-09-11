@@ -1,15 +1,19 @@
+import { CubeProvider } from './cube-context'
+import { HeaderButtons } from './HeaderButtons'
+import { Screen } from './Screen'
 import { useTheme } from './theme'
 import './app.css'
 
 /**
- * Origin: SimpleChess src/ui/App.tsx (London's, adapted), adapted: the name.
- * The app shell: the header, and the one screen under it (spec section 4).
+ * Origin: SimpleChess src/ui/App.tsx (London's, adapted), adapted: the name, and split into the shell and the provider around it.
+ * The app: the header, and the one screen under it (spec section 4).
  *
- * The header holds the name with the version beside it, and the theme toggle.
- * Reset cube, Solve and Hint join it in phases 2 and 3. There is no nav to a
- * second screen, because there is no second screen (spec C1).
+ * `Shell` is everything a person sees. `App` is the shell with the cube's
+ * provider around it, which is what `main.tsx` renders. They are split the way
+ * the trainer splits them, so a test can put the shell inside a provider of
+ * its own with the animations turned down.
  */
-export function App() {
+export function Shell() {
   const { theme, toggle } = useTheme()
   const switchTo = theme === 'dark' ? 'Switch to the light theme' : 'Switch to the dark theme'
 
@@ -19,6 +23,9 @@ export function App() {
         <h1>
           Cuber <span className="app-version">v{__APP_VERSION__}</span>
         </h1>
+
+        <HeaderButtons />
+
         <nav className="app-nav">
           <button
             type="button"
@@ -32,7 +39,17 @@ export function App() {
         </nav>
       </header>
 
-      <main />
+      <main>
+        <Screen />
+      </main>
     </div>
+  )
+}
+
+export function App() {
+  return (
+    <CubeProvider>
+      <Shell />
+    </CubeProvider>
   )
 }

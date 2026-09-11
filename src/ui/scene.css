@@ -1,0 +1,88 @@
+/* The cube in CSS 3D (spec C4). Everything 3D is here; the frame is app.css. */
+
+:root {
+  /*
+   * The plastic between the stickers. The one colour in the app that is
+   * neither a theme variable nor a sticker colour: the cube is the same cube
+   * in both themes, so its body does not follow the frame (spec 4.3).
+   */
+  --cube-body: #111;
+}
+
+.scene {
+  position: relative;
+  margin: 0 auto;
+  perspective: 1200px;
+  /* A tap paints a sticker. A double tap must not zoom the page (spec 4.2). */
+  touch-action: manipulation;
+}
+
+/* A point at the scene's centre. Every cubie hangs off it, so the view is one
+   transform on this element and the layer turns of phase 3 are another. */
+.cube {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 0;
+  height: 0;
+  transform-style: preserve-3d;
+  transition-property: transform;
+  transition-timing-function: ease-in-out;
+}
+
+/* The view change is there to be copied on a real cube. Someone who has asked
+   for less movement still gets the sentences, just not the turning. */
+@media (prefers-reduced-motion: reduce) {
+  .cube {
+    transition-duration: 0ms !important;
+  }
+}
+
+.cubie {
+  position: absolute;
+  transform-style: preserve-3d;
+}
+
+.sticker {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  border: none;
+  border-radius: 0;
+  background: var(--cube-body);
+  cursor: pointer;
+  /* A sticker facing away neither draws nor takes a click. */
+  backface-visibility: hidden;
+}
+
+/* The app's button rules do not apply to a sticker: it is a coloured square,
+   and it stays the same square while the view turns. */
+.sticker:hover {
+  background: var(--cube-body);
+}
+
+.sticker:disabled {
+  opacity: 1;
+  cursor: default;
+}
+
+.sticker-face {
+  position: absolute;
+  inset: 6px;
+  border-radius: 4px;
+  background: var(--cube-body);
+}
+
+/* Not filled in yet, which is a different thing from a black sticker. */
+.sticker-face.blank {
+  border: 1px dotted var(--text-faint);
+}
+
+.sticker.marked .sticker-face {
+  outline: 2px solid var(--bad);
+  outline-offset: 1px;
+}

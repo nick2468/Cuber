@@ -1,9 +1,17 @@
 /* Origin: London src/ui/app.css, adapted: cut to the header, the buttons and
-   the tall-window block; button:disabled is London src/ui/drill.css line 132. */
+   the tall-window block; button:disabled is London src/ui/drill.css line 132.
+   Phase 2 added the screen below the header: the picker, the view button, the
+   status line, the box and the colour menu. */
 
 .app {
+  /* One column, up to 720 wide, centred (spec 4.1). */
+  max-width: 720px;
   margin: 0 auto;
-  padding: 24px;
+  /* On an iPad the page runs under the rounded corners and the home
+     indicator, so the padding is at least the safe area, as Conquest's
+     .board-page does (spec 4.2). */
+  padding: max(24px, env(safe-area-inset-top)) max(24px, env(safe-area-inset-right))
+    max(24px, env(safe-area-inset-bottom)) max(24px, env(safe-area-inset-left));
 }
 
 .app-header {
@@ -70,6 +78,158 @@ button:hover {
 button:disabled {
   opacity: 0.5;
   cursor: default;
+}
+
+/* Reset cube, Solve and Hint, in the middle of the header (spec 4, Q16). */
+.header-buttons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Big enough for a finger on an iPad (spec 4.2). */
+.header-buttons button,
+.view-button,
+.swatch,
+.menu-swatch,
+.menu-clear {
+  min-height: 36px;
+}
+
+.hint-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+}
+
+/* ------------------------------------------------------------ the screen */
+
+.screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+/* The picker sits at the top right, above the cube's own corner (the drawing). */
+.picker-row {
+  display: flex;
+  width: 100%;
+  justify-content: flex-end;
+}
+
+.picker {
+  margin: 0;
+  padding: 6px 12px 10px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+}
+
+.picker legend {
+  padding: 0 6px;
+  color: var(--text-faint);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Four then two, as the drawing has them. */
+.swatches {
+  display: grid;
+  grid-template-columns: repeat(4, auto);
+  gap: 4px;
+}
+
+.swatch {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 4px;
+  background: none;
+  border: 1px solid transparent;
+}
+
+.swatch:hover {
+  background: var(--surface-hover);
+}
+
+/* A ring on the colour that painting uses. */
+.swatch.chosen {
+  border-color: var(--accent);
+  background: var(--accent-wash);
+}
+
+.swatch[aria-disabled='true'],
+.menu-swatch[aria-disabled='true'] {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.swatch-colour {
+  display: block;
+  width: 24px;
+  height: 24px;
+  border: 1px solid var(--line-strong);
+  border-radius: 4px;
+}
+
+.swatch-count {
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  font-variant-numeric: tabular-nums;
+}
+
+.status {
+  margin: 0;
+  min-height: 24px;
+  color: var(--text-soft);
+  text-align: center;
+}
+
+/* The box across the bottom. Phase 3 puts the steps in it. */
+.box {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 220px;
+  padding: 12px 16px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+}
+
+.box-empty {
+  margin: 0;
+  color: var(--text-dim);
+}
+
+/* The menu a right click or a long press opens, at the pointer (spec 5.3).
+   A strong border rather than a shadow: a shadow colour would be a seventh
+   colour, and index.css is a copy this app does not add to. */
+.colour-menu {
+  position: fixed;
+  z-index: 10;
+  display: grid;
+  grid-template-columns: repeat(3, auto);
+  gap: 4px;
+  padding: 8px;
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-radius: 6px;
+}
+
+.menu-swatch {
+  padding: 4px;
+  background: none;
+  border: 1px solid transparent;
+}
+
+.menu-swatch:hover {
+  background: var(--surface-hover);
+}
+
+.menu-clear {
+  grid-column: 1 / -1;
 }
 
 .theme-toggle {
