@@ -158,28 +158,30 @@ outside the repository (do not `npm install` it), and read `lib/cube.js` lines 1
 120 (the tables), `fromString`, `asString`, `move`, `isSolved`, and `lib/solve.js`
 `initSolver` and `solve`.
 
-- [ ] 1.1 `src/model/colours.ts`: `Colour` = the six names, `COLOURS` in the
+- [x] 1.1 `src/model/colours.ts`: `Colour` = the six names, `COLOURS` in the
       picker's order (red, green, yellow, white, blue, orange), `hexOf(colour)` per
       spec 4.3, `Face` = `U R F D L B`, `FACES` in the library's order, `faceWord`
       ("the top face" and the rest), `opposite(face)`. `Scheme` = a map from face
       to colour, `standardScheme()`, `schemeFrom(centres)` returning null when two
       centres share a colour.
-- [ ] 1.2 `src/model/cube.ts`: `Cube` = an array of 54 `Colour | null`. `blank()`
+- [x] 1.2 `src/model/cube.ts`: `Cube` = an array of 54 `Colour | null`. `blank()`
       (48 nulls, the standard centres), `solved(scheme)`, `paint(cube, index,
       colour | null)` returning a new array, `counts(cube)` per colour, `filled(cube)`
       as a number, `isComplete`. `CENTRES` = `[4, 13, 22, 31, 40, 49]`.
-- [ ] 1.3 `src/model/geometry.ts`: `indexOf(face, row, column)`, `placeOf(index)`
+- [x] 1.3 `src/model/geometry.ts`: `indexOf(face, row, column)`, `placeOf(index)`
       returning `{ face, row, column }`, `positionOf(index)` returning `{ x, y, z }`
       from the table in spec 6.1, and the inverse `stickersAt(x, y, z)` returning
       the indices of that cubie's outside stickers. `CORNERS` (8) and `EDGES` (12)
       as arrays of facelet indices in the library's clockwise order, exactly the
-      table in spec 6.1, with the piece names as comments. Tests: C19 item 1
+      table in spec 6.1, with the piece names as comments. (Built with the names
+      as data, `{ name, stickers }`: the validator reads a piece's solved colours
+      from its name. See the phase 1 notes.) Tests: C19 item 1
       (the geometry's three stickers at (1, 1, 1) are the URF entry, and so on for
       all 20 pieces); `positionOf` and `stickersAt` are inverses for all 54.
-- [ ] 1.4 `src/model/facelets.ts`: `toFacelets(cube)` returning the 54-letter string
+- [x] 1.4 `src/model/facelets.ts`: `toFacelets(cube)` returning the 54-letter string
       or null (a blank sticker or a bad scheme), `fromFacelets(letters, scheme)`.
       Test: round trip on `solved(standardScheme())` and on a hand-made cube.
-- [ ] 1.5 `src/solver/vendor/`: `cube.js` and `solve.js` from the scratch package with
+- [x] 1.5 `src/solver/vendor/`: `cube.js` and `solve.js` from the scratch package with
       the two edits of spec C5 and an `Origin:` line each; `LICENSE` copied;
       `cube.d.ts` with the seven members named in C5. Test (C19 item 8): the one
       slow test, `initSolver`, solve the fixed scramble of spec 15.1 and one random
@@ -187,24 +189,24 @@ outside the repository (do not `npm install` it), and read `lib/cube.js` lines 1
       time in the notes. **If the vendored files do not load under vitest or Vite,
       stop and report**: the fallback is `npm install cubejs` with Vite's CommonJS
       interop, but that is a spec change (C5) and is the orchestrator's call.
-- [ ] 1.6 `src/model/moves.ts`: `Move` = the eighteen strings, `MOVES`,
+- [x] 1.6 `src/model/moves.ts`: `Move` = the eighteen strings, `MOVES`,
       `inverse(move)`, `applyMove(cube, move)` through `Cube.fromString(...).move
       (move).asString()` and `fromFacelets`, `applyMoves(cube, moves)`. Test: C19
       item 4; and `applyMoves(solved, scramble)` equals `Cube.fromString(solved
       letters).move(scramble).asString()` converted back (the library as oracle).
-- [ ] 1.7 `src/model/validate.ts`: `checkPartial(cube)` and `validate(cube)` per spec
+- [x] 1.7 `src/model/validate.ts`: `checkPartial(cube)` and `validate(cube)` per spec
       6.4, returning `{ ok: true, facelets }` or `{ ok: false, message, stickers }`
       where `stickers` is the indices to outline. The piece tables come from
       `geometry.ts`. Tests: C19 items 2 and 3. For item 3 build each failing cube
       from `solved()` by hand and assert the exact sentence. The two property tests
       use `Cube.random().asString()` from the vendored library (no `initSolver`
       needed for that).
-- [ ] 1.8 `src/model/notation.ts`: `moveSentence(move)` per spec 8. Test: C19 item 5.
-- [ ] 1.9 `src/model/views.ts`: `View` = `near | far`, `viewFaces(view)` returning
+- [x] 1.8 `src/model/notation.ts`: `moveSentence(move)` per spec 8. Test: C19 item 5.
+- [x] 1.9 `src/model/views.ts`: `View` = `near | far`, `viewFaces(view)` returning
       the three faces at the top, front-left and front-right slots, and
       `VIEW_MOVEMENTS` = the two movements of spec C2 with their forward and reverse
       sentences (spec 5.2), as data. Test: C19 item 6.
-- [ ] 1.10 `src/model/cube-text.ts`: `toText(cube)` (54 characters, `wyrobg-`) and
+- [x] 1.10 `src/model/cube-text.ts`: `toText(cube)` (54 characters, `wyrobg-`) and
       `fromText(text)` returning the cube or null for anything else. Test: C19 item 7.
 - [ ] 1.11 `src/solver/solver.ts`: `createSolver()` per spec 7.2 with the worker
       started through `new Worker(new URL('./worker.ts', import.meta.url), { type:
