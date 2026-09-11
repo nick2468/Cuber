@@ -8,7 +8,8 @@ later, as an iPad Home Screen app (a PWA on Cloudflare Pages, like Conquest in
 `../Conquest`), from one React, TypeScript and Vite code base. The shell, the theme,
 the settings helpers, the installer and the testing rules are copied from those apps.
 
-Current state: specified and planned 2026-09-11. Nothing built yet.
+Current state: specified and planned 2026-09-11. Phase 0 (the scaffold: the header,
+the theme toggle, the two test projects) built 2026-09-11. Phase 1 is next.
 
 ## Documents
 

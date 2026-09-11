@@ -10,11 +10,19 @@ code base.
 
 ## Running it
 
-Nothing is built yet. When phase 0 lands:
+Phase 0 is built: the page shows the header (the name, the version and the theme
+toggle) and nothing else yet. These commands work now:
 
-- `npm install`, then `npm run dev` and open `http://localhost:5190`.
-- `npx vitest run` runs the tests. `npm run build` makes `dist/`.
+- `npm install`, then `npm run dev` and open `http://localhost:5190`. The port is
+  fixed: if something else holds 5190 the command fails rather than moving.
+- `npx vitest run` runs both kinds of test (see [docs/testing.md](docs/testing.md)).
+  `npx tsc -b` type-checks. `npm run build` makes `dist/`, and `npm run preview`
+  serves it on `http://localhost:5191`.
+
+Later:
+
 - `npx tauri build` makes the Windows installer (phase 5).
+- The iPad Home Screen app waits for Nick's word (phase 6).
 
 ## Documents
 

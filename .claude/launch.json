@@ -1,0 +1,19 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "//": "The --prefix flag makes npm run the script in THIS folder whatever directory invoked it. Port 5190 with --strictPort, because 5173 is dc.web, 5175 is the trainer, 5180 and 5181 are Conquest, and 5185 and 5186 are Simple Chess.",
+      "name": "cuber-dev",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "C:/Users/nick2/Code/Cuber", "run", "dev"],
+      "port": 5190
+    },
+    {
+      "//": "Serves the BUILT files. Once the service worker arrives (phase 6, the iPad app) this is the only way to test that the app opens with no internet.",
+      "name": "cuber-preview",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "C:/Users/nick2/Code/Cuber", "run", "preview"],
+      "port": 5191
+    }
+  ]
+}

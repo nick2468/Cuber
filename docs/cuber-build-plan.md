@@ -1,6 +1,6 @@
 # Cuber - build plan
 
-Version 1. Written 2026-09-11. Status: **Active**, nothing built yet.
+Version 1. Written 2026-09-11. Status: **Active**, phase 0 built 2026-09-11.
 
 Read [the specification](cuber-spec.md) first. It says what the app does. This
 document says what gets built, in what order, and how we know each part is finished.
@@ -87,7 +87,7 @@ instead of from `../London` where the two differ, and say which you used);
 `src/globals.d.ts`, `src/version.test.ts`, `src/ui/theme.ts`, `src/ui/app.css`,
 `docs/testing.md`; `../Conquest/index.html`, `.node-version`, `.vscode/`.
 
-- [ ] 0.1 `git init`. `package.json`: name `cuber`, version `0.1.0`, `"type":
+- [x] 0.1 `git init`. `package.json`: name `cuber`, version `0.1.0`, `"type":
       "module"`, description "Solves a Rubik's Cube from its colours". Scripts:
       `dev` = `vite --port 5190 --strictPort`, `build` = `tsc -b && vite build`,
       `preview` = `vite preview --port 5191 --strictPort`, `test` = `vitest run`,
@@ -95,44 +95,44 @@ instead of from `../London` where the two differ, and say which you used);
       `react`, `react-dom`, `@tauri-apps/api` at the trainer's versions. Dev
       dependencies: the trainer's list. Pin the four testing-library and jsdom
       versions exactly, as the trainer does.
-- [ ] 0.2 `tsconfig.json`, `tsconfig.app.json`, `tsconfig.node.json`: the trainer's,
+- [x] 0.2 `tsconfig.json`, `tsconfig.app.json`, `tsconfig.node.json`: the trainer's,
       identical, plus `src/solver/vendor` excluded from `checkJs` if the trainer's
       config checks JavaScript (it may not; then nothing to add). `.oxlintrc.json`
       identical plus an ignore for `src/solver/vendor/**`. `.node-version` =
       `22.12.0`.
-- [ ] 0.3 `vite.config.ts`: the trainer's `define` for `__APP_VERSION__`, the server
+- [x] 0.3 `vite.config.ts`: the trainer's `define` for `__APP_VERSION__`, the server
       port from `PORT` or 5190 with `strictPort`, the two vitest projects (`string` in
       node for `src/**/*.test.ts`, `dom` in jsdom for `src/**/*.dom.test.tsx` with
       `src/test/dom-setup.ts`). No PWA plugin (phase 6).
-- [ ] 0.4 `.gitignore`: the trainer's (`node_modules/`, `dist/`, `src-tauri/target/`,
+- [x] 0.4 `.gitignore`: the trainer's (`node_modules/`, `dist/`, `src-tauri/target/`,
       `src-tauri/gen/`, caches, editor files, logs) plus Conquest's `dev-dist/`.
       `.vscode/extensions.json` and `settings.json` from Conquest, committed.
-- [ ] 0.5 `.claude/launch.json` with `cuber-dev` (`npm run dev`, port 5190) and
+- [x] 0.5 `.claude/launch.json` with `cuber-dev` (`npm run dev`, port 5190) and
       `cuber-preview` (`npm run preview`, port 5191), in Conquest's shape with the
       `--prefix` flag pointing at this folder.
-- [ ] 0.6 `index.html`: Conquest's head (lang `en-AU`, viewport with
+- [x] 0.6 `index.html`: Conquest's head (lang `en-AU`, viewport with
       `viewport-fit=cover`, theme-color `#16181c`, the two `mobile-web-app-capable`
       metas, the apple-touch-icon and favicon links) with the title Cuber. The icon
       files arrive in phase 5 and 6; the links may point at files not there yet.
-- [ ] 0.7 `src/main.tsx` identical, `src/index.css` identical, `src/globals.d.ts`
+- [x] 0.7 `src/main.tsx` identical, `src/index.css` identical, `src/globals.d.ts`
       identical, `src/ui/theme.ts` identical but for the key `cuber.theme`,
       `src/ui/app.css` cut to `.app`, `.app-header`, `.app-version`, `.nav-link`,
       `.theme-toggle`, `button`, `button:disabled` and the `@media (min-width: 900px)
       and (min-height: 700px)` block.
-- [ ] 0.8 `src/ui/App.tsx`: the header (name, version, theme toggle) and an empty
+- [x] 0.8 `src/ui/App.tsx`: the header (name, version, theme toggle) and an empty
       `<main>`. No provider yet.
-- [ ] 0.9 `src/version.test.ts`: the trainer's. The two Tauri files do not exist
+- [x] 0.9 `src/version.test.ts`: the trainer's. The two Tauri files do not exist
       until phase 5, so the two tests that read them are written now and marked
       `it.skip` with a comment naming phase 5, which unskips them.
-- [ ] 0.10 `src/test/dom-setup.ts` identical. `src/test/dom.tsx` with `renderApp`
+- [x] 0.10 `src/test/dom-setup.ts` identical. `src/test/dom.tsx` with `renderApp`
       only, adapted to this app's provider as it arrives.
-- [ ] 0.11 `docs/testing.md`: the trainer's, adapted. Drop the content checkers and
+- [x] 0.11 `docs/testing.md`: the trainer's, adapted. Drop the content checkers and
       the board stub. Keep the two kinds, what is faked and why (the solver, from
       phase 3), and the rules, with the one slow solver test named as the exception.
-- [ ] 0.12 One DOM test: the header shows "Cuber" and the version, and the theme
+- [x] 0.12 One DOM test: the header shows "Cuber" and the version, and the theme
       toggle flips `data-theme` on the root and writes `cuber.theme`.
-- [ ] 0.13 `README.md`: what the app is, the two ways to run it, the documents.
-- [ ] 0.14 `npm run dev`, `npx vitest run`, `tsc -b`, `npm run build` all work.
+- [x] 0.13 `README.md`: what the app is, the two ways to run it, the documents.
+- [x] 0.14 `npm run dev`, `npx vitest run`, `tsc -b`, `npm run build` all work.
 
 **Done when:** the dev page shows the header in both themes, the suite is green, and
 `dist/` exists. Screenshot the header in both themes at 800 by 1000.
@@ -480,7 +480,7 @@ only build config. The iPad phase is parked by ruling.
 
 | Phase | State |
 |---|---|
-| 0 - the scaffold | Not started |
+| 0 - the scaffold | Done, 2026-09-11 |
 | 1 - the model, the validator and the solver | Not started |
 | 2 - the cube on screen, and entering the colours | Not started |
 | 3 - Solve, Hint, the box and the animation | Not started |
@@ -493,3 +493,103 @@ only build config. The iPad phase is parked by ruling.
 Each phase appends its notes here as it closes: what was measured, what was decided
 and why, what was asked of Nick and what he said, what the reuse review found, and
 what is left. The orchestrator's review adds its gate findings under them.
+
+### Phase 0 - builder notes (2026-09-11)
+
+**Which origin.** Simple Chess had finished the same scaffold and passed its review gate
+0 the same day, so, per the chip, files were copied from `../SimpleChess` where it
+differs from London. It differs in two ways that matter: `version.test.ts` carries
+`/// <reference types="node" />` (London's copy compiles only because another London
+test pulls node types in), and `theme.ts`'s comment no longer speaks of the trainer's
+progress file. Simple Chess's gate 0 rulings were taken as binding here too (see
+Screenshots).
+
+**Copied, and from where.**
+
+- Byte-identical, no origin line (JSON has no comment): `tsconfig.json`,
+  `tsconfig.app.json`, `tsconfig.node.json` (London); `.vscode/extensions.json`,
+  `.vscode/settings.json`, `.node-version` (Conquest).
+- Identical plus the origin line, each diffed against London with that line removed:
+  `src/main.tsx`, `src/index.css`, `src/globals.d.ts`, `src/test/dom-setup.ts`.
+- Adapted, each saying what changed in its origin line: `vite.config.ts` (port 5190 and
+  `strictPort`, the port comment lists Simple Chess's 5185 and 5186),
+  `src/ui/theme.ts` (key `cuber.theme`), `src/ui/app.css` (Simple Chess's cut, which
+  is exactly plan 0.7's list; `button:disabled` is London's `drill.css` line 132),
+  `src/version.test.ts` (the two Tauri tests skipped until phase 5), `src/ui/App.tsx`,
+  `src/test/dom.tsx`, `index.html` (Conquest's head with Cuber's title, name and
+  theme colour `#16181c`), `.claude/launch.json` (Conquest's shape), `docs/testing.md`
+  (an origin paragraph).
+- `.oxlintrc.json` is London's plus `"ignorePatterns": ["src/solver/vendor/**"]`
+  (plan 0.2). `.gitignore` is Simple Chess's (London's plus Conquest's `dev-dist/` and
+  the `.vscode/settings.json` exception) without `public/engine/`, which this app does
+  not have. `package.json` is the trainer's list without chess, the engine, `ts-fsrs`,
+  `react-markdown` or the two Tauri plugins, and with no `engine` or `icons` script,
+  so nothing dead is left behind. The four exact pins stay exact.
+- `tsconfig.app.json` has `allowJs` but not `checkJs`, so nothing was added for the
+  vendor folder (chip rule; phase 1 handles it).
+
+**Measured.**
+
+- `npm install`: 138 packages, 0 vulnerabilities.
+- `npx vitest run`: 2 files, 4 passed and 2 skipped (the two Tauri version tests),
+  1.6 seconds warm. The first run after `npm install` took 14.1 seconds, 10.8 of them
+  jsdom starting.
+- `tsc -b` clean. `npx oxlint` reports nothing. `npm run build`: 18 modules,
+  `dist/index.html` 1.24 kB, JavaScript 220.45 kB (68.91 kB gzipped), CSS 2.65 kB.
+- Red first: `shell.dom.test.tsx` asserted `simple-chess.theme` first and failed with
+  "expected null to be 'light'". Then it was fixed to `cuber.theme` and passed.
+- The pane at 800 by 1000, dev server `cuber-dev` on 5190. The served page read "Cuber
+  v0.1.0" with the title "Cuber", which is this folder's `package.json`, so it was this
+  app. Dark: `data-theme` dark, `cuber.theme` = dark, ground rgb(22, 24, 28), the
+  version at 12.8 px in rgb(122, 128, 138) (`--text-faint`). After the toggle:
+  `data-theme` light, `cuber.theme` = light, ground rgb(244, 242, 238), the button
+  reading "Dark" named "Switch to the dark theme". Pressed again, back to dark.
+  `scrollWidth` 800 against `innerWidth` 800 in both themes. The pane's storage was
+  cleared afterwards and the viewport reset.
+- `git -C ../London status` and `git -C ../Conquest status` show only what was there
+  before (`grep.exe.stackdump`, `tsconfig.tsbuildinfo`, as Simple Chess's notes
+  recorded). `../SimpleChess` is clean.
+
+**Screenshots.** Both themes were screenshotted in the pane at 800 by 1000 and looked
+at: the name, the faint version beside it, the toggle at the right behind its rule, and
+the empty page under the header's line. **There are no screenshot files, so there are
+no names to give.** The chip asked for "the two screenshots' names", but the pane
+writes no file, and Simple Chess's gate 0 ruled that no screenshot files are required
+and that no session starts a headless browser on this machine (Edge signed a scratch
+profile into Nick's account there). This chip predates that ruling reaching Cuber's
+plan. The orchestrator may want to copy the ruling into rule 7 here.
+
+**Decided (code shape).**
+
+- The shell test reads the version as `__APP_VERSION__`, not a fresh read of
+  `package.json`, for Simple Chess's reason: `version.test.ts` already holds the
+  constant to the file. It also checks the app opens dark.
+- `vite.config.ts` sets `strictPort: true` as well as the `dev` script's
+  `--strictPort`. Plan 0.3 asks for it, and it makes a bare `npx vite` fail loudly too.
+- `App.tsx`'s comment says Reset cube, Solve and Hint join the header in phases 2 and
+  3 (spec 4). The `nav` carries no `aria-label`, as in Simple Chess.
+
+**A mistake of mine, recorded so it is not repeated.** The first `npm install` was run
+as `npm install --prefix C:\Users\nick2\Code\Cuber`. npm took the path as a package as
+well as the prefix, and added `"cuber": "file:"` to `dependencies`, with
+`node_modules/cuber` a link back to this folder. The line was removed and a plain
+`npm install` pruned the link; the lock file has no `file:` entry. A `Remove-Item` of
+the link was tried first and stopped at a prompt. That was lucky, because a recursive
+delete through that link would have deleted the repository. Run npm from the folder,
+not with `--prefix` and a path. (`launch.json`'s `--prefix` is safe: it comes before
+`run`.)
+
+**Contradictions.** None that stopped an item. The chip's screenshot names are covered
+above.
+
+**Asked of Nick.** Nothing.
+
+**Reuse review.** Every colour is in `src/index.css`: a search of `src/` for hex and
+`rgb(` finds only that file. No em dashes under `src/`. The version is read from
+`package.json` in two places, `vite.config.ts` (the define) and `version.test.ts`, both
+copies, and the new test uses the constant. The toggle label's ternary has one home
+(`switchTo`). `App.tsx`, `dom.tsx` and `shell.dom.test.tsx` repeat Simple Chess's text
+with Cuber's words, which is the copy rule (C16), not duplication inside this app.
+Nothing to refactor.
+
+**Left.** Nothing in phase 0. For the orchestrator: the screenshot-file ruling above.
