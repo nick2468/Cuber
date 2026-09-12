@@ -254,6 +254,62 @@ button:disabled {
   color: var(--text);
 }
 
+/* ------------------------------------------------------ the update banner */
+
+/* Origin: Conquest src/ui/styles.css .update-bar and the rules under it,
+   adapted: this app's palette variables, and px rather than rem to match the
+   rest of this file. It is a fixed bar at the bottom, so it never pushes the
+   column about and never changes what the fit rule measured (spec 4.1); it
+   covers the last few pixels of the box while it shows, and the box scrolls
+   inside itself, so nothing becomes unreachable. */
+.update-bar {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 10;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  /* Above the home indicator on an iPad, as the page's own padding is (spec 4.2). */
+  padding: 14px max(16px, env(safe-area-inset-right)) max(14px, env(safe-area-inset-bottom))
+    max(16px, env(safe-area-inset-left));
+  background: var(--surface);
+  color: var(--text);
+  border-top: 1px solid var(--line);
+  box-shadow: 0 -6px 24px rgb(0 0 0 / 30%);
+}
+
+.update-words {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 192px;
+  flex: 1 1 288px;
+}
+
+.update-words span {
+  font-size: 0.85rem;
+  color: var(--text-dim);
+}
+
+.update-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.update-buttons button {
+  min-height: 36px;
+}
+
+.update-buttons button.primary {
+  font-weight: 600;
+  background: var(--accent-solid);
+  border-color: var(--accent-edge);
+}
+
 /* A window at least the app's own minimum size pins the shell to the
    viewport, so a view can scroll part of itself instead of the whole page.
    Anything smaller falls back to one flowing, scrolling page. */

@@ -1,4 +1,4 @@
-import { afterEach } from 'vitest'
+import { afterEach, vi } from 'vitest'
 import { cleanup } from '@testing-library/react'
 
 /**
@@ -25,6 +25,24 @@ import { cleanup } from '@testing-library/react'
  * a no-op is the honest stand-in rather than a gap being papered over.
  */
 Element.prototype.scrollIntoView = () => {}
+
+/**
+ * `virtual:pwa-register/react`, which `useUpdate` imports, has no file behind
+ * it: `vite-plugin-pwa` makes the module up while it builds. Vitest resolves
+ * the name to `file:///@vite-plugin-pwa/virtual:pwa-register/react` and then
+ * fails to load it, which took every DOM test in the suite down with it, not
+ * just the ones about updating.
+ *
+ * So the hook it exports is stood in for. The stand-in says no new version is
+ * waiting, which is the ordinary case and the one the rest of the suite needs:
+ * a banner appearing over the app would make `getByRole('status')` ambiguous
+ * everywhere. The waiting case is tested by rendering `UpdateBanner` itself
+ * (`update-banner.dom.test.tsx`), and the real registration is proved in a
+ * browser against the built app, which is the only place it exists at all.
+ */
+vi.mock('virtual:pwa-register/react', () => ({
+  useRegisterSW: () => ({ needRefresh: [false], updateServiceWorker: async () => {} }),
+}))
 
 afterEach(() => {
   cleanup()

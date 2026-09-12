@@ -2,10 +2,12 @@ import { useState } from 'react'
 import { applyDevScene } from '../dev/apply-scene'
 import type { Scene } from '../dev/scenes'
 import { useDevScene } from '../dev/use-dev-scene'
+import { isDesktop } from '../storage/paths'
 import { CubeProvider } from './cube-context'
 import { HeaderButtons } from './HeaderButtons'
 import { Screen } from './Screen'
 import { useTheme } from './theme'
+import { UpdateWatch } from './UpdateWatch'
 import './app.css'
 
 /**
@@ -47,6 +49,12 @@ export function Shell({ scene = null }: { scene?: Scene | null }) {
       <main>
         <Screen />
       </main>
+
+      {/* Only off the desktop. The Tauri window updates by installer, so it
+          registers no service worker at all (spec C21, and UpdateWatch says
+          why). The condition is on the component, not inside it, so no hook is
+          called conditionally. */}
+      {isDesktop() ? null : <UpdateWatch />}
     </div>
   )
 }
