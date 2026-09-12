@@ -21,10 +21,13 @@
   gap: 24px;
   flex-wrap: wrap;
   border-bottom: 1px solid var(--line);
-  /* The same 8px above the rule and below it. It was 8 and 16, which read as
-     the dropdown having drifted down away from the header it belongs to. */
-  padding-bottom: 8px;
-  margin-bottom: 8px;
+  /* The same space above the rule and below it. It was 8 and 16, which read as
+     the dropdown having drifted down away from the header it belongs to, and
+     then 8 and 8 until phase 4's layout pass halved both: the page has to fit
+     an 800 by 1000 window with a solution in the box, and even space that is
+     equal on both sides is space. */
+  padding-bottom: 4px;
+  margin-bottom: 4px;
 }
 
 .app-header h1 {
@@ -109,7 +112,9 @@ button:disabled {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  /* Four gaps down the page, so every pixel here costs four. Phase 4's layout
+     pass took them from 8 to 4 to fit the 800 by 1000 window (spec 11.1). */
+  gap: 4px;
 }
 
 /* The picker sits at the top right, above the cube's own corner (the drawing). */
@@ -194,7 +199,7 @@ button:disabled {
   box-sizing: border-box;
   width: 100%;
   min-height: 220px;
-  padding: 12px 16px;
+  padding: 8px 16px;
   border: 1px solid var(--line);
   border-radius: 6px;
 }

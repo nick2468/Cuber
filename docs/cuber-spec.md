@@ -170,19 +170,22 @@ All in CSS pixels.
 | Thing | Size | Why |
 |---|---|---|
 | The column | up to 720 wide, centred | The drawing is a portrait page. 720 fits the picker beside the cube's top and the box's rows without wrapping a sentence. |
-| The scene | 440 by 440, or smaller to fit | The square the cube is drawn in. |
-| Cubie | the scene divided by 4.8, rounded down: 91 at 440, 62 at 300 | Measured at phase 2: turned corner-on and seen through a 1200 px perspective, the cube's silhouette is about 1.3 times three cubies wide, so a 440 scene holds a 91 px cubie and no more. Still far more than the 36 px a finger needs. (Version 1 said 120 and a divisor of 3.67, which drew the cube 1.3 times too big and over the view button.) |
+| The scene | 400 by 400, or smaller to fit | The square the cube is drawn in. It was 440 until phase 4's layout pass, which had to find 75 pixels to stop the 800 by 1000 window scrolling (the notes say where the rest came from). |
+| Cubie | the scene divided by 4.8, rounded down: 83 at 400, 58 at 280 | Measured at phase 2: turned corner-on and seen through a 1200 px perspective, the cube's silhouette is about 1.3 times three cubies wide, so a 400 scene holds an 83 px cubie and no more (a 440 scene held 91, before phase 4 shrank it). Still far more than the 36 px a finger needs. (Version 1 said 120 and a divisor of 3.67, which drew the cube 1.3 times too big and over the view button.) |
 | Gap between cubies | 0 | A gap is a hole through the cube, and the page ground shows through it as bright lines in the light theme (found at gate 2). The dark plastic between stickers is each sticker's own 6 px inset on the cube-body colour. |
 | Lift | a quarter of a cubie | Corner-on, the silhouette hangs low in its square because the tilt brings the bottom corner forward and the perspective magnifies it. The cube is drawn a quarter of a cubie above the centre so it sits in the middle (measured at phase 2: 22 px at a 91 px cubie). |
 | Header | 56 tall | The trainer's header. |
-| The box | at least 220 tall, grows with the moves | The control row, the holding sentence and five moves visible without scrolling; longer solutions scroll inside the box. |
+| The box | at least 220 tall, grows with the moves; 265 with a solution in it | The control row, the holding sentence and four moves visible with a fifth part-shown; longer solutions scroll inside the box. (Version 1 said five, and measurement at phase 4 put the list at 4.3 rows. The half row showing is a useful thing to see: it says there is more.) |
 | Page padding | 24 | The trainer's `.app`. |
 
-**The fit rule.** The scene is the smaller of 440 and what the viewport leaves after
+**The fit rule.** The scene is the smaller of 400 and what the viewport leaves after
 the header, the picker, the button, the status line, the box's minimum and the
-padding. It is never smaller than 280. On the 800 by 1000 window it is 440. On an
-iPad held sideways (1180 by 820) it is about 300. The scene is re-measured when the
-window or the orientation changes. The cube is drawn to fit the scene: the cubie
+padding. It is never smaller than 280. On the 800 by 1000 window it is 400. On an
+iPad held sideways (1180 by 820) it is 280, and the page scrolls a little inside
+the shell. The scene is re-measured when the window or the orientation changes.
+Every number the rule subtracts is MEASURED by `scripts/probes/layout.js`, not
+estimated: `src/ui/fit.ts` names the probe box each one came from. The estimates
+were wrong by 75 pixels, which is what phase 4's layout pass found. The cube is drawn to fit the scene: the cubie
 size is the scene size divided by 4.8, rounded down (the table above says why).
 
 The page must never scroll sideways at any viewport this app is used at (section
@@ -692,8 +695,11 @@ Nothing about the approach changes.
 ### 11.1 The window
 
 - Title "Cuber". Opens at 800 by 1000, minimum 680 by 800, centred, resizable. 800
-  fits the 720 column with the padding; 1000 fits the header, the picker, the 440
-  scene, the button, the status line and a box with five moves.
+  fits the 720 column with the padding; 1000 fits the header, the picker, the 400
+  scene, the button, the status line and a box holding a nineteen-move solution,
+  with nine pixels to spare. Measured at phase 4, in a browser; phase 5 measures it
+  again in the window the app actually opens, where the window's own frame may take
+  some of the 1000.
 - Declared in `tauri.conf.json` with `"create": false` and built in `lib.rs` from
   that same declaration, so the WebView2 profile can be pointed at
   `%LOCALAPPDATA%\Cuber Data\WebView2`. The trainer's `lib.rs` says why.

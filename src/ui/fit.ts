@@ -3,27 +3,39 @@ import { useEffect, useState } from 'react'
 /**
  * How big the cube is drawn (spec 4.1, the fit rule).
  *
- * The scene is 440 square, or smaller when the window leaves less, and never
+ * The scene is 400 square, or smaller when the window leaves less, and never
  * under 280. Each number it takes off is one thing on the screen above or
  * below it, named here so a change to the layout has an obvious line to
  * change.
+ *
+ * Every number below was MEASURED by `scripts/probes/layout.js` at 800 by 1000
+ * with the `solution` scene, after phase 4's layout pass. They were estimates
+ * until then, and three of them were wrong by enough to matter: the picker is
+ * two-thirds taller than the 92 guessed for it, and the box holding nineteen
+ * moves is 265 rather than 220. The estimates said the 440 scene fitted the
+ * Windows window; it did not, by 75 pixels.
  */
 
 /** The column of spec 4.1, and the page padding on each side of it. */
 export const COLUMN_MAX = 720
 export const PAGE_PADDING = 24
 
-export const SCENE_MAX = 440
+export const SCENE_MAX = 400
 export const SCENE_MIN = 280
 
 /** What the scene shares the height with, top to bottom (spec 4.1). */
-const HEADER = 56
-const PICKER = 92
-const VIEW_BUTTON = 40
+/** `.app-header`, whose height carries its own padding. */
+const HEADER = 45
+/** `.picker`: six swatches four then two, a legend, and its border. */
+const PICKER = 151
+/** The "Show the other side" button, which is `.status`'s neighbour. */
+const VIEW_BUTTON = 38
+/** `.status`, one line. */
 const STATUS = 24
-const BOX_MIN = 220
-/** The five gaps between them. */
-const GAPS = 40
+/** `.box` with a nineteen-move solution in it: the tallest it is asked to be. */
+const BOX_MIN = 265
+/** The header's margin, and the four gaps `.screen` puts between its children. */
+const GAPS = 4 + 4 * 4
 
 const HEIGHT_TAKEN = 2 * PAGE_PADDING + HEADER + PICKER + VIEW_BUTTON + STATUS + BOX_MIN + GAPS
 
@@ -43,7 +55,7 @@ export function sceneSize(viewportWidth: number, viewportHeight: number): number
  * in a 440 scene, about 1.30 times its flat width. It hid the view button and
  * the status line under it. So the divisor is that 3.67 times the 1.30 the
  * turn adds, which is 4.8, and the cube ends up just inside its scene.
- * A 440 scene gives a 91 px cubie, still far more than a finger needs.
+ * A 400 scene gives an 83 px cubie, still far more than a finger needs.
  */
 export function cubieSize(scene: number): number {
   return Math.floor(scene / 4.8)

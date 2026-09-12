@@ -387,18 +387,18 @@ Read first: spec 15; `../London/src/ui/Diagnostics.tsx` (dev-only pattern);
 `../SimpleChess/src/dev/` if it exists by now (the same pattern, copy it);
 `../London/scripts/packaged-eval.mjs`.
 
-- [ ] 4.1 `src/dev/scenes.ts`: the six scenes of spec 15.1 as data, built through
+- [x] 4.1 `src/dev/scenes.ts`: the six scenes of spec 15.1 as data, built through
       `applyMoves` and `paint` so they are always valid (or invalid in exactly the
       way named). `sceneFromLocation(search)` returning `{ scene, view, theme,
       speed }` or null, tested as a string test.
-- [ ] 4.2 `useDevScene()` in `src/dev/use-dev-scene.ts`: returns null unless
+- [x] 4.2 `useDevScene()` in `src/dev/use-dev-scene.ts`: returns null unless
       `import.meta.env.DEV` and a scene is present; otherwise applies the settings
       and the cube once; the `solution` scene waits for `solverReady` and presses
       Solve. `App` calls it once. Confirm by reading the built bundle that no scene
       text survives `npm run build`.
-- [ ] 4.3 `scripts/probes/layout.js`: the expression of spec 15.3.
+- [x] 4.3 `scripts/probes/layout.js`: the expression of spec 15.3.
       `scripts/packaged-eval.mjs` identical (used in phase 5).
-- [ ] 4.4 The layout pass: every scene at the three viewports, both themes, both
+- [x] 4.4 The layout pass: every scene at the three viewports, both themes, both
       views. Fix what is wrong. Record the probe for each viewport in the notes.
       The two numbers of C20 hold everywhere. Also (gate 2): at 800 by 1000 with
       the box holding five moves, the page must not scroll at all; phase 2 measured
@@ -412,7 +412,7 @@ Read first: spec 15; `../London/src/ui/Diagnostics.tsx` (dev-only pattern);
       phase 2 entering test changes to match; a new case paints red over a blue
       sticker on a complete cube and reads rule 7's sentence; a blank sticker
       refuses with the new sentence.
-- [ ] 4.6 Reuse review and commit.
+- [x] 4.6 Reuse review and commit.
 
 **Done when:** the notes carry a screenshot list and the probe output for every
 viewport, with no sideways scroll anywhere.

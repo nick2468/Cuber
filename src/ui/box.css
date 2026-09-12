@@ -5,9 +5,10 @@
   align-items: center;
   gap: 16px;
   flex-wrap: wrap;
-  padding-bottom: 8px;
+  /* 4 rather than 8 on each side of the rule, from phase 4's layout pass. */
+  padding-bottom: 4px;
   border-bottom: 1px solid var(--line);
-  margin-bottom: 8px;
+  margin-bottom: 4px;
 }
 
 .control-buttons {
@@ -57,7 +58,7 @@
 
 /* How to hold the cube, which is fixed and true for every solution (spec 8). */
 .holding {
-  margin: 0 0 8px;
+  margin: 0 0 4px;
   color: var(--text-dim);
 }
 
