@@ -144,8 +144,9 @@ There is one screen. It never navigates anywhere. It follows the drawing:
 - **The picker** (`.picker`): a bordered box at the top right, labelled "Colours",
   six swatches in the drawing's order: red, green, yellow, white, blue, orange. Each
   swatch shows a small count of how many stickers carry that colour, "7/9". The
-  selected swatch has a ring. A swatch whose colour is used nine times is greyed and
-  cannot be selected (C9).
+  selected swatch has a ring. A swatch whose colour is used nine times shows its
+  count in the faint style and stays selectable: it can still repaint a filled
+  sticker, and a blank sticker refuses it (C9, as ruled at gate 3).
 - **The cube** (`.scene`): the 3D cube, centred, corner-on, drawn with CSS 3D (C4).
   Under it the **Show the other side** button, which reads **Show the first side**
   while the far view is showing.
@@ -278,8 +279,10 @@ Hint work in either view. Solution moves animate in whichever view is showing.
   that sticker and closes the menu. Escape or a click anywhere else closes it. A
   **long press** of 500 ms on a touch screen opens the same menu (Q10). The menu is
   one component used by both.
-- A swatch whose colour is already on nine stickers is greyed in the picker and in
-  the menu, and does nothing when clicked. This is the first validation rule (C9).
+- A colour already on nine stickers cannot be painted on to a BLANK sticker: the
+  click does nothing except put "Red is already on nine stickers." in the status
+  line. It can be painted over a FILLED sticker, and the count rule then says what
+  is off. This is the first validation rule (C9, as ruled at gate 3).
 - **Centres** paint like any other sticker. The scheme follows the centres, so a user
   with a non-standard cube can enter it. Two centres with the same colour is a
   validation failure (section 6.4).
@@ -452,8 +455,20 @@ module and share the piece tables.
 
 **C9. The Solve button is off until the cube is complete and possible, and the
 reason is beside it.** A Solve that returns "no solution" teaches nothing. The status
-line carries the validator's sentence, and the picker refuses a tenth sticker of any
-colour so the commonest mistake cannot be made at all.
+line carries the validator's sentence, and a BLANK sticker refuses a tenth sticker of
+any colour so the commonest mistake cannot be made at all.
+
+**Painting over a filled sticker is always allowed** (ruled at gate 3, built in
+phase 4). Version 1 of this decision refused a tenth sticker of a colour everywhere,
+and the build showed the consequence: on a complete cube every colour is already on
+nine stickers, so the only paint that could change one was Clear, and a person who
+had swapped two colours had to clear both and paint both. So the rule is now about
+blank stickers only. A filled sticker takes any colour, the counts go to ten and
+eight, and rule 7's sentence says so ("There are ten red stickers and eight blue. A
+cube has nine of each.") until the other sticker is fixed. The picker's swatch stays
+selectable at nine; its count reads 9/9 in the faint style as information. Painting
+a blank sticker with a colour at nine does nothing except put "Red is already on
+nine stickers." in the status line until the next paint.
 
 ---
 
@@ -515,7 +530,13 @@ A cube that is already solved is not sent to the worker. `solve` returns an empt
 list and the status line says "Your cube is already solved."
 
 Before the worker is ready the Solve and Hint buttons are disabled and their title
-says "Getting ready...". The wait is about a second after opening, once.
+says "Getting ready...". The wait is about a second after opening, once (measured at
+gate 3 on the built app: ready 1.1 seconds after navigation, a solve in 10 ms. A
+browser tab in the background throttles the worker's timers and makes both numbers
+look five times worse; measure with the tab in front).
+
+Solve and Hint are also off while a move turns or the view changes, with the title
+"Wait for the cube to stop turning." (added at phase 3).
 
 The moves come back exactly as the library writes them: face letter, then nothing,
 `2` or `'`. The library calls `solve()` with its default depth of 22.
@@ -551,7 +572,8 @@ come from:
 A half turn goes either way, so the sentence does not say which. The face names are
 the words of section 3, so "the top face" and never "the up face" on screen.
 
-After the last step the box ends with "Done. Your cube is solved."
+After the last move of the solution has been made, the box ends with "Done. Your
+cube is solved."
 
 ---
 
@@ -606,9 +628,13 @@ In a solver, a hint is "just tell me the next move". So:
 - If there is no solution yet, Hint solves silently (the same worker call) and
   reveals move 1: the box shows "Hint 1: R' - Turn the right face anticlockwise."
   and the cube animates that move.
-- Each further press reveals the next move, adds it to the list, and animates it.
+- Each further press, standing on the last move shown, reveals the next move, adds
+  it to the list, and animates it. Standing further back (after Step back), a press
+  makes the next move that is already on the screen, because "just tell me the
+  next move" is what the button is for.
 - The stepping controls work over the revealed moves only. The count of moves left
-  is not shown, so a hint stays a hint.
+  is not shown, so a hint stays a hint, and "Done. Your cube is solved." appears only
+  when every move of the solution has been made, never after the last hint shown.
 - Pressing Solve at any time reveals the whole solution from the current step.
 
 Solve and Hint share one solution and one step counter. The only difference is how

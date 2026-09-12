@@ -64,8 +64,9 @@ probe and the layout pass.
 - The library's `move` is the only face-turn implementation. The validator is ours
   and runs before anything reaches the library. Spec C6, section 6.4.
 - The solver runs in a web worker, warmed up when the app opens. Spec C10.
-- The screen is drawn from the provider's state. A layer turn is a CSS transition on
-  the nine cubies, then the model applies the move and the cube is redrawn. Spec 9.4.
+- The screen is drawn from the provider's state. A layer turn is a web animation on
+  the nine cubies (`turn-layer.ts`, cancelled in a layout effect when the move
+  commits), then the model applies the move and the cube is redrawn. Spec 9.4.
 - Tauri is imported lazily behind `isDesktop()`, and only from `src/storage`. Spec C18.
 
 ## Code quality (applies from the first line, never as a later pass)
@@ -118,6 +119,12 @@ probe and the layout pass.
   Cuber's phase 2 the provider reached the far view while the cube on screen was
   still turning for seconds more, which reads exactly like a wrong transform. Front
   the tab, wait, then read the computed transform against the inline one.
+- **A background pane tab throttles the worker's timers and stalls animations.** At
+  gate 3 the built app was ready in 1.1 s and solved in 10 ms with its tab in front,
+  and 4.8 s and 1.0 s in the background. A builder session saw animations stall
+  outright. Any number about time, and any check about motion, is taken with the
+  tab fronted, and a check about motion is better asked in arithmetic
+  (`turn-direction.test.ts`) than by eye.
 - **The pane's viewport emulation sends no `resize` event.** Anything that measures
   the fit rule after a `resize_window` must reload the page first, or the scene keeps
   its old size and the numbers lie.

@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useLayoutEffect, useRef } from 'react'
 import type { Face } from '../model/colours'
 import { inLayer, stickersAt, type Position } from '../model/geometry'
 import { useCube } from './cube-state'
@@ -47,7 +47,11 @@ export function Scene() {
   const cubie = cubieSize(scene)
   const cubies = useRef(new Map<string, HTMLElement>())
 
-  useEffect(() => {
+  // A layout effect, not a passive one: its cleanup cancels the animations,
+  // and that has to happen BEFORE the browser paints the committed move. A
+  // passive effect runs after the paint, which would show one frame of the
+  // new colours still held in the old turned pose (found at gate 3).
+  useLayoutEffect(() => {
     if (!turning) return
     const face = turning.move[0] as Face
     const playing: Animation[] = []

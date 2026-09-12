@@ -1,7 +1,8 @@
 # Cuber - build plan
 
-Version 1. Written 2026-09-11. Status: **Active**, phases 0 to 2 built and passed
-their gates (0 on 2026-09-11, 1 and 2 on 2026-09-12).
+Version 1. Written 2026-09-11. Status: **Active**, phases 0 to 3 built and passed
+their gates (0 on 2026-09-11, 1 to 3 on 2026-09-12). Nick's physical-cube check is
+still open (phase 3's "Done when", carried to phase 5 box 5.6).
 
 Read [the specification](cuber-spec.md) first. It says what the app does. This
 document says what gets built, in what order, and how we know each part is finished.
@@ -403,7 +404,15 @@ Read first: spec 15; `../London/src/ui/Diagnostics.tsx` (dev-only pattern);
       the box holding five moves, the page must not scroll at all; phase 2 measured
       `scrollHeight` 1006 against 1000 with the empty box. Change the gaps, or the
       window height in spec 11.1, and record which.
-- [ ] 4.5 Reuse review and commit.
+- [ ] 4.5 Painting over a filled sticker (spec C9 as ruled at gate 3): the provider's
+      `paint` refuses a colour at nine only for a BLANK sticker, and then puts "Red
+      is already on nine stickers." in the status line until the next paint;
+      `select` never refuses; the picker's swatch at nine shows its count in the
+      faint style and stays enabled; the menu's swatches the same. Tests: the
+      phase 2 entering test changes to match; a new case paints red over a blue
+      sticker on a complete cube and reads rule 7's sentence; a blank sticker
+      refuses with the new sentence.
+- [ ] 4.6 Reuse review and commit.
 
 **Done when:** the notes carry a screenshot list and the probe output for every
 viewport, with no sideways scroll anywhere.
@@ -1097,3 +1106,47 @@ answer is probably longer stage times rather than a `waitFor`.
 **Left.** The physical cube (above), and for the orchestrator: the C9 consequence, the
 "Wait for the cube to stop turning." sentence, and the 75 px downward scroll, which is
 phase 4's box 4.4.
+
+### Gate 3 findings (orchestrator, 2026-09-12)
+
+- **Verified from the repository and the pane.** `npx vitest run`: 31 files, 166
+  passed, 2 skipped, 7 to 11 seconds. `tsc -b` clean, `npx oxlint` silent, `npm run
+  build` 49 modules with the worker in its own 17 kB chunk. No em dashes. All three
+  commits carry the trailer. Every phase 3 box is ticked.
+- **Driven in the pane at 800 by 1000 with the real solver, the tab in front.** The
+  scrambled cube seeded through storage; Solve answered in 58 ms with the same 19
+  moves; the first row marked; the box 283 px tall with the list scrolling inside
+  it. At slow speed, Step forward ran nine web animations (233 ms of 900 when read)
+  and the bottom layer was visibly part-turned in the screenshot; after the commit
+  the second row was marked, the bottom row's colours had moved, and the stored
+  text followed. Play at fast reached "Done. Your cube is solved." with the stored
+  text all solved. Jump to start restored the entered cube. Nothing scrolled
+  sideways; `scrollHeight` 1069 against 1000, which is box 4.4's.
+- **The animations DO run in the pane when its tab is in front.** The builder's
+  session had them stalled; this one did not. The builder's answer was right
+  anyway: `turn-direction.test.ts` proves all eighteen turns in arithmetic, which is
+  stronger than six eyes-on checks, and it stays.
+- **The warm-up numbers were a background tab's.** On the built app served by `npm
+  run preview` with its tab in front: ready 1.1 seconds after navigation, a solve in
+  10 ms. The same page in a background tab: 4.8 seconds and 1.0 seconds, because a
+  background tab throttles timers. Spec 7.2 now says so, and CLAUDE.md's hazards
+  carry it.
+- **One fix at the gate: the animation is cancelled in a layout effect.** It was a
+  passive effect, whose cleanup runs after the browser paints, so the frame after a
+  move committed could show the new colours still held in the old turned pose.
+  `useLayoutEffect` cancels before paint. One word and a comment; the suite is
+  unchanged (jsdom has no animations).
+- **Rulings on what the builder left.** The C9 consequence is real and the rule is
+  changed: painting over a filled sticker is always allowed, a blank sticker
+  refuses a colour at nine, and phase 4 builds it as box 4.5. "Wait for the cube to
+  stop turning." is now in spec 9.1. Hint standing earlier stepping forward, and
+  "Done" only when every move is made, are the right readings and are now in spec
+  9.3 and 8.
+- **The physical cube is Nick's check.** No cube in either session's hands. It stays
+  open here and is phase 5's box 5.6; Nick can do it now from `npm run dev`.
+- **Read as code.** One `makeMove` for every move on screen, the play effect
+  reading the live step each time, `stepping` derived rather than stored, the
+  solver's answer checked with `isMove` rather than cast, `terminate` on unmount.
+  The unused `show` helper is gone.
+- **Passed, with Nick's physical-cube check open.** Phase 4 is next; its chip
+  follows this gate.
