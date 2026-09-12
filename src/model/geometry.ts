@@ -118,3 +118,21 @@ export const EDGES: readonly Piece[] = [
   piece('BL', 'B6 L4'),
   piece('BR', 'B4 R6'),
 ]
+
+/**
+ * Which way each face lies: the coordinate that is 1 for every piece in that
+ * face's layer. A turn of a face moves those nine pieces and no others.
+ */
+const LAYER: Readonly<Record<Face, (position: Position) => number>> = {
+  U: (position) => position.y,
+  R: (position) => position.x,
+  F: (position) => position.z,
+  D: (position) => -position.y,
+  L: (position) => -position.x,
+  B: (position) => -position.z,
+}
+
+/** True when the piece at this place turns with that face. */
+export function inLayer(face: Face, position: Position): boolean {
+  return LAYER[face](position) === 1
+}

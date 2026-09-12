@@ -4,13 +4,18 @@ import { standardScheme } from './colours'
 import { blank, solved } from './cube'
 import { SOLVED_FACELETS, fromFacelets } from './facelets'
 import { sticker } from './geometry'
-import { FIXED_SCRAMBLE, MOVES, applyMove, applyMoves, inverse, undo } from './moves'
+import { FIXED_SCRAMBLE, MOVES, applyMove, applyMoves, inverse, isMove, undo } from './moves'
 
 const scrambled = applyMoves(solved(), FIXED_SCRAMBLE)
 
 describe('the moves', () => {
   it('are the eighteen face turns', () => {
     expect(MOVES.join(' ')).toBe("U U' U2 R R' R2 F F' F2 D D' D2 L L' L2 B B' B2")
+  })
+
+  it('are told apart from anything else a solver might say', () => {
+    for (const move of MOVES) expect(isMove(move), move).toBe(true)
+    for (const other of ['', 'x', 'R3', "r'", 'RU', 'M2']) expect(isMove(other), other).toBe(false)
   })
 
   it('each have an inverse, and a half turn is its own', () => {

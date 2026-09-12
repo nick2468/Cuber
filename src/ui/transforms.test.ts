@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest'
 import { FACES } from '../model/colours'
 import { positionOf, sticker } from '../model/geometry'
-import { cubieTransform, stickerTransform, viewTransform, type Stage } from './transforms'
+import { MOVES } from '../model/moves'
+import { cubieTransform, layerTurn, stickerTransform, viewTransform, type Stage } from './transforms'
 
 describe('the view', () => {
   it('is the same four turns at every stage, so a transition can interpolate them', () => {
@@ -36,6 +37,41 @@ describe('a cubie', () => {
     expect(cubieTransform({ x: 1, y: 0, z: 0 }, 100, 'rotateX(90deg)')).toBe(
       'rotateX(90deg) translate3d(100px, 0px, 0px) translate(-50%, -50%)',
     )
+  })
+})
+
+describe('a layer turn', () => {
+  it('names an axis and a direction for all eighteen moves', () => {
+    expect(MOVES.map((move) => `${move} ${layerTurn(move)}`)).toEqual([
+      'U rotateY(-90deg)',
+      "U' rotateY(90deg)",
+      'U2 rotateY(-180deg)',
+      'R rotateX(90deg)',
+      "R' rotateX(-90deg)",
+      'R2 rotateX(180deg)',
+      'F rotateZ(90deg)',
+      "F' rotateZ(-90deg)",
+      'F2 rotateZ(180deg)',
+      'D rotateY(90deg)',
+      "D' rotateY(-90deg)",
+      'D2 rotateY(180deg)',
+      'L rotateX(-90deg)',
+      "L' rotateX(90deg)",
+      'L2 rotateX(-180deg)',
+      'B rotateZ(-90deg)',
+      "B' rotateZ(90deg)",
+      'B2 rotateZ(-180deg)',
+    ])
+  })
+
+  // Both keyframes of the turn must name the same rotate function, or the
+  // browser interpolates between two matrices, which for a half turn has no
+  // single answer.
+  it('gives the same function at zero degrees, for the start of the animation', () => {
+    for (const move of MOVES) {
+      const axis = layerTurn(move).slice(0, 7)
+      expect(layerTurn(move, 0), move).toBe(`${axis}(0deg)`)
+    }
   })
 })
 

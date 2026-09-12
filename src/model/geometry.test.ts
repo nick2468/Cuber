@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import Library from '../solver/vendor/cube.js'
 import { FACES } from './colours'
-import { CORNERS, EDGES, indexOf, placeOf, positionOf, stickersAt, type Piece } from './geometry'
+import { CORNERS, EDGES, inLayer, indexOf, placeOf, positionOf, stickersAt, type Piece } from './geometry'
 
 const ALL = Array.from({ length: 54 }, (_, index) => index)
 
@@ -53,6 +53,25 @@ describe('the geometry', () => {
       seen.add(`${x},${y},${z}`)
     }
     expect(seen.size).toBe(count)
+  })
+
+  it('puts nine pieces in every face layer, and none in both of two opposite faces', () => {
+    const pieces = POSITIONS.filter(({ x, y, z }) => x !== 0 || y !== 0 || z !== 0)
+    for (const face of FACES) {
+      expect(pieces.filter((position) => inLayer(face, position)), face).toHaveLength(9)
+    }
+    for (const [face, opposite] of [
+      ['U', 'D'],
+      ['R', 'L'],
+      ['F', 'B'],
+    ] as const) {
+      const both = pieces.filter((position) => inLayer(face, position) && inLayer(opposite, position))
+      expect(both, `${face} and ${opposite}`).toHaveLength(0)
+    }
+    // Every sticker of a piece turns with it: U9 is on the corner (1, 1, 1),
+    // which is in the U, R and F layers and in no others.
+    const corner = positionOf(indexOf('U', 2, 2))
+    expect(FACES.filter((face) => inLayer(face, corner))).toEqual(['U', 'R', 'F'])
   })
 
   // C19 item 1, with the library as the oracle. On any cube the library makes,

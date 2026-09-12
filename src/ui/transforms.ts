@@ -1,5 +1,6 @@
 import type { Face } from '../model/colours'
 import type { Position } from '../model/geometry'
+import type { Move } from '../model/moves'
 
 /**
  * The CSS transforms that draw the cube (spec C4, 5.1).
@@ -75,4 +76,36 @@ const FACING: Readonly<Record<Face, string>> = {
 export function stickerTransform(face: Face, cubie: number): string {
   const push = `translateZ(${cubie / 2}px)`
   return FACING[face] ? `${FACING[face]} ${push}` : push
+}
+
+/**
+ * Which way a face turns, in the cube's own frame: the axis, and the sign of a
+ * clockwise quarter turn seen from outside that face.
+ *
+ * The signs follow from the screen's y running down. They are checked against
+ * the model in the pane rather than argued about: the cube is drawn from the
+ * model, so a layer turned the wrong way ends with a visible jump when the
+ * move commits and the new picture is drawn.
+ */
+const TURNS: Readonly<Record<Face, { axis: 'X' | 'Y' | 'Z'; sign: number }>> = {
+  R: { axis: 'X', sign: 1 },
+  L: { axis: 'X', sign: -1 },
+  U: { axis: 'Y', sign: -1 },
+  D: { axis: 'Y', sign: 1 },
+  F: { axis: 'Z', sign: 1 },
+  B: { axis: 'Z', sign: -1 },
+}
+
+/**
+ * The rotation that turns a move's layer.
+ *
+ * `angle` overrides the degrees, so the start of an animation can use the same
+ * rotate function at zero degrees. Both keyframes must name the same function,
+ * or the browser interpolates between two matrices instead, which for a half
+ * turn has no single answer.
+ */
+export function layerTurn(move: Move, angle?: number): string {
+  const { axis, sign } = TURNS[move[0] as Face]
+  const quarter = move.endsWith('2') ? 180 : move.endsWith("'") ? -90 : 90
+  return `rotate${axis}(${angle ?? sign * quarter}deg)`
 }

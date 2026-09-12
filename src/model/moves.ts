@@ -21,6 +21,11 @@ export const MOVES: readonly Move[] = FACES.flatMap((face) =>
   (['', "'", '2'] as const).map((turn): Move => `${face}${turn}`),
 )
 
+/** Whether a string the solver sent back is one of the eighteen moves. */
+export function isMove(text: string): text is Move {
+  return (MOVES as readonly string[]).includes(text)
+}
+
 /** The move that undoes this one: `R` and `R'` swap, `R2` stays. */
 export function inverse(move: Move): Move {
   if (move.endsWith('2')) return move
