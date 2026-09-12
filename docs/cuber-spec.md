@@ -697,9 +697,11 @@ Nothing about the approach changes.
 - Title "Cuber". Opens at 800 by 1000, minimum 680 by 800, centred, resizable. 800
   fits the 720 column with the padding; 1000 fits the header, the picker, the 400
   scene, the button, the status line and a box holding a nineteen-move solution,
-  with nine pixels to spare. Measured at phase 4, in a browser; phase 5 measures it
-  again in the window the app actually opens, where the window's own frame may take
-  some of the 1000.
+  with room to spare. Measured at phase 4 in a browser, which gave nine pixels, and
+  again at phase 5 in the installed window, which gives fifteen: the window's frame
+  takes none of the 1000, so the page gets all of it, and WebView2 draws the picker
+  and the box three pixels shorter each than the pane's browser does. The probe's
+  numbers from the installed window are in the plan's phase 5 notes.
 - Declared in `tauri.conf.json` with `"create": false` and built in `lib.rs` from
   that same declaration, so the WebView2 profile can be pointed at
   `%LOCALAPPDATA%\Cuber Data\WebView2`. The trainer's `lib.rs` says why.
@@ -713,8 +715,11 @@ Nothing about the approach changes.
   `Cargo.toml`), shown in the header as `__APP_VERSION__` from Vite's `define`, and
   held together by the trainer's `version.test.ts`, copied.
 - The icon set in `src-tauri/icons/` is generated with `npx tauri icon` from
-  `public/icon.svg`: a corner-on cube of nine visible stickers in the six colours on
-  the dark ground. The same SVG serves the PWA icons later (section 12).
+  `public/icon.svg`: a corner-on cube with nine stickers on each of the three faces
+  it shows, white on top, green on the left and red on the right, on the dark
+  ground. The same SVG serves the PWA icons later (section 12). `tauri icon` also
+  writes `android/` and `ios/` folders; this app builds for neither, so phase 5
+  deleted them rather than committing icons nothing reads.
 
 ### 11.3 The uninstaller
 

@@ -427,30 +427,30 @@ uninstalls cleanly. Version 1.0.0.**
 Read first: `../London/src-tauri/` in full, `scripts/check-uninstall-hook.mjs`,
 `scripts/packaged-eval.mjs`, `src/version.test.ts`, spec 11.
 
-- [ ] 5.1 `src-tauri/`: `tauri.conf.json` (productName "Cuber", identifier
+- [x] 5.1 `src-tauri/`: `tauri.conf.json` (productName "Cuber", identifier
       `com.nick.cuber`, devUrl 5190, the window per spec 11.1 with `"create":
       false`, nsis `currentUser` with `installerHooks`, `csp: null` as the trainer,
       no `plugins` block), `Cargo.toml` (package `cuber`, lib `cuber_lib`, no
       plugin crates), `build.rs`, `src/main.rs`, `src/lib.rs` identical but for
       `LOCAL_FOLDER` and the two plugin lines removed, `capabilities/default.json`
       with `core:default` only, `.gitignore`.
-- [ ] 5.2 `installer-hooks.nsh` with one folder, and `scripts/check-uninstall-hook.
+- [x] 5.2 `installer-hooks.nsh` with one folder, and `scripts/check-uninstall-hook.
       mjs` adapted to one folder. Run the check: four cases, only the ticked
       non-upgrade case removes the scratch folder. Record the output.
-- [ ] 5.3 `public/icon.svg`: the corner-on cube of spec 11.2. `npx tauri icon
+- [x] 5.3 `public/icon.svg`: the corner-on cube of spec 11.2. `npx tauri icon
       public/icon.svg` into `src-tauri/icons/`.
-- [ ] 5.4 `version.test.ts`: unskip the two Tauri tests. Set 1.0.0 in all three
+- [x] 5.4 `version.test.ts`: unskip the two Tauri tests. Set 1.0.0 in all three
       files.
-- [ ] 5.5 `npx tauri build`. Record the installer's path and size. Start the built
+- [x] 5.5 `npx tauri build`. Record the installer's path and size. Start the built
       executable with the debug port and run the probe through `packaged-eval.mjs`;
       `--shot` the window. Confirm the solver's worker starts inside WebView2 (Solve
       answers).
 - [ ] 5.6 Nick: run the installer, open the app, enter his son's cube, solve it,
       close and reopen to see the cube remembered. Uninstall with the box ticked and
       confirm `%LOCALAPPDATA%\Cuber Data` is gone. Record the date here.
-- [ ] 5.7 Acceptance walk: spec 17, item by item, each with what was done to check
+- [x] 5.7 Acceptance walk: spec 17, item by item, each with what was done to check
       it, in `docs/acceptance.md`.
-- [ ] 5.8 Reuse review, docs sweep (spec, plan, testing, README, CLAUDE.md
+- [x] 5.8 Reuse review, docs sweep (spec, plan, testing, README, CLAUDE.md
       current), commit.
 
 **Done when:** spec 17 is green in `docs/acceptance.md`, with 5.6 dated by Nick.
@@ -517,7 +517,7 @@ only build config. The iPad phase is parked by ruling.
 | 2 - the cube on screen, and entering the colours | Done, 2026-09-12 |
 | 3 - Solve, Hint, the box and the animation | Done, 2026-09-12 (the physical cube waits for Nick) |
 | 4 - scenes, the probe and the layout pass | Done, 2026-09-12 |
-| 5 - the Windows app and the installer | Not started |
+| 5 - the Windows app and the installer | Done, 2026-09-12 (the installed app waits for Nick) |
 | 6 - the iPad Home Screen app | Waits for Nick |
 
 ## Phase notes
@@ -1351,3 +1351,155 @@ or the tests importing dev code. Either is worse than the line.
 - **Passed.** Phase 5 is next: the Windows app and the installer. Its chip follows
   this gate. Note for it: the nine pixels of headroom at 800 by 1000 were measured in
   a browser, and the Tauri window's 1000 may not all be page.
+
+### Phase 5 - builder notes (2026-09-12)
+
+Boxes 5.1 to 5.5, 5.7 and 5.8 are ticked. 5.6 is Nick's. Three commits: `7544785` the
+wrapper and the hook, `8ad5de3` the icon and version 1.0.0, and the docs commit this
+note is part of. The bar at the end: 33 files, 184 passed and none skipped in about 7
+seconds, `tsc -b` clean, `npx oxlint` silent, `npm run build` clean, no em dashes
+under `src/` or `src-tauri/`.
+
+**What was built.** `src-tauri/` is the trainer's, with this app's names, no plugins
+and one folder. The two plugin crates, the two `.plugin(...)` lines and every `fs:`
+and `dialog:` permission are gone, because Cuber reads and writes no files: everything
+it remembers is in `localStorage` inside the window's own WebView2 profile. The
+capability file grants `core:default` and nothing else. The window is declared in
+`tauri.conf.json` with `"create": false` and built in `lib.rs` from that same
+declaration, which is what lets the profile sit in `%LOCALAPPDATA%\Cuber Data\WebView2`
+rather than in a folder named after the bundle identifier.
+
+**The installer.** `npm run tauri build`, with `%USERPROFILE%\.cargo\bin` put on the
+path first. The Rust side compiled from scratch in 2 minutes 45 seconds.
+
+| What | Where | Size |
+|---|---|---|
+| The installer | `src-tauri/target/release/bundle/nsis/Cuber_1.0.0_x64-setup.exe` | 1,163,504 bytes (1.11 MB) |
+| The executable | `src-tauri/target/release/cuber.exe` | 3,111,424 bytes (2.97 MB) |
+
+`Cargo.lock` is committed, as the trainer's is.
+
+**The uninstall hook, all four cases.** `node scripts/check-uninstall-hook.mjs`
+compiles the shipped macro text against a scratch folder and runs the program four
+times:
+
+```
+      the program saw ticked=1 update=0
+PASS  ticked, ordinary uninstall: wanted gone, got local=gone
+      the program saw ticked=1 update=1
+PASS  ticked, but an upgrade: wanted present, got local=present
+      the program saw ticked=0 update=0
+PASS  not ticked, ordinary uninstall: wanted present, got local=present
+      the program saw ticked=0 update=1
+PASS  not ticked, and an upgrade: wanted present, got local=present
+All four cases behaved.
+```
+
+Only the ticked ordinary uninstall removes anything. The guard is what stops a version
+bump from deleting the user's remembered cube.
+
+**The built window, driven and measured.** Started with
+`WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS="--remote-debugging-port=9333"` and read
+through `scripts/packaged-eval.mjs`.
+
+- `document.title` is `Cuber`. `.app-version` reads `v1.0.0`.
+- `innerWidth` 800 and `innerHeight` 1000 exactly. **The window's frame takes none of
+  the 1000**, which was the open question phase 4 left: `outerHeight` is 1001 to
+  `innerHeight`'s 1000, and Tauri's 800 by 1000 is the page. `devicePixelRatio` is
+  1.5, because the display is at 150 per cent, and the CSS pixels are still 800 by
+  1000. WebView2 is Edge 152.
+- **The solver.** With a blank cube Solve stays off for a reason that is not the
+  solver ("Fill in every sticker. 48 to go."), so readiness was measured with the
+  scrambled cube seeded through `localStorage` and the page reloaded. The polling
+  script attached 1295 ms after the page loaded and found Solve already enabled, so
+  the solver was ready **within 1.3 seconds**, which is an upper bound and agrees
+  with the 1.1 seconds measured at gate 3 in a fronted browser tab. Pressing Solve
+  answered in **28 ms** with nineteen moves and "Solved in 19 moves.". The worker
+  runs inside WebView2.
+- **The layout probe in the installed window**, with those nineteen moves in the box
+  (`x, y, width, height`):
+
+| | the installed window |
+|---|---|
+| `.app-header` | 40, 24, 720, 45 |
+| `.picker` | 584, 73, 176, 148 |
+| `.scene` | 200, 225, 400, 400 |
+| `.status` | 330, 670, 140, 24 |
+| `.box` | 40, 698, 720, 263 |
+| `scrollWidth` / `innerWidth` | 800 / 800 |
+| `scrollHeight` / `innerHeight` | 1000 / 1000 |
+| `sceneSquare` | true |
+
+  C20 holds and the page does not scroll. The column is 985 tall in a 1000 page, so
+  there are **fifteen pixels to spare**, six more than the browser's nine: WebView2
+  draws the picker 148 rather than 151 and the box 263 rather than 265. The moves
+  list shows 134 px of 588, which is the four rows and a part row that gate 4
+  accepted. Spec 11.1 now carries these numbers.
+- **The screenshot.** `packaged-eval.mjs --shot` wrote a 1200 by 1500 PNG (800 by
+  1000 at 1.5) to the session's scratch folder, not committed. It shows the header
+  with "Cuber v1.0.0", Reset cube, Solve, the bulb and the Light toggle; the picker
+  with all six colours at 9/9 and red selected; the cube corner-on with no clipping;
+  "Show the other side"; "Solved in 19 moves."; and the box with the five controls,
+  the three speeds, the holding sentence and the moves, row 1 marked green. Nothing
+  is cut off at the bottom but the fifth move row, by design.
+- **The profile folder.** After the window closed, `%LOCALAPPDATA%\Cuber Data` holds
+  exactly one thing, `WebView2`. That is `lib.rs`'s choice proved on disk: the folder
+  is named for the app, not for the bundle identifier. The drive's `localStorage` was
+  cleared before the window closed, so Nick's first run of the installed app starts
+  from a blank cube rather than this session's scrambled one.
+
+**Two contradictions found, both small, both decided here.**
+
+1. **Spec 11.2 described the icon as "a corner-on cube of nine visible stickers in the
+   six colours".** A corner-on cube shows twenty-seven stickers, nine on each of three
+   faces, and three faces can show at most three colours. The chip asked for the
+   twenty-seven: white on top, green on the left, red on the right. That is what was
+   drawn, and spec 11.2 is reworded to say it. The six colours still appear on the
+   cube the app draws, which is probably where the sentence came from.
+2. **Spec 17's item 2 says "a tenth sticker of a colour is refused", which C9 half
+   changed at gate 3.** A tenth is refused on a BLANK sticker and allowed over a
+   filled one, which is what makes the validator's first rule reachable and lets a
+   user correct a mistake by painting over it. `docs/acceptance.md` records item 2 as
+   passed with that note rather than quietly rewording spec 17, because the spec's
+   section 17 is Nick's acceptance list and the orchestrator owns it.
+
+Also: the chip's step 5 named the acceptance items as "8's install and uninstall" and
+"item 9, the iPad". Spec 17 has no iPad item, and it is item 9 that is Windows and
+item 8 that is Remembered. The walk follows spec 17's real numbering.
+
+**One more gap, left alone.** `.node-version` says 22.12.0 and `CLAUDE.md` repeats it,
+but the node on this machine is 20.20.2, in both shells. Everything is green on it:
+the suite, `tsc -b`, `npm run build` and the whole Tauri build. Changing either number
+is a ruling rather than a repair, so both are left as they are and the fact is written
+down here.
+
+**What was decided.**
+
+- The screenshot went to the session's scratch folder rather than `%TEMP%` itself.
+  Both are temporary and neither is committed; the scratch folder is this session's
+  and gets cleaned up with it.
+- `build.rs` carries no `Origin:` line. It is three lines of Rust with no header
+  comment, and C16's origin line goes at the top of a header comment. A comment added
+  to say "this file is copied" would be half the file.
+- The check script's fixture file is `settings.json` rather than the trainer's
+  `progress.json`. It only has to exist, so it may as well name something this app
+  could plausibly have written.
+
+**What was asked of Nick.** Nothing.
+
+**What is left.** Box 5.6, which is his: install, open, enter his son's cube, solve
+it, close and reopen to see the cube remembered, then uninstall with the box ticked
+and check that `%LOCALAPPDATA%\Cuber Data` has gone. His date goes in box 5.6 and in
+`docs/acceptance.md` item 8.
+
+**The reuse and duplication review** found one repeated literal and left it repeated on
+purpose. `Cuber Data` is written out three times: `LOCAL_FOLDER` in
+`src/storage/paths.ts`, `LOCAL_FOLDER` in `src-tauri/src/lib.rs`, and
+`APP_LOCAL_FOLDER` in `src-tauri/installer-hooks.nsh`. Three languages, two of them
+compiled separately and the third compiled by NSIS at install time, so there is no
+single home they could share. What they get instead is a comment each naming the other
+two, which is what the trainer does and is the reason its rename was survivable. The
+hook's own comment says why it is not `${PRODUCTNAME}`: a deletion that followed a
+renamed product would be a deletion of the wrong folder. Nothing else new is
+duplicated; `packaged-eval.mjs` and `check-uninstall-hook.mjs` are copies of the
+trainer's with their origin lines, and the probe is the one from phase 4, unchanged.

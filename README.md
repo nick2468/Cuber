@@ -10,8 +10,8 @@ code base.
 
 ## Running it
 
-Phases 0 to 4 are built: the cube is on the screen, you can paint it, and Solve and
-Hint work. These commands work now:
+Phases 0 to 5 are built: the app is complete and version 1.0.0 has an installer.
+These commands work now:
 
 - `npm install`, then `npm run dev` and open `http://localhost:5190`. The port is
   fixed: if something else holds 5190 the command fails rather than moving.
@@ -23,14 +23,36 @@ Hint work. These commands work now:
   `npx tsc -b` type-checks. `npm run build` makes `dist/`, and `npm run preview`
   serves it on `http://localhost:5191`.
 
+## Building the Windows app
+
+`npm run tauri build` makes the installer. It needs the Rust toolchain, which on this
+machine is at `%USERPROFILE%\.cargo\bin` and is not on the shell's path by default:
+
+```powershell
+$env:Path = "$env:USERPROFILE\.cargo\bin;$env:Path"
+npm run tauri build
+```
+
+It lands two things under `src-tauri/target/release/`: `cuber.exe`, which runs the app
+straight from the folder, and `bundle/nsis/Cuber_1.0.0_x64-setup.exe`, which installs
+it for the current user. The first build compiles the Rust side from scratch and takes
+several minutes; later ones are quick.
+
+The installer is unsigned, so Windows SmartScreen warns the first time it runs. The
+uninstaller offers to delete application data; ticking that box removes
+`%LOCALAPPDATA%\Cuber Data`, which holds the remembered cube, theme and speed, and
+nothing else. `node scripts/check-uninstall-hook.mjs` proves that guard against
+scratch folders, all four cases.
+
 Later:
 
-- `npx tauri build` makes the Windows installer (phase 5).
 - The iPad Home Screen app waits for Nick's word (phase 6).
 
 ## Documents
 
 - [docs/cuber-spec.md](docs/cuber-spec.md) - what the app does and why. Start here.
 - [docs/cuber-build-plan.md](docs/cuber-build-plan.md) - the phases and their boxes.
+- [docs/acceptance.md](docs/acceptance.md) - the acceptance walk: every line of spec
+  section 17, what was done to check it, and what was seen.
 - [CLAUDE.md](CLAUDE.md) - the house rules for sessions working in this folder.
 - `layout.jpg` - the drawing the screen follows.

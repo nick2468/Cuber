@@ -17,8 +17,12 @@ menu, the validation sentences, Reset and the two views) built 2026-09-12. Phase
 solved a real cube by following the screen the same day. Phase 4 (the scenes, the
 probe, the layout pass and painting over a filled sticker) built 2026-09-12: the
 app now fits the 800 by 1000 window with a solution in the box, and any screen
-state opens from the address bar in a development build. Phase 5 is next: the
-Windows app and the installer.
+state opens from the address bar in a development build. Phase 5 (the Tauri
+window, the NSIS installer, the icon and the acceptance walk) built 2026-09-12:
+version 1.0.0, `src-tauri/target/release/bundle/nsis/Cuber_1.0.0_x64-setup.exe`,
+and the built window measured at 800 by 1000 with fifteen pixels to spare. What
+is left of it is Nick's box 5.6: install, solve, reopen, uninstall. Phase 6, the
+iPad Home Screen app, waits for his word.
 
 ## Documents
 
@@ -30,7 +34,8 @@ Windows app and the installer.
   works on screen.
 - [docs/testing.md](docs/testing.md) - the two kinds of test and the rules the suite
   keeps (arrives in phase 0).
-- [docs/acceptance.md](docs/acceptance.md) - the acceptance walk (arrives in phase 5).
+- [docs/acceptance.md](docs/acceptance.md) - the acceptance walk: spec section 17
+  item by item, what was done to check it, and what was seen.
 - `Cuber-brief.txt` - Nick's brief, kept for history. Build from the spec, not from
   this.
 - `layout.jpg` - the drawing Nick's son made of the screen. The spec's section 4
@@ -53,7 +58,9 @@ Windows app and the installer.
 - `npm run dev` on port 5190 (`--strictPort`; 5173 is dc.web, 5175 is London, 5180
   and 5181 are Conquest, 5185 and 5186 are Simple Chess). `npm run preview` on 5191.
 - `npx vitest run` runs both test projects. `tsc -b` type-checks. `npm run build`
-  makes `dist/`. `npx tauri build` makes the installer (phase 5).
+  makes `dist/`. `npm run tauri build` makes the installer, and needs
+  `%USERPROFILE%\.cargo\bin` put on the shell's path first: it is not there by
+  default, and the setting does not survive between tool calls.
 - The solver is vendored: `src/solver/vendor/` holds cubejs 1.3.2's two files with an
   ES module edit each. Nothing is installed from npm for it. Spec C5.
 

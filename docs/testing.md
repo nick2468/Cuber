@@ -114,6 +114,13 @@ itself, because `App` builds the real solver.
   validator's property tests use `Cube.random()`, which needs no initialisation.
 - **A regression test is shown red first.** Write it against the commit before the fix,
   or put the bug back and watch it fail. A test that has never failed proves nothing.
+- **One version, in three files.** `src/version.test.ts` reads `package.json`,
+  `src-tauri/tauri.conf.json` and `src-tauri/Cargo.toml` from disk and holds all three
+  to the same number, plus `__APP_VERSION__`, which is what the header shows. Four
+  tests, all running from phase 5; two of them were skipped until `src-tauri/` existed.
+  The trainer needed them: three of its files once said 0.0.0, 1.1.0 and 1.1.0, and a
+  number the app shows that disagrees with the one the installer wrote is worse than a
+  number nobody can see.
 
 ## Writing one
 
