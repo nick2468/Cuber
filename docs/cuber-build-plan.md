@@ -2,8 +2,9 @@
 
 Version 1. Written 2026-09-11. Status: **Active**, phases 0 to 5 built and passed
 their gates (0 on 2026-09-11, 1 to 5 on 2026-09-12), version 1.0.0. Nick solved a
-real cube by following the screen on 2026-09-12. Open: Nick's install walk (box
-5.6) and phase 6, the iPad app, which waits for his word.
+real cube by following the screen on 2026-09-12, and installed, solved and
+uninstalled the built app the same day. Version 1.0.0 is accepted. Open: phase 6,
+the iPad app, which waits for his word.
 
 Read [the specification](cuber-spec.md) first. It says what the app does. This
 document says what gets built, in what order, and how we know each part is finished.
@@ -446,9 +447,10 @@ Read first: `../London/src-tauri/` in full, `scripts/check-uninstall-hook.mjs`,
       executable with the debug port and run the probe through `packaged-eval.mjs`;
       `--shot` the window. Confirm the solver's worker starts inside WebView2 (Solve
       answers).
-- [ ] 5.6 Nick: run the installer, open the app, enter his son's cube, solve it,
+- [x] 5.6 Nick: run the installer, open the app, enter his son's cube, solve it,
       close and reopen to see the cube remembered. Uninstall with the box ticked and
-      confirm `%LOCALAPPDATA%\Cuber Data` is gone. Record the date here.
+      confirm `%LOCALAPPDATA%\Cuber Data` is gone. Record the date here. **Done by
+      Nick, 2026-09-12: installed, solved and uninstalled.**
 - [x] 5.7 Acceptance walk: spec 17, item by item, each with what was done to check
       it, in `docs/acceptance.md`.
 - [x] 5.8 Reuse review, docs sweep (spec, plan, testing, README, CLAUDE.md
@@ -518,7 +520,7 @@ only build config. The iPad phase is parked by ruling.
 | 2 - the cube on screen, and entering the colours | Done, 2026-09-12 |
 | 3 - Solve, Hint, the box and the animation | Done, 2026-09-12 (the physical cube waits for Nick) |
 | 4 - scenes, the probe and the layout pass | Done, 2026-09-12 |
-| 5 - the Windows app and the installer | Done, 2026-09-12 (the installed app waits for Nick) |
+| 5 - the Windows app and the installer | Done, 2026-09-12, installed and uninstalled by Nick the same day |
 | 6 - the iPad Home Screen app | Waits for Nick |
 
 ## Phase notes

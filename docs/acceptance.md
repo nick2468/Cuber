@@ -135,7 +135,8 @@ app it is the same `localStorage` inside the window's own WebView2 profile at
 
 Closing and reopening the INSTALLED app is Nick's check, in box 5.6.
 
-**Passed** in the browser, 2026-09-12. **Nick: pending** on the installed app.
+**Passed** in the browser, 2026-09-12, and **Passed** on the installed app the same
+day: Nick closed and reopened it and found his cube remembered.
 
 ## 9. Windows
 
@@ -160,8 +161,10 @@ Three halves, and two of them are done here.
 Installing and uninstaller for real is Nick's, in box 5.6: this session does not
 install software on his machine.
 
-**Passed** for the build, the window and the hook, 2026-09-12. **Nick: pending** for
-the install and the uninstall.
+**Passed** for the build, the window and the hook, 2026-09-12, and **Passed** for the
+install and the uninstall the same day: Nick ran the installer, solved his cube in
+the installed app, and uninstalled with the box ticked. Every item in this walk is
+now passed, and version 1.0.0 is accepted.
 
 ## 10. Tests
 
