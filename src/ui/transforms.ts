@@ -10,8 +10,13 @@ import type { Position } from '../model/geometry'
  * they look like is checked in the pane.
  */
 
-/** The space between two cubies, in pixels. */
-export const GAP = 4
+/**
+ * The space between two cubies, in pixels. Zero on purpose: a gap between
+ * cubies is a hole through the cube, and the page ground shows through it as
+ * bright lines in the light theme (found at gate 2). The dark plastic between
+ * the stickers is the sticker's own inset, not a gap between cubies.
+ */
+export const GAP = 0
 
 /** What the cube is turned to: the near view, half way, or the far view. */
 export type Stage = 'near' | 'rolled' | 'far'

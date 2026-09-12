@@ -111,8 +111,14 @@ next: Solve, Hint, the box and the layer animation.
   C19 item 1 pins the table against the library's own piece tables.
 - **`initSolver` takes about a second here, and longer on an iPad.** It runs in the
   worker, never on the main thread, and never in more than one test.
-- **A hidden browser pane throttles React.** Poll for the DOM to change; do not read
-  once and conclude. The trainer met this twice.
+- **A hidden or busy browser pane throttles React and CSS transitions.** Poll for the
+  DOM to change; do not read once and conclude. The trainer met this twice, and at
+  Cuber's phase 2 the provider reached the far view while the cube on screen was
+  still turning for seconds more, which reads exactly like a wrong transform. Front
+  the tab, wait, then read the computed transform against the inline one.
+- **The pane's viewport emulation sends no `resize` event.** Anything that measures
+  the fit rule after a `resize_window` must reload the page first, or the scene keeps
+  its old size and the numbers lie.
 - **Simple Chess's dev server may be running on 5185.** Confirm the served page shows
   this app's version before trusting any live check.
 - **Never run `npm install --prefix <path>` with this folder's path.** npm takes the

@@ -169,8 +169,10 @@ All in CSS pixels.
 | Thing | Size | Why |
 |---|---|---|
 | The column | up to 720 wide, centred | The drawing is a portrait page. 720 fits the picker beside the cube's top and the box's rows without wrapping a sentence. |
-| The scene | 440 by 440, or smaller to fit | Three cubies of 120 with 4 px gaps is 368 across; corner-on it needs the extra for the depth. |
-| Cubie | 120, sticker inset 6 | Big enough to click on an iPad with a finger. |
+| The scene | 440 by 440, or smaller to fit | The square the cube is drawn in. |
+| Cubie | the scene divided by 4.8, rounded down: 91 at 440, 62 at 300 | Measured at phase 2: turned corner-on and seen through a 1200 px perspective, the cube's silhouette is about 1.3 times three cubies wide, so a 440 scene holds a 91 px cubie and no more. Still far more than the 36 px a finger needs. (Version 1 said 120 and a divisor of 3.67, which drew the cube 1.3 times too big and over the view button.) |
+| Gap between cubies | 0 | A gap is a hole through the cube, and the page ground shows through it as bright lines in the light theme (found at gate 2). The dark plastic between stickers is each sticker's own 6 px inset on the cube-body colour. |
+| Lift | a quarter of a cubie | Corner-on, the silhouette hangs low in its square because the tilt brings the bottom corner forward and the perspective magnifies it. The cube is drawn a quarter of a cubie above the centre so it sits in the middle (measured at phase 2: 22 px at a 91 px cubie). |
 | Header | 56 tall | The trainer's header. |
 | The box | at least 220 tall, grows with the moves | The control row, the holding sentence and five moves visible without scrolling; longer solutions scroll inside the box. |
 | Page padding | 24 | The trainer's `.app`. |
@@ -180,7 +182,7 @@ the header, the picker, the button, the status line, the box's minimum and the
 padding. It is never smaller than 280. On the 800 by 1000 window it is 440. On an
 iPad held sideways (1180 by 820) it is about 300. The scene is re-measured when the
 window or the orientation changes. The cube is drawn to fit the scene: the cubie
-size is the scene size divided by 3.67, rounded down.
+size is the scene size divided by 4.8, rounded down (the table above says why).
 
 The page must never scroll sideways at any viewport this app is used at (section
 15 measures this). It may scroll down.

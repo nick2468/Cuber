@@ -1,7 +1,7 @@
 # Cuber - build plan
 
-Version 1. Written 2026-09-11. Status: **Active**, phases 0 and 1 built and passed
-their gates, 2026-09-11 and 2026-09-12.
+Version 1. Written 2026-09-11. Status: **Active**, phases 0 to 2 built and passed
+their gates (0 on 2026-09-11, 1 and 2 on 2026-09-12).
 
 Read [the specification](cuber-spec.md) first. It says what the app does. This
 document says what gets built, in what order, and how we know each part is finished.
@@ -392,7 +392,10 @@ Read first: spec 15; `../London/src/ui/Diagnostics.tsx` (dev-only pattern);
       `scripts/packaged-eval.mjs` identical (used in phase 5).
 - [ ] 4.4 The layout pass: every scene at the three viewports, both themes, both
       views. Fix what is wrong. Record the probe for each viewport in the notes.
-      The two numbers of C20 hold everywhere.
+      The two numbers of C20 hold everywhere. Also (gate 2): at 800 by 1000 with
+      the box holding five moves, the page must not scroll at all; phase 2 measured
+      `scrollHeight` 1006 against 1000 with the empty box. Change the gaps, or the
+      window height in spec 11.1, and record which.
 - [ ] 4.5 Reuse review and commit.
 
 **Done when:** the notes carry a screenshot list and the probe output for every
@@ -901,3 +904,49 @@ provider file exporting a hook and a component together, split as above. Nothing
 
 **Left.** For the orchestrator: spec 4.1's cubie divisor and its "cubie 120" line, now
 measured wrong; and whether the picker's label should sit where the drawing has it.
+
+### Gate 2 findings (orchestrator, 2026-09-12)
+
+- **Verified from the repository and the pane, not from the notes.** `npx vitest run`:
+  23 files, 126 passed, 2 skipped, 4.7 seconds. `tsc -b` clean, `npx oxlint` silent,
+  `npm run build` 40 modules, no warning. No em dashes under `src/`. All three
+  commits carry the trailer and a body that says why. Every phase 2 box is ticked.
+- **Driven in the pane at 800 by 1000, the served header reading v0.1.0.** The near
+  view's visible centres read U, F, R by `elementFromPoint` (white, green, red on
+  screen); the far view's read D and B by the same test and yellow, orange, blue by
+  eye, with "Show the first side" on the button. A click painted D1 red and the swatch
+  read 2/9; a right click opened the menu at the pointer and Escape closed it; Reset
+  armed to "Press again to clear" with the cube untouched, then cleared to the blank
+  cube in the near view with the stored text
+  `----w--------r--------g--------y--------o--------b----`. `scrollWidth` 785 against
+  800 in both themes.
+- **The pane's throttled transition is real and the builder's note is right.** The
+  provider reached the far view in 2.8 seconds while the cube on screen was still
+  turning for several seconds more; the computed transform caught up and the far
+  view was then correct. Nothing in the code is wrong. Carried into CLAUDE.md's
+  hazards, with the missing `resize` event.
+- **Spec 4.1's cubie size was wrong, as the builder measured.** The spec now says the
+  scene divided by 4.8 (91 px at 440), the quarter-cubie lift, and why. The
+  builder's `fit.ts` and `Scene.tsx` comments already carry the measurements.
+- **One fault found and fixed at the gate: the 4 px gap between cubies was a hole
+  through the cube.** In the light theme the page ground showed through it as bright
+  white lines across every face, which read as a wireframe rather than a cube. The
+  gap is a number of mine (spec 4.1), so the fix is mine: `GAP` is 0, the dark
+  plastic between stickers is each sticker's own 6 px inset, the transform test's
+  numbers follow, and the spec's table says why. Looked at in both themes: a solid
+  cube. Landed in this gate's commit.
+- **The picker's label stays a legend at the top of the box.** The drawing has the
+  word at the bottom right; a legend is how a group of controls gets its name for a
+  screen reader, and the label's position inside its box is not the part of the
+  drawing that carries the design. Nick can reverse this with a word.
+- **The page scrolls 6 px at the Windows window size** (`scrollHeight` 1006 against
+  1000). Spec 4.1 allows a downward scroll, but the window should open showing the
+  whole page. Phase 4's layout pass (box 4.4) now says so: with the box holding
+  five moves, either the window height in spec 11.1 or the gaps change so nothing
+  scrolls at 800 by 1000.
+- **Read as code.** One `paint` path, one `ColourMenu`, three transform functions in
+  one file, the problem and the status worked out during the render rather than
+  stored. The provider split into a state file and a component file is a fair answer
+  to the lint rule. The long press as a state machine fed explicit times is exactly
+  what the no-fake-timers rule wants.
+- **Passed.** Phase 3 is next; its chip follows this gate.

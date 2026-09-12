@@ -23,18 +23,18 @@ describe('the view', () => {
 describe('a cubie', () => {
   it('is moved out by its place and centred on it', () => {
     // U9 is the corner at (1, 1, 1). The screen's y runs down, so the model's
-    // y of 1 is -124 on screen.
+    // y of 1 is -120 on screen. Cubies touch: there is no gap between them.
     expect(cubieTransform(positionOf(sticker('U9')), 120)).toBe(
-      'translate3d(124px, -124px, 124px) translate(-50%, -50%)',
+      'translate3d(120px, -120px, 120px) translate(-50%, -50%)',
     )
     expect(cubieTransform({ x: 0, y: 0, z: -1 }, 120)).toBe(
-      'translate3d(0px, 0px, -124px) translate(-50%, -50%)',
+      'translate3d(0px, 0px, -120px) translate(-50%, -50%)',
     )
   })
 
   it('carries a layer turn in front of its place, so the layer turns about the centre', () => {
     expect(cubieTransform({ x: 1, y: 0, z: 0 }, 100, 'rotateX(90deg)')).toBe(
-      'rotateX(90deg) translate3d(104px, 0px, 0px) translate(-50%, -50%)',
+      'rotateX(90deg) translate3d(100px, 0px, 0px) translate(-50%, -50%)',
     )
   })
 })
