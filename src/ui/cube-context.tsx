@@ -34,6 +34,16 @@ import type { Stage } from './transforms'
  * and written on every paint and every step; the solution is not stored,
  * because it costs a second to ask for again (spec C15).
  */
+
+/**
+ * The one sentence a refused paint puts in the status line: "Red is already on
+ * nine stickers." It lives here because it is the rule `paint` applies, not a
+ * verdict the validator reaches, and `paint` is the only place that refuses.
+ */
+function alreadyNine(colour: Colour): string {
+  return `${colour[0].toUpperCase()}${colour.slice(1)} is already on nine stickers.`
+}
+
 export function CubeProvider({
   children,
   durations = DEFAULT_DURATIONS,
@@ -62,6 +72,8 @@ export function CubeProvider({
   const [solving, setSolving] = useState(false)
   /** What the solver last said, which takes the status line until the cube changes. */
   const [solverSaid, setSolverSaid] = useState<string | null>(null)
+  /** Why the last paint did nothing, which takes the status line until the next one. */
+  const [notice, setNotice] = useState<string | null>(null)
 
   // The provider owns the waiting, so nothing is left running after a reset or
   // an unmount. No animation event is relied on: the timer is the truth and
@@ -112,9 +124,17 @@ export function CubeProvider({
   const paint = useCallback(
     (index: number, colour: Colour | null) => {
       if (viewChanging || turning) return
-      // The tenth sticker of a colour is refused here as well as being greyed
-      // in the picker, because the menu can ask for one too (spec C9).
-      if (colour !== null && cube[index] !== colour && counts[colour] >= 9) return
+      // A colour already on nine stickers cannot go on to a BLANK one: that
+      // would make ten of it and take nothing away, which is the mistake the
+      // rule exists to stop. Over a FILLED sticker it is always allowed,
+      // because it swaps one colour for another and the user is correcting
+      // something they can see. The count rule then says what is off, and the
+      // status line says why the blank one refused (spec C9, ruled at gate 3).
+      if (colour !== null && cube[index] === null && counts[colour] >= 9) {
+        setNotice(alreadyNine(colour))
+        return
+      }
+      setNotice(null)
       // The cube on screen has changed, so the solution no longer applies to
       // it. It goes, and the user is back to entering, with the cube they can
       // see (spec C12).
@@ -127,13 +147,9 @@ export function CubeProvider({
     [counts, cube, setCube, turning, viewChanging],
   )
 
-  const select = useCallback(
-    (colour: Colour) => {
-      if (counts[colour] >= 9) return
-      setSelected(colour)
-    },
-    [counts],
-  )
+  // Every colour can be picked, at any count: a colour on nine stickers is
+  // still the one to paint over a sticker entered wrongly (spec C9).
+  const select = useCallback((colour: Colour) => setSelected(colour), [])
 
   const openMenu = useCallback((index: number, x: number, y: number) => setMenu({ index, x, y }), [])
   const closeMenu = useCallback(() => setMenu(null), [])
@@ -160,6 +176,7 @@ export function CubeProvider({
     setPlaying(false)
     setTurning(null)
     setSolverSaid(null)
+    setNotice(null)
   }, [clearTimers, durations.arm, later, resetArmed, setCube])
 
   const changeView = useCallback(() => {
@@ -184,6 +201,7 @@ export function CubeProvider({
     setViewChanging(true)
     setMenu(null)
     setPlaying(false)
+    setNotice(null)
     setStage(steps[0].stage)
     setSentence(steps[0].sentence)
 
@@ -379,6 +397,7 @@ export function CubeProvider({
   const trouble = problem?.message ?? (complete && !verdict.ok ? verdict.message : null)
   const status =
     sentence ??
+    notice ??
     solverSaid ??
     trouble ??
     (verdict.ok ? 'Ready. Press Solve.' : `Fill in the stickers. ${filledOf(cube) - 6} of 48 done.`)

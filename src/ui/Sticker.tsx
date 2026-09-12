@@ -29,8 +29,18 @@ export function Sticker({ index, cubie }: { index: number; cubie: number }) {
   }
   useEffect(() => stopWaiting, [])
 
-  const openHere = (x: number, y: number) => {
-    skipClick.current = true
+  /**
+   * A long press opens the menu, and the browser sends a click straight after
+   * it, which would paint the sticker the press was only asking about. So the
+   * press arms this and the click that follows is spent clearing it.
+   *
+   * A right click arms nothing. It sends no click of its own, so an armed flag
+   * would sit there and eat the user's NEXT left click on that sticker: right
+   * click, choose a colour, click the sticker, nothing happens. Found in phase
+   * 4 by box 4.5's test, which paints through the menu and then clicks.
+   */
+  const openHere = (x: number, y: number, fromPress: boolean) => {
+    if (fromPress) skipClick.current = true
     openMenu(index, x, y)
   }
 
@@ -45,7 +55,7 @@ export function Sticker({ index, cubie }: { index: number; cubie: number }) {
       disabled={viewChanging}
       onContextMenu={(event) => {
         event.preventDefault()
-        openHere(event.clientX, event.clientY)
+        openHere(event.clientX, event.clientY, false)
       }}
       onPointerDown={(event) => {
         if (event.button !== 0) return
@@ -55,7 +65,7 @@ export function Sticker({ index, cubie }: { index: number; cubie: number }) {
           const held = press.current
           if (held && elapsed(held, held.at + LONG_PRESS_MS) === 'menu') {
             press.current = opened(held)
-            openHere(held.x, held.y)
+            openHere(held.x, held.y, true)
           }
         }, LONG_PRESS_MS)
       }}
@@ -66,7 +76,7 @@ export function Sticker({ index, cubie }: { index: number; cubie: number }) {
         stopWaiting()
         const held = press.current
         press.current = null
-        if (held && up(held, event.timeStamp) === 'menu') openHere(event.clientX, event.clientY)
+        if (held && up(held, event.timeStamp) === 'menu') openHere(event.clientX, event.clientY, true)
       }}
       onPointerCancel={() => {
         stopWaiting()

@@ -161,12 +161,6 @@ button:disabled {
   background: var(--accent-wash);
 }
 
-.swatch[aria-disabled='true'],
-.menu-swatch[aria-disabled='true'] {
-  opacity: 0.45;
-  cursor: default;
-}
-
 .swatch-colour {
   display: block;
   width: 24px;
@@ -179,6 +173,13 @@ button:disabled {
   font-size: 0.7rem;
   color: var(--text-dim);
   font-variant-numeric: tabular-nums;
+}
+
+/* Nine of nine: nothing left to fill in with this colour, so its count steps
+   back. The swatch itself stays on, because the colour still paints over a
+   sticker entered wrongly (spec C9). */
+.swatch-count.all-nine {
+  color: var(--text-faint);
 }
 
 .status {

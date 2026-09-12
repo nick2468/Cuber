@@ -404,7 +404,7 @@ Read first: spec 15; `../London/src/ui/Diagnostics.tsx` (dev-only pattern);
       the box holding five moves, the page must not scroll at all; phase 2 measured
       `scrollHeight` 1006 against 1000 with the empty box. Change the gaps, or the
       window height in spec 11.1, and record which.
-- [ ] 4.5 Painting over a filled sticker (spec C9 as ruled at gate 3): the provider's
+- [x] 4.5 Painting over a filled sticker (spec C9 as ruled at gate 3): the provider's
       `paint` refuses a colour at nine only for a BLANK sticker, and then puts "Red
       is already on nine stickers." in the status line until the next paint;
       `select` never refuses; the picker's swatch at nine shows its count in the

@@ -14,7 +14,7 @@ const WIDTH = 180
 const HEIGHT = 96
 
 export function ColourMenu() {
-  const { menu, cube, counts, paint, closeMenu } = useCube()
+  const { menu, paint, closeMenu } = useCube()
 
   useEffect(() => {
     if (!menu) return
@@ -35,32 +35,26 @@ export function ColourMenu() {
 
   if (!menu) return null
 
-  const here = cube[menu.index]
   const left = Math.max(0, Math.min(menu.x, window.innerWidth - WIDTH))
   const top = Math.max(0, Math.min(menu.y, window.innerHeight - HEIGHT))
 
   return (
     <div className="colour-menu" role="menu" aria-label="Paint this sticker" style={{ left, top }}>
-      {COLOURS.map((colour) => {
-        const usedUp = counts[colour] >= 9 && here !== colour
-        return (
-          <button
-            key={colour}
-            type="button"
-            role="menuitem"
-            className={usedUp ? 'menu-swatch used-up' : 'menu-swatch'}
-            aria-label={colour}
-            aria-disabled={usedUp || undefined}
-            onClick={() => {
-              if (usedUp) return
-              paint(menu.index, colour)
-              closeMenu()
-            }}
-          >
-            <span className="swatch-colour" style={{ background: hexOf(colour) }} />
-          </button>
-        )
-      })}
+      {COLOURS.map((colour) => (
+        <button
+          key={colour}
+          type="button"
+          role="menuitem"
+          className="menu-swatch"
+          aria-label={colour}
+          onClick={() => {
+            paint(menu.index, colour)
+            closeMenu()
+          }}
+        >
+          <span className="swatch-colour" style={{ background: hexOf(colour) }} />
+        </button>
+      ))}
       <button
         type="button"
         role="menuitem"
