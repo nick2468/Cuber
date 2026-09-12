@@ -48,16 +48,23 @@ export function CubeProvider({
   children,
   durations = DEFAULT_DURATIONS,
   createSolver = startRealSolver,
+  initialView = 'near',
 }: {
   children: ReactNode
   durations?: Durations
   /** The real worker in the app, `fakeSolver` in the tests (spec 7.2). */
   createSolver?: () => Solver
+  /**
+   * Which side the app opens on. The near view always, except when a dev
+   * scene asks for the far one, which it then shows at once: a scene is a
+   * starting state, and nothing about it animates (spec 15.1).
+   */
+  initialView?: View
 }) {
   const { cube, setCube } = useRememberedCube()
   const { speed, setSpeed } = useSpeed()
-  const [view, setView] = useState<View>('near')
-  const [stage, setStage] = useState<Stage>('near')
+  const [view, setView] = useState<View>(initialView)
+  const [stage, setStage] = useState<Stage>(initialView)
   const [selected, setSelected] = useState<Colour>('red')
   const [viewChanging, setViewChanging] = useState(false)
   /** What the view change is saying, which takes the status line while it plays. */

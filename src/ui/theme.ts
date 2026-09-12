@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from 'react'
-import { readOneOf, write } from '../storage/prefs'
+import { THEME_KEY, readOneOf, write } from '../storage/prefs'
 
 /**
- * Origin: London src/ui/theme.ts, adapted: the storage key, the comment (the trainer's spoke of its progress file), and storage read and written through src/storage/prefs.ts.
+ * Origin: London src/ui/theme.ts, adapted: the storage key (named in src/storage/prefs.ts, which owns the keys), the comment (the trainer's spoke of its progress file), and storage read and written through src/storage/prefs.ts.
  * Dark or light, remembered between sessions.
  *
  * The choice is a display preference, kept in `localStorage` like every other
@@ -12,14 +12,12 @@ import { readOneOf, write } from '../storage/prefs'
 
 export type Theme = 'dark' | 'light'
 
-const KEY = 'cuber.theme'
-
 export function useTheme(): { theme: Theme; toggle: () => void } {
-  const [theme, setTheme] = useState<Theme>(() => readOneOf(KEY, ['dark', 'light'] as const, 'dark'))
+  const [theme, setTheme] = useState<Theme>(() => readOneOf(THEME_KEY, ['dark', 'light'] as const, 'dark'))
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme
-    write(KEY, theme)
+    write(THEME_KEY, theme)
   }, [theme])
 
   const toggle = useCallback(() => {

@@ -1,3 +1,7 @@
+import { useState } from 'react'
+import { applyDevScene } from '../dev/apply-scene'
+import type { Scene } from '../dev/scenes'
+import { useDevScene } from '../dev/use-dev-scene'
 import { CubeProvider } from './cube-context'
 import { HeaderButtons } from './HeaderButtons'
 import { Screen } from './Screen'
@@ -13,8 +17,9 @@ import './app.css'
  * the trainer splits them, so a test can put the shell inside a provider of
  * its own with the animations turned down.
  */
-export function Shell() {
+export function Shell({ scene = null }: { scene?: Scene | null }) {
   const { theme, toggle } = useTheme()
+  useDevScene(scene)
   const switchTo = theme === 'dark' ? 'Switch to the light theme' : 'Switch to the dark theme'
 
   return (
@@ -47,9 +52,19 @@ export function Shell() {
 }
 
 export function App() {
+  // A development build reads the address bar for a scene and writes it to
+  // storage here, before the provider mounts, so the hooks that read storage
+  // read the scene (spec 15.1). A `useState` initialiser runs once, which is
+  // what "before the provider mounts" needs. In a production build
+  // `import.meta.env.DEV` is the constant false, so the branch and everything
+  // it reaches are gone from the bundle.
+  const [scene] = useState<Scene | null>(() =>
+    import.meta.env.DEV ? applyDevScene(window.location.search) : null,
+  )
+
   return (
-    <CubeProvider>
-      <Shell />
+    <CubeProvider initialView={scene?.view ?? 'near'}>
+      <Shell scene={scene} />
     </CubeProvider>
   )
 }

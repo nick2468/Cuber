@@ -20,8 +20,14 @@ import { SPEEDS, type Speed } from '../model/speeds'
  * This is the only module that touches storage (spec C17).
  */
 
-const SPEED_KEY = 'cuber.speed'
-const CUBE_KEY = 'cuber.cube'
+/**
+ * The three keys, together, because they are what storage is keyed by and
+ * this is the module that owns storage. `src/ui/theme.ts` reads the theme
+ * through the helpers below, and the dev scenes write all three.
+ */
+export const THEME_KEY = 'cuber.theme'
+export const SPEED_KEY = 'cuber.speed'
+export const CUBE_KEY = 'cuber.cube'
 
 export function read(key: string): string | null {
   try {
@@ -39,10 +45,20 @@ export function write(key: string, value: string): void {
   }
 }
 
+/**
+ * One of a fixed set of words, or the default for anything else.
+ *
+ * Pure, and separate from the reading, because the same question is asked of
+ * two different places a word can come from: storage here, and the address
+ * bar in `src/dev/scenes.ts`. Both answer it the same way, so both ask here.
+ */
+export function oneOf<T extends string>(value: string | null, allowed: readonly T[], fallback: T): T {
+  return allowed.includes(value as T) ? (value as T) : fallback
+}
+
 /** One of a fixed set of words, or the default when storage says anything else. */
 export function readOneOf<T extends string>(key: string, allowed: readonly T[], fallback: T): T {
-  const saved = read(key)
-  return allowed.includes(saved as T) ? (saved as T) : fallback
+  return oneOf(read(key), allowed, fallback)
 }
 
 /**
