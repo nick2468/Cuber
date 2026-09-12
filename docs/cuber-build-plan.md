@@ -1148,5 +1148,9 @@ phase 4's box 4.4.
   reading the live step each time, `stepping` derived rather than stored, the
   solver's answer checked with `isMove` rather than cast, `terminate` on unmount.
   The unused `show` helper is gone.
-- **Passed, with Nick's physical-cube check open.** Phase 4 is next; its chip
-  follows this gate.
+- **Passed.** Nick solved a real cube by following the screen on 2026-09-12, which
+  closes phase 3's "Done when" (phase 5's box 5.6 repeats it on the installed app).
+  Phase 4 is next; its chip follows this gate.
+- **Raised by Nick at the same time: a second cube with non-standard colours.**
+  Recorded in spec section 16 as a later phase with a design sketch; the decision
+  to wait, and why, is there.
