@@ -486,7 +486,10 @@ Read first: `../Conquest/vite.config.ts`, `src/ui/useUpdate.ts`, `UpdateBanner.t
       Home Screen and aeroplane-mode steps. These are Nick's steps.
 - [ ] 6.6 Nick: publish, add to the Home Screen, solve a cube in aeroplane mode.
       Record the date here.
-- [ ] 6.7 Reuse review, docs sweep, commit.
+- [ ] 6.7 Reuse review, docs sweep, commit. Version 1.1.0 in the three version
+      files (ruled with the phase 6 chip: the iPad app is a new capability), the
+      banner seen both ways with `?pretendUpdate`, and `UpdateWatch` rendered only
+      off the desktop, with a test for both sides.
 
 **Done when:** 6.4 is proven here and 6.6 is proven by Nick.
 
