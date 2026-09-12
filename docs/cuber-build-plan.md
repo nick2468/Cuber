@@ -328,13 +328,17 @@ speed); `../London/src/ui/prefs.ts` `useStepMs`.
       Every step applies `applyMove` (or its inverse) to `cube` after the turn
       duration, then writes storage.
 - [ ] 3.2 The animation (spec 9.4) in `Scene.tsx`: while `turning`, the nine cubies of
-      that layer carry the layer rotation before their `translate3d`, with a
-      transition of the turn duration and `ease-in-out`; when the provider applies
-      the move and clears `turning`, the cubies are drawn from the new model with no
-      rotation. The provider owns the timer (one `setTimeout` of the turn duration;
-      `transitionend` is not relied on). Check every face's direction in the pane
-      against a real cube and record "R clockwise from the right" and the other
-      five in the notes.
+      that layer are turned by a web animation (`element.animate`, two keyframes
+      with the same function list, `fill: 'forwards'`) of the turn duration with
+      `ease-in-out`; when the provider applies the move and clears `turning`, the
+      animations are cancelled and the cubies are drawn from the new model with no
+      rotation. Not a CSS transition: a transition would animate the snap back to
+      zero when the move commits, and it interpolates a half turn by matrix, which
+      is ambiguous (aligned with the phase 3 chip at gate 2). The provider owns the
+      timer (one `setTimeout` of the turn duration; no animation event is relied
+      on). Check every face's direction in the pane: a wrong sign shows as a jump
+      at the end of the turn. Record "R clockwise from the right, no jump" and the
+      other five in the notes.
 - [ ] 3.3 `src/ui/Box.tsx` and `box.css`: the control row (five buttons with
       accessible names "Jump to start", "Step back", "Play", "Pause", "Step forward",
       "Jump to end"; the speed radios), the holding line, the moves with the letter

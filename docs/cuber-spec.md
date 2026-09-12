@@ -620,7 +620,8 @@ Each move turns the nine cubies of that face's layer as one, about the axis thro
 the centre of that face, by 90 or 180 degrees, over the turn duration with an
 ease-in-out curve. The cube on screen is drawn from the model: the cubie at each
 position shows the model's stickers for that position. So the animation is: rotate
-the nine cubies with a CSS transition, wait the turn duration, then apply the move
+the nine cubies with a web animation (the same thing a CSS transition draws, driven
+from script so the snap back to zero is never animated), wait the turn duration, then apply the move
 to the model and draw the new state with no rotation. The new drawing shows the same
 colours in the same places the rotation left them, so nothing jumps.
 
