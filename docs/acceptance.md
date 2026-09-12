@@ -196,5 +196,53 @@ is recorded in the phase notes rather than quietly left.
 ## What the iPad brings
 
 Nothing in section 17 is an iPad line: the Home Screen app is spec section 12 and plan
-phase 6, and it waits for Nick. When it comes it adds its own walk, not another pass
-over this one.
+phase 6. It does not add a pass over the eleven items above, which the browser and the
+installed app have both already answered. It adds the three lines below instead.
+
+---
+
+## The iPad walk
+
+Phase 6, built 2026-09-12 at version 1.1.0. The steps that need Nick's accounts and
+his iPad are in [cuber-deploy.md](cuber-deploy.md).
+
+### i. It opens and solves with no internet
+
+`npm run build` writes `dist/manifest.webmanifest` and `dist/sw.js`, and the service
+worker's precache names seventeen entries, `assets/worker-*.js` among them, which is
+the solver. Served on `localhost` by `npm run preview` and driven in the browser pane:
+the worker registered and took control, then the server was **stopped** and the page
+reloaded. It opened, drew the remembered cube, answered Solve with "Solved in 19
+moves." and stepped forward, with nothing answering on the port.
+
+That last part is the real proof. The app opening offline only says the HTML and the
+bundle were stored; Solve answering says the solver's own chunk was stored too, which
+is the one file a size limit or a wrong glob would have left out.
+
+**Passed**, 2026-09-12.
+
+### ii. The Home Screen and aeroplane mode
+
+Nick opens `https://cuber.datacrafter.net` in Safari, adds it to the Home Screen, turns
+on Aeroplane Mode, closes the app fully, opens it again and solves a real cube. That is
+plan box 6.6, and it needs the site to be published first (deploy steps 1 to 3).
+
+**Nick: pending.**
+
+### iii. A new version is offered, never forced
+
+Seen in the browser pane on the dev server with `?pretendUpdate`, in both themes. A bar
+appears across the bottom of the page reading "A new version is ready" and "Your cube
+and settings are remembered, so loading it loses nothing.", with "Not now" and "Load
+it". "Not now" removed the bar without reloading. "Load it" reloaded the page, and the
+theme came back from storage, which is the promise the words make.
+
+The bar is fixed at the bottom and takes none of the page's height, so the layout probe
+at 800 by 1000 gave the same numbers with it showing: `scrollWidth` 800 of 800 and
+`scrollHeight` 1000 of 1000.
+
+`src/ui/update-watch.dom.test.tsx` holds the other half: the watch is mounted in a
+browser and not mounted inside the Tauri window, so the installed app registers no
+service worker and still updates by installer (spec C21).
+
+**Passed**, 2026-09-12.

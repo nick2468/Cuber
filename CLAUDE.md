@@ -20,9 +20,14 @@ app now fits the 800 by 1000 window with a solution in the box, and any screen
 state opens from the address bar in a development build. Phase 5 (the Tauri
 window, the NSIS installer, the icon and the acceptance walk) built 2026-09-12:
 version 1.0.0, `src-tauri/target/release/bundle/nsis/Cuber_1.0.0_x64-setup.exe`,
-and the built window measured at 800 by 1000 with fifteen pixels to spare. What
-is left of it is Nick's box 5.6: install, solve, reopen, uninstall. Phase 6, the
-iPad Home Screen app, waits for his word.
+and the built window measured at 800 by 1000 with fifteen pixels to spare. Nick
+installed it, solved a cube with it and uninstalled it the same day: version
+1.0.0 is accepted. Phase 6 (the web app manifest, the service worker, the update
+banner, the icon files and the deploy document) built 2026-09-12 at version
+1.1.0: the built app opens and solves with the server stopped. What is left of it
+is Nick's box 6.6: publish to Cloudflare Pages, add it to the iPad Home Screen,
+and solve a cube in aeroplane mode. His steps are in
+[docs/cuber-deploy.md](docs/cuber-deploy.md).
 
 ## Documents
 
@@ -35,7 +40,11 @@ iPad Home Screen app, waits for his word.
 - [docs/testing.md](docs/testing.md) - the two kinds of test and the rules the suite
   keeps (arrives in phase 0).
 - [docs/acceptance.md](docs/acceptance.md) - the acceptance walk: spec section 17
-  item by item, what was done to check it, and what was seen.
+  item by item, what was done to check it, and what was seen, with the iPad walk
+  after it.
+- [docs/cuber-deploy.md](docs/cuber-deploy.md) - publishing the iPad app. Every
+  step in it is Nick's: GitHub, Cloudflare Pages, the domain, the Home Screen and
+  the aeroplane-mode check.
 - `Cuber-brief.txt` - Nick's brief, kept for history. Build from the spec, not from
   this.
 - `layout.jpg` - the drawing Nick's son made of the screen. The spec's section 4
@@ -62,7 +71,10 @@ iPad Home Screen app, waits for his word.
 - `npm run dev` on port 5190 (`--strictPort`; 5173 is dc.web, 5175 is London, 5180
   and 5181 are Conquest, 5185 and 5186 are Simple Chess). `npm run preview` on 5191.
 - `npx vitest run` runs both test projects. `tsc -b` type-checks. `npm run build`
-  makes `dist/`. `npm run tauri build` makes the installer, and needs
+  makes `dist/`, and from phase 6 that includes `manifest.webmanifest` and
+  `sw.js`. `npm run icons` redraws the four PWA icon files from
+  `public/icon.svg`; its output is committed, so it only runs when the drawing
+  changes. `npm run tauri build` makes the installer, and needs
   `%USERPROFILE%\.cargo\bin` put on the shell's path first: it is not there by
   default, and the setting does not survive between tool calls.
 - The solver is vendored: `src/solver/vendor/` holds cubejs 1.3.2's two files with an
@@ -82,6 +94,10 @@ iPad Home Screen app, waits for his word.
   the nine cubies (`turn-layer.ts`, cancelled in a layout effect when the move
   commits), then the model applies the move and the cube is redrawn. Spec 9.4.
 - Tauri is imported lazily behind `isDesktop()`, and only from `src/storage`. Spec C18.
+- The service worker is never registered inside the Tauri window. `UpdateWatch` is
+  the one caller of `useUpdate`, and `Shell` renders it only when `!isDesktop()`.
+  The installed app takes a new version from the installer; a stored old copy
+  inside its window would make a reinstall look like it had done nothing. Spec C21.
 
 ## Code quality (applies from the first line, never as a later pass)
 

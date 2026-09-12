@@ -460,7 +460,7 @@ Read first: `../London/src-tauri/` in full, `scripts/check-uninstall-hook.mjs`,
 
 ---
 
-## Phase 6 - the iPad Home Screen app (waits for Nick)
+## Phase 6 - the iPad Home Screen app
 
 **Goal: the built app installs to an iPad Home Screen and solves a cube with no
 internet. Not started until Nick asks.**
@@ -469,24 +469,24 @@ Read first: `../Conquest/vite.config.ts`, `src/ui/useUpdate.ts`, `UpdateBanner.t
 `updates.ts` and `updates.test.ts`, `tools/make-icons.mjs`, `docs/conquest-deploy.md`,
 `../SimpleChess/docs/simple-chess-deploy.md` if it exists, spec 12.
 
-- [ ] 6.1 `tools/make-icons.mjs` adapted from Conquest's: reads `public/icon.svg`,
+- [x] 6.1 `tools/make-icons.mjs` adapted from Conquest's: reads `public/icon.svg`,
       writes `icon-192.png`, `icon-512.png`, `apple-touch-icon.png` (180),
       `favicon-32.png`. Run it and commit the output. Add `sharp` and
       `vite-plugin-pwa` at Conquest's versions.
-- [ ] 6.2 `vite.config.ts`: `VitePWA` with Conquest's settings and this app's
+- [x] 6.2 `vite.config.ts`: `VitePWA` with Conquest's settings and this app's
       manifest (spec 12), `devOptions` off.
-- [ ] 6.3 `src/ui/useUpdate.ts` and `UpdateBanner.tsx` from Conquest, `updates.ts`
+- [x] 6.3 `src/ui/useUpdate.ts` and `UpdateBanner.tsx` from Conquest, `updates.ts`
       reduced to one notice: "A new version is ready", "Your cube is remembered, so
       loading it loses nothing.", "Load it", "Not now". Rendered only when
       `!isDesktop()`.
-- [ ] 6.4 Offline proof: `npm run build`, `npm run preview` on 5191, open it in the
+- [x] 6.4 Offline proof: `npm run build`, `npm run preview` on 5191, open it in the
       pane, stop the server, reload, enter and solve the `scrambled` scene's cube.
-- [ ] 6.5 `docs/cuber-deploy.md`: Conquest's deploy document adapted for project
+- [x] 6.5 `docs/cuber-deploy.md`: Conquest's deploy document adapted for project
       `cuber`, repository `nick2468/Cuber`, domain `cuber.datacrafter.net`, with the
       Home Screen and aeroplane-mode steps. These are Nick's steps.
 - [ ] 6.6 Nick: publish, add to the Home Screen, solve a cube in aeroplane mode.
       Record the date here.
-- [ ] 6.7 Reuse review, docs sweep, commit. Version 1.1.0 in the three version
+- [x] 6.7 Reuse review, docs sweep, commit. Version 1.1.0 in the three version
       files (ruled with the phase 6 chip: the iPad app is a new capability), the
       banner seen both ways with `?pretendUpdate`, and `UpdateWatch` rendered only
       off the desktop, with a test for both sides.
@@ -524,7 +524,7 @@ only build config. The iPad phase is parked by ruling.
 | 3 - Solve, Hint, the box and the animation | Done, 2026-09-12 (the physical cube waits for Nick) |
 | 4 - scenes, the probe and the layout pass | Done, 2026-09-12 |
 | 5 - the Windows app and the installer | Done, 2026-09-12, installed and uninstalled by Nick the same day |
-| 6 - the iPad Home Screen app | Waits for Nick |
+| 6 - the iPad Home Screen app | Done, 2026-09-12, the iPad itself waits for Nick |
 
 ## Phase notes
 
@@ -1541,3 +1541,167 @@ trainer's with their origin lines, and the probe is the one from phase 4, unchan
   gate and in `docs/acceptance.md` items 8 and 9. Phase 6 waits for his word. This
   repository has no remote: pushing to a private GitHub repository is his step
   (spec Q15) whenever he wants a copy off this machine.
+
+### Phase 6 - builder notes (2026-09-12)
+
+Boxes 6.1 to 6.5 and 6.7 are ticked. 6.6 is Nick's. Three commits: the icons, the
+service worker with the update banner, and version 1.1.0, plus the docs commit
+these notes are part of. The bar at the end: 36 files, 191 passed and none
+skipped in 7.7 to 8.5 seconds, `tsc -b` clean, `npx oxlint` silent, `npm run
+build` clean, no em dashes under `src/`.
+
+**What was built.** `vite-plugin-pwa` in Conquest's shape writes the manifest and
+a service worker that stores the whole app. `useUpdate.ts` is Conquest's byte for
+byte: nothing in it was about Conquest. `updates.ts` is Conquest's cut to ONE
+notice, because Conquest's second notice exists to warn that a game held in
+memory will be lost and Cuber's cube is in storage (spec 10), so there is nothing
+to warn about. `UpdateWatch` is new and is the only caller of `useUpdate`, so the
+shell can leave the whole thing out inside the Tauri window with one condition on
+the component rather than a condition inside a hook.
+
+**The suite got slower by about half a second, and gained seven tests.** It was
+33 files, 184 tests, 7.19 s before this phase and is 36 files, 191 tests, 7.7 to
+8.5 s after it. Two runs back to back varied by 0.8 s, which is more than the
+plugin costs, so the honest reading is that the plugin is not measurably slower
+and the extra time is the extra tests. Well under the twenty-second rule either
+way.
+
+**The build, and the numbers box 6.4 asked for.**
+
+| What | Value |
+|---|---|
+| Precache entries in `dist/sw.js` | 17, 332.78 KiB |
+| Unique entries in the browser's cache | 11 |
+| The solver's chunk | `assets/worker-D1sGLpjM.js`, 17.36 kB, in the precache |
+| `dist/index.html` | carries `<link rel="manifest" href="/manifest.webmanifest">` |
+
+Seventeen listed and eleven cached is not a fault. `includeAssets` names the
+three icon files and the glob picks up the same files again, so six entries are
+listed twice with the same revision and workbox keeps one of each. It would only
+be an error if the same URL were listed with DIFFERENT revisions, which is what
+workbox refuses. Conquest has the same shape. Left as it is rather than trimming
+`includeAssets`, because the list is what makes the intent readable: these files
+are wanted offline whether or not a glob happens to catch them.
+
+**The offline proof, in the pane with the tab fronted.** `npm run preview` on
+5191, the page opened, the worker registered, and after one reload
+`navigator.serviceWorker.controller` was `http://localhost:5191/sw.js`. The
+scrambled cube was seeded through `localStorage` and the page reloaded. Then the
+server was **stopped** (`curl` to 5191 got nothing at all), and the page was
+reloaded again:
+
+- It opened. Title `Cuber`, header `v1.1.0`, 54 stickers drawn, the remembered
+  cube on them.
+- Solve was already enabled, so `initSolver` had run. **That is the part that
+  matters**: the app opening offline only proves the HTML and the main bundle
+  were stored, and Solve answering proves the solver's own chunk was too.
+- Solve answered "Solved in 19 moves." with the nineteen rows, the first marked.
+- Step forward moved the mark to row 2, turned the cube and wrote the new cube
+  back to storage, all with no server.
+
+Afterwards the pane's `localStorage` was cleared, the registration unregistered
+and the caches deleted, so a later phase's drive does not meet this build.
+
+**The banner, seen both ways and in both themes**, on the dev server at
+`http://localhost:5190/?pretendUpdate`. A bar across the bottom of the page:
+"A new version is ready" over "Your cube and settings are remembered, so loading
+it loses nothing.", with "Not now" and "Load it" at the right.
+
+- **Not now** removed the bar and did not reload. `.update-watch` stayed mounted.
+- **Load it** reloaded the page, proved by a value stamped on `window` beforehand
+  being gone afterwards. The theme came back from storage, which is the promise
+  the words make. The bar came back too, because `?pretendUpdate` is still in the
+  address: a real waiting version would be gone.
+- The colours are this app's variables in both themes, read from
+  `getComputedStyle` rather than from a picture: dark gives the bar `#1c1f24`
+  (`--surface`) with a `#2a2e35` (`--line`) top edge, `#e6e6e6` (`--text`)
+  heading, `#9aa0a6` (`--text-dim`) detail and a `#2f4a33` on `#4b7a52`
+  (`--accent-solid` and `--accent-edge`) Load it. Light gives white, `#d8d4cc`,
+  `#1f2124` and the pale `#dcecdd` accent.
+- No service worker registers on the dev server at all (`getRegistrations()` was
+  empty), which is `devOptions: { enabled: false }` doing its job.
+
+**The layout probe at 800 by 1000 with the banner showing**, light theme,
+nineteen moves in the box (`x, y, width, height`):
+
+| | the browser at 800 by 1000 |
+|---|---|
+| `.app-header` | 40, 24, 720, 45 |
+| `.picker` | 578, 73, 182, 151 |
+| `.scene` | 200, 228, 400, 400 |
+| `.status` | 330, 674, 140, 24 |
+| `.box` | 40, 702, 720, 265 |
+| `.update-bar` | 0, 925, 800, 75 |
+| `scrollWidth` / `innerWidth` | 800 / 800 |
+| `scrollHeight` / `innerHeight` | 1000 / 1000 |
+| `sceneSquare` | true |
+
+C20 holds and the page does not scroll, sideways or down, with the banner up. The
+bar is `position: fixed`, so it takes none of the page's height and the fit rule
+measures exactly what it measured before. The five column boxes are phase 4's
+numbers unchanged, which is the point of recording them: the banner changed
+nothing.
+
+**What the bar does cover.** The box ends at 967 and the bar starts at 925, so
+while the bar is up it hides the last 42 px of the box, which is the part-row of
+the moves list. The controls are at the top of the box and are never covered, the
+list scrolls inside itself, and "Not now" removes the bar. That is the trade a
+fixed bar makes and it is the one Conquest makes too. It was measured rather than
+assumed.
+
+**Two small contradictions, both decided here.**
+
+1. **Box 6.3 quotes the notice as "Your cube is remembered, so loading it loses
+   nothing."** and the chip's "The pieces, exactly" says "Your cube and settings
+   are remembered, so loading it loses nothing." The chip's wording is built,
+   because it is the later and the more accurate of the two: the theme and the
+   speed are remembered as well as the cube, and a promise that named only the
+   cube would be a smaller promise than the app actually keeps.
+2. **`virtual:pwa-register/react` cannot be imported under vitest here**, which
+   the chip anticipated. Vitest resolved it to
+   `file:///@vite-plugin-pwa/virtual:pwa-register/react` and then refused to load
+   that as a filename. Because the shell reaches the import, this failed all
+   FOURTEEN DOM test files, not just the ones about updating, which is worth
+   knowing: a broken virtual module looks like the whole DOM suite breaking. The
+   chip's `vi.mock` in `src/test/dom-setup.ts` fixes it, with a comment, and
+   `docs/testing.md` now has a paragraph under "What is faked, and why" saying
+   why the stand-in reports no update waiting.
+
+**What was decided.**
+
+- `make-icons.mjs` reads `public/icon.svg` and makes the square variant by
+  replacing `rx="160"` with `rx="0"` in the SVG text, and throws if that string
+  is not there. A string replacement is a blunt instrument, but the alternative
+  was a second drawing of the cube, and a loud failure on a changed drawing is
+  better than a silently rounded Apple icon nobody notices until it is on the
+  Home Screen with its corners clipped twice.
+- The icon script no longer writes `icon.svg`. Conquest's did, because Conquest's
+  script DRAWS the icon. Cuber's icon was drawn at phase 5 and this script only
+  resizes it, so writing over its own input would be a way to lose the drawing.
+- `Cargo.lock` was re-synced by cargo rather than left at 1.0.0. Only the one line
+  changed, and a lock that disagrees with its manifest until the next Windows
+  build is a puzzle waiting for whoever runs that build.
+- `UpdateBanner`'s `aria-label` is the notice's own heading rather than a second
+  copy of the words, so a change to the heading cannot leave the label behind.
+- The banner's CSS is in px rather than Conquest's rem, matching the rest of
+  `app.css`, and the safe-area padding is kept: on an iPad the bar sits above the
+  home indicator the way the page's own padding does (spec 4.2).
+
+**What was asked of Nick.** Nothing.
+
+**What is left.** Box 6.6, which is his, and it needs the site published first.
+`docs/cuber-deploy.md` has his five steps in order: create the GitHub repository,
+make the Cloudflare Pages project, point `cuber.datacrafter.net` at it, add it to
+the Home Screen, then aeroplane mode and a real cube. The date goes in box 6.6
+and in `docs/acceptance.md` under "The iPad walk".
+
+**The reuse and duplication review.** One notice (`updateNotice`), one banner
+(`UpdateBanner`), one caller of `useUpdate` (`UpdateWatch`), one drawing of the
+icon (`public/icon.svg`, resized here and by `npx tauri icon`, never redrawn).
+The one repeated literal is the ground colour `#16181c`, now in three files:
+`--ground` in `src/index.css`, the `theme-color` meta in `index.html`, and the
+manifest's two colours in `vite.config.ts`. There is no single home available:
+the meta is parsed before any CSS runs and the manifest is JSON written at build
+time, so neither can read a variable. This is the same shape as phase 5's `Cuber
+Data` in three languages and gets the same remedy, a comment in each naming the
+others and saying what drift would look like. Nothing else new is duplicated.

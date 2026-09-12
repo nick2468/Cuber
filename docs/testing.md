@@ -72,6 +72,21 @@ One test deliberately does not turn them off. `views.dom.test.tsx` gives each mo
 150 ms, because the view change is a sequence of three sentences and a sequence with no
 time in it is over before anything can look at it.
 
+**The service worker's hook, from phase 6.** `src/ui/useUpdate.ts` imports
+`virtual:pwa-register/react`, which has no file behind it: `vite-plugin-pwa` makes the
+module up while it builds. Vitest resolves the name and then fails to load it, and
+because the app's shell reaches the import, that took all fourteen DOM test files down
+rather than only the ones about updating. So `src/test/dom-setup.ts` stands the hook in
+with `vi.mock`, reporting no new version waiting.
+
+Two reasons that is the right stand-in rather than a nuisance. It is the ordinary state,
+and a banner appearing over the app would make `getByRole('status')` ambiguous in every
+other DOM test, because the banner is a status region too. And the waiting state is
+tested anyway, by rendering `UpdateBanner` directly in `update-banner.dom.test.tsx`
+where the buttons can be pressed. The registration itself only exists in a built app
+served over HTTP, so it is proved there and not here: `docs/acceptance.md`, the iPad
+walk.
+
 Nothing else is faked. The provider, the model, the validator, the storage and the
 screen are the code that ships.
 

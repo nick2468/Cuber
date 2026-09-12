@@ -9,7 +9,14 @@
     />
     <title>Cuber</title>
 
-    <!-- The colour iPadOS paints around the app. -->
+    <!--
+      The colour iPadOS paints around the app. The same value lives in two other
+      places that cannot read this one: --ground in src/index.css, which is the
+      palette's one home, and the manifest's background_color and theme_color in
+      vite.config.ts. The meta is parsed before any CSS and the manifest is JSON
+      written at build time, so neither can take a variable. A value that drifts
+      here shows as a band of the wrong colour around the app.
+    -->
     <meta name="theme-color" content="#16181c" />
 
     <!--
