@@ -1,0 +1,11 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "What the Cuber window is allowed to do: nothing beyond the core. The app keeps everything it remembers in localStorage inside its own WebView2 profile, so it reads and writes no files and needs no plugin.",
+  "windows": [
+    "main"
+  ],
+  "permissions": [
+    "core:default"
+  ]
+}
