@@ -1015,7 +1015,9 @@ The app is done when every line below is true, checked and recorded in
    section 15, with the probe's two numbers holding (C20).
 2. **Entering**: every sticker can be painted by left click, by the right-click menu
    and by long press; the swatch counts are right; a tenth sticker of a colour is
-   refused; the centres are pre-filled and editable.
+   refused on a blank sticker and allowed over a filled one, with the count sentence
+   saying what is off (C9 as ruled at gate 3); the centres are pre-filled and
+   editable.
 3. **The views**: "Show the other side" plays the two slow movements with their
    sentences and shows Down, Left and Back; "Show the first side" plays them back.
 4. **Validation**: every rule of section 6.4 fires with its sentence on a hand-made

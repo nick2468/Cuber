@@ -54,7 +54,11 @@ iPad Home Screen app, waits for his word.
 
 ## Toolchain
 
-- Node 22.12.0 (`.node-version`), npm. Rust toolchain for phase 5 only.
+- Node 22.12.0 (`.node-version`), npm. `.node-version` is what Cloudflare Pages will
+  read in phase 6 and matches the trainer's; the node on this machine is 20.20.2 and
+  everything is green on it (ruled at gate 5: leave both as they are). The Rust
+  toolchain (`cargo 1.98`) is at `%USERPROFILE%\.cargo\bin` and is NOT on the shell's
+  PATH: put it there before any `npm run tauri` command.
 - `npm run dev` on port 5190 (`--strictPort`; 5173 is dc.web, 5175 is London, 5180
   and 5181 are Conquest, 5185 and 5186 are Simple Chess). `npm run preview` on 5191.
 - `npx vitest run` runs both test projects. `tsc -b` type-checks. `npm run build`

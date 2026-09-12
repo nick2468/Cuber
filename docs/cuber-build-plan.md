@@ -1,8 +1,9 @@
 # Cuber - build plan
 
-Version 1. Written 2026-09-11. Status: **Active**, phases 0 to 4 built and passed
-their gates (0 on 2026-09-11, 1 to 4 on 2026-09-12). Nick solved a real cube by
-following the screen on 2026-09-12. Phase 5, the Windows app, is next.
+Version 1. Written 2026-09-11. Status: **Active**, phases 0 to 5 built and passed
+their gates (0 on 2026-09-11, 1 to 5 on 2026-09-12), version 1.0.0. Nick solved a
+real cube by following the screen on 2026-09-12. Open: Nick's install walk (box
+5.6) and phase 6, the iPad app, which waits for his word.
 
 Read [the specification](cuber-spec.md) first. It says what the app does. This
 document says what gets built, in what order, and how we know each part is finished.
@@ -1503,3 +1504,35 @@ hook's own comment says why it is not `${PRODUCTNAME}`: a deletion that followed
 renamed product would be a deletion of the wrong folder. Nothing else new is
 duplicated; `packaged-eval.mjs` and `check-uninstall-hook.mjs` are copies of the
 trainer's with their origin lines, and the probe is the one from phase 4, unchanged.
+
+### Gate 5 findings (orchestrator, 2026-09-12)
+
+- **Verified from the repository.** `npx vitest run`: 33 files, 184 passed, none
+  skipped, 7.5 seconds. `tsc -b` clean, `npx oxlint` silent. Version 1.0.0 in all
+  three files. No em dashes under `src/`, `src-tauri/` or `scripts/`. All three
+  commits carry the trailer. Every wrapper file diffs against the trainer's as its
+  origin line says: the names, no plugins, one folder, and comments rewritten for
+  Cuber where they spoke of the trainer's data. `build.rs` is identical.
+- **The uninstall check re-run here: all four cases behaved**, and only the ticked
+  ordinary uninstall removed the scratch folder.
+- **The built window driven from this session** with the debug port and
+  `packaged-eval.mjs`: title `Cuber`, header `v1.0.0`, page 800 by 1000 at a device
+  pixel ratio of 1.5, storage empty on open (the builder's clean-up held). With the
+  scrambled cube seeded, Solve was enabled within the three seconds the script
+  waited, answered in 28 ms with nineteen moves, and the probe gave the builder's
+  table to the pixel: `scrollHeight` 1000 against 1000, the box 263, the scene 400
+  square. The screenshot shows the whole screen with nothing clipped, the first row
+  marked, and the fifth row part-shown. Storage cleared and the window closed;
+  `%LOCALAPPDATA%\Cuber Data` holds only `WebView2`.
+- **The icon** is the corner-on cube as drawn: white top, green left, red right, on
+  the dark rounded ground. Spec 11.2's "nine visible stickers in the six colours"
+  was wrong and the builder's rewording stands.
+- **Rulings on what the builder left.** Spec 17 item 2 now says a tenth sticker is
+  refused on a blank sticker and allowed over a filled one, which `acceptance.md`
+  item 2 already recorded. `.node-version` stays at 22.12.0 (it is what Cloudflare
+  Pages will read in phase 6 and matches the trainer's) and the local node 20.20.2
+  is written into CLAUDE.md's toolchain line beside it, with the cargo PATH fact.
+- **Passed, with box 5.6 open for Nick.** The steps are in the report below this
+  gate and in `docs/acceptance.md` items 8 and 9. Phase 6 waits for his word. This
+  repository has no remote: pushing to a private GitHub repository is his step
+  (spec Q15) whenever he wants a copy off this machine.
