@@ -1,8 +1,8 @@
 # Cuber - build plan
 
-Version 1. Written 2026-09-11. Status: **Active**, phases 0 to 3 built and passed
-their gates (0 on 2026-09-11, 1 to 3 on 2026-09-12). Nick's physical-cube check is
-still open (phase 3's "Done when", carried to phase 5 box 5.6).
+Version 1. Written 2026-09-11. Status: **Active**, phases 0 to 4 built and passed
+their gates (0 on 2026-09-11, 1 to 4 on 2026-09-12). Nick solved a real cube by
+following the screen on 2026-09-12. Phase 5, the Windows app, is next.
 
 Read [the specification](cuber-spec.md) first. It says what the app does. This
 document says what gets built, in what order, and how we know each part is finished.
@@ -1316,3 +1316,38 @@ in six places, five of them phase 3 test files and the sixth `scenes.ts`. It was
 alone on purpose. It is not an algorithm forking, it is one call to two named exports,
 and the only single home that would serve both would have `src/dev` importing test code
 or the tests importing dev code. Either is worse than the line.
+
+### Gate 4 findings (orchestrator, 2026-09-12)
+
+- **Verified from the repository and the pane.** `npx vitest run`: 33 files, 182
+  passed, 2 skipped, 9 to 11 seconds. `tsc -b` clean, `npx oxlint` silent, `npm run
+  build` 52 modules with no warning, and `dist/assets/*.js` carries none of
+  `scene=`, `mirrored`, `sceneCube`, `applyDevScene` or `useDevScene`. No em dashes.
+  All five commits carry the trailer. `packaged-eval.mjs` diffs clean against
+  London's with the origin line removed. Every phase 4 box is ticked.
+- **The probe re-run at the three viewports gives the builder's table exactly.**
+  With the `solution` scene at 800 by 1000: `scrollHeight` 1000 against 1000, the
+  box 265 tall, nineteen rows, the list 134 of 581 tall with rows of 30.6 px. At
+  1180 by 820 the page itself does not scroll and `main` scrolls 51 px inside the
+  shell. At 820 by 1180 nothing scrolls. The scene is square and never under 280.
+- **The scenes work as designed.** The `solution` scene presses Solve once the
+  solver is ready (4.5 s on the dev server, which serves the solver unminified; 1.1
+  s on the built app at gate 3). The `mirrored` scene shows "That corner is not a
+  real piece. Check its three colours." with stickers 8, 9 and 20 outlined, in the
+  light theme, which is the right reading of the spec's "rotated the wrong way";
+  spec 15.1 is amended to say swapped. The `view=far` scene loads already turned
+  with "Show the first side" on the button and no animation.
+- **Rulings on the two things left.** Four rows and a part row is accepted, and the
+  builder's spec 4.1 wording stands. The column's two widths were a real fault: the
+  tall-window rule made it 672 above 900 px and 720 below. Fixed at the gate with
+  one rule (`box-sizing: border-box` and a max-width of 720 plus the padding at
+  every width, the media block's own `box-sizing` removed): the header and the box
+  now measure 720 at all three viewports, and 800 by 1000 is unchanged. Spec 4.1's
+  column row says so.
+- **Two good finds by the builder.** The fit rule's budget was guesses, three of them
+  wrong by a lot, and is now measured numbers with their source named. And a right
+  click was arming the long press's click-swallowing flag, so the next real click on
+  that sticker did nothing: a phase 2 fault, found by a phase 4 test shown red first.
+- **Passed.** Phase 5 is next: the Windows app and the installer. Its chip follows
+  this gate. Note for it: the nine pixels of headroom at 800 by 1000 were measured in
+  a browser, and the Tauri window's 1000 may not all be page.

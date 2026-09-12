@@ -169,7 +169,7 @@ All in CSS pixels.
 
 | Thing | Size | Why |
 |---|---|---|
-| The column | up to 720 wide, centred | The drawing is a portrait page. 720 fits the picker beside the cube's top and the box's rows without wrapping a sentence. |
+| The column | up to 720 wide, centred, at every window width; the 24 px padding sits outside the 720 | The drawing is a portrait page. 720 fits the picker beside the cube's top and the box's rows without wrapping a sentence. (Corrected at gate 4: the tall-window rule had made the column 672 above 900 px and 720 below it.) |
 | The scene | 400 by 400, or smaller to fit | The square the cube is drawn in. It was 440 until phase 4's layout pass, which had to find 75 pixels to stop the 800 by 1000 window scrolling (the notes say where the rest came from). |
 | Cubie | the scene divided by 4.8, rounded down: 83 at 400, 58 at 280 | Measured at phase 2: turned corner-on and seen through a 1200 px perspective, the cube's silhouette is about 1.3 times three cubies wide, so a 400 scene holds an 83 px cubie and no more (a 440 scene held 91, before phase 4 shrank it). Still far more than the 36 px a finger needs. (Version 1 said 120 and a divisor of 3.67, which drew the cube 1.3 times too big and over the view button.) |
 | Gap between cubies | 0 | A gap is a hole through the cube, and the page ground shows through it as bright lines in the light theme (found at gate 2). The dark plastic between stickers is each sticker's own 6 px inset on the cube-body colour. |
@@ -937,7 +937,9 @@ http://localhost:5190/?scene=scrambled&view=far&theme=light
 - `scene`: `blank` (the fresh cube), `solved` (every sticker its centre's colour),
   `scrambled` (the solved cube after the fixed scramble `R U R' U' F2 D L' B2 U2 R`
   applied through `applyMove`, so it is always valid), `mirrored` (`scrambled` with
-  the URF corner's stickers rotated the wrong way, so a validation message shows),
+  the URF corner's first two stickers swapped, which is a mirrored corner and no real
+  piece, so rule 5's sentence shows with the three stickers outlined; a rotation
+  would be a twist, rule 10, with nothing outlined - corrected at gate 4),
   `partial` (`scrambled` with 20 stickers blanked), `solution` (`scrambled` with
   Solve pressed, which waits for the real solver).
 - `view`: `near` or `far`. `theme`: `dark` or `light`. `speed`: one of the three.

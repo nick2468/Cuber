@@ -4,8 +4,13 @@
    status line, the box and the colour menu. */
 
 .app {
-  /* One column, up to 720 wide, centred (spec 4.1). */
-  max-width: 720px;
+  /* One column, up to 720 wide, centred (spec 4.1). The 720 is the CONTENT:
+     the padding sits outside it, so the column is the same width whether or
+     not the tall-window rule below is in force. Before gate 4 the rule added
+     border-box only above 900 px, and the column was 720 wide below that and
+     672 above it: one name for two widths. */
+  box-sizing: border-box;
+  max-width: calc(720px + 2 * 24px);
   margin: 0 auto;
   /* On an iPad the page runs under the rounded corners and the home
      indicator, so the padding is at least the safe area, as Conquest's
@@ -257,7 +262,6 @@ button:disabled {
     height: 100%;
     display: flex;
     flex-direction: column;
-    box-sizing: border-box;
   }
 
   .app > main {
