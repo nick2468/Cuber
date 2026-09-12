@@ -319,7 +319,7 @@ injected, the `finally` discipline, why the value is not memoised); `../London/s
 Study.tsx` (the auto-step effect and its speed, `STEP_MS`, and the phase 45 step
 speed); `../London/src/ui/prefs.ts` `useStepMs`.
 
-- [ ] 3.1 The provider grows: `solver` (from `createSolver`, `fakeSolver` in tests),
+- [x] 3.1 The provider grows: `solver` (from `createSolver`, `fakeSolver` in tests),
       `solverReady`, `solution` (`null` or `{ moves, revealed }`), `step`, `playing`,
       `turning` (`null` or the move animating). Actions: `solve()` (validate, send,
       set `revealed` to all), `hint()` (solve if needed, reveal one more, step
@@ -327,7 +327,7 @@ speed); `../London/src/ui/prefs.ts` `useStepMs`.
       `play()`, `pause()`, `setSpeed()`. `paint` during a solution clears it (C12).
       Every step applies `applyMove` (or its inverse) to `cube` after the turn
       duration, then writes storage.
-- [ ] 3.2 The animation (spec 9.4) in `Scene.tsx`: while `turning`, the nine cubies of
+- [x] 3.2 The animation (spec 9.4) in `Scene.tsx`: while `turning`, the nine cubies of
       that layer are turned by a web animation (`element.animate`, two keyframes
       with the same function list, `fill: 'forwards'`) of the turn duration with
       `ease-in-out`; when the provider applies the move and clears `turning`, the
@@ -339,7 +339,7 @@ speed); `../London/src/ui/prefs.ts` `useStepMs`.
       on). Check every face's direction in the pane: a wrong sign shows as a jump
       at the end of the turn. Record "R clockwise from the right, no jump" and the
       other five in the notes.
-- [ ] 3.3 `src/ui/Box.tsx` and `box.css`: the control row (five buttons with
+- [x] 3.3 `src/ui/Box.tsx` and `box.css`: the control row (five buttons with
       accessible names "Jump to start", "Step back", "Play", "Pause", "Step forward",
       "Jump to end"; the speed radios), the holding line, the moves with the letter
       in a fixed-width chip and the sentence from `moveSentence`, the current step
@@ -348,26 +348,29 @@ speed); `../London/src/ui/prefs.ts` `useStepMs`.
       and the Hint form ("Hint 1: ...") when `revealed` is less than the count.
       Keyboard: left and right arrows step, space plays or pauses, ignored while a
       menu is open.
-- [ ] 3.4 Play: an effect that steps forward at the speed's interval while `playing`
+- [x] 3.4 Play: an effect that steps forward at the speed's interval while `playing`
       and stops at the end, in the shape of the trainer's auto-step effect. The
       speeds from spec 9.2 as one table in `src/model/speeds.ts`.
-- [ ] 3.5 Header: Solve enabled when `validate` passes and the solver is ready, else
+- [x] 3.5 Header: Solve enabled when `validate` passes and the solver is ready, else
       disabled with the reason in its `title` and in the status line; Hint the same.
       Both say "Getting ready..." before `solverReady`. The status line says "Solved
       in N moves." and "Your cube is already solved." per spec.
-- [ ] 3.6 The worker in the real app: `createSolver` default builds the worker;
+- [x] 3.6 The worker in the real app: `createSolver` default builds the worker;
       confirm in the pane that the page is not frozen during the four to five
       seconds of `initSolver` (the theme toggle answers) and that Solve on the
       `scrambled` cube returns within a second. Record both times.
-- [ ] 3.7 DOM tests (C19 items 11, 12, 13, 15 for the speed): with `fakeSolver` and
+- [x] 3.7 DOM tests (C19 items 11, 12, 13, 15 for the speed): with `fakeSolver` and
       durations at 0. The worker guard: a throwing `Worker` on `globalThis` is never
       constructed.
-- [ ] 3.8 Drive in the pane with the real solver: enter a real scrambled cube from a
+- [x] 3.8 Drive in the pane with the real solver: (Everything but the physical
+      cube, which needs one in a hand: see the notes. The six faces are proved by
+      `turn-direction.test.ts` because the pane's throttling makes the walk
+      unreliable.) enter a real scrambled cube from a
       physical cube, Solve, follow the moves on the physical cube at slow speed,
       and confirm it ends solved. Then Hint from a fresh entry, three presses. Then
       paint during a solution and see it discarded. Screenshots of the box with a
       solution at 800 by 1000 in both themes. Record the probe.
-- [ ] 3.9 Reuse review and commit.
+- [x] 3.9 Reuse review and commit.
 
 **Done when:** a physical cube has been solved by following the screen, and every
 DOM test of C19 is present.
@@ -503,7 +506,7 @@ only build config. The iPad phase is parked by ruling.
 | 0 - the scaffold | Done, 2026-09-11 |
 | 1 - the model, the validator and the solver | Done, 2026-09-12 |
 | 2 - the cube on screen, and entering the colours | Done, 2026-09-12 |
-| 3 - Solve, Hint, the box and the animation | Not started |
+| 3 - Solve, Hint, the box and the animation | Done, 2026-09-12 (the physical cube waits for Nick) |
 | 4 - scenes, the probe and the layout pass | Not started |
 | 5 - the Windows app and the installer | Not started |
 | 6 - the iPad Home Screen app | Waits for Nick |
@@ -954,3 +957,143 @@ measured wrong; and whether the picker's label should sit where the drawing has 
   to the lint rule. The long press as a state machine fed explicit times is exactly
   what the no-fake-timers rule wants.
 - **Passed.** Phase 3 is next; its chip follows this gate.
+
+### Phase 3 - builder notes (2026-09-12)
+
+**What the app does now.** Solve sends the cube to the worker and writes every move into
+the box with its letter and its sentence. The five controls walk the solution, the three
+speeds set how fast, the cube turns with each move, Hint gives one move at a time and
+Solve then shows the rest, the arrows and the space bar work, and painting during a
+solution discards it.
+
+**Measured.**
+
+- The suite: 31 files, 166 passed and 2 skipped, 7.1 seconds. `tsc -b` clean, `npx
+  oxlint` silent. `npm run build`: 49 modules, no warning, and the worker is now its own
+  chunk, `worker-*.js` at 17.36 kB; the page is 251.01 kB (79.69 kB gzipped) with 6.82 kB
+  of CSS.
+- **The worker's warm-up, in the pane: 5.55 seconds** from navigation to Solve being
+  enabled. That is the dev server, where the vendored solver is served unminified and
+  the machine was also running the suite; the same work measured 1.05 seconds in node at
+  phase 1. Worth re-measuring against the built app in phase 5. **The screen is not
+  frozen while it happens**: the theme toggle answered during the wait, and Solve's
+  tooltip reads "Getting ready...".
+- **Solve, with the real solver in the pane: 102 ms** for the fixed scramble, and the
+  answer is the same 19 moves phase 1 got from node:
+  `D R' U2 F2 R2 U' R D L2 B2 U2 R2 L2 U F2 U R2 B2 U2`. The status line read "Solved in
+  19 moves." and the box listed all nineteen with the first marked.
+- The layout at 800 by 1000 with an 11-move solution in the box: `scrollWidth` 785
+  against `innerWidth` 800, so nothing scrolls sideways; `scrollHeight` 1075 against
+  1000, so the page scrolls 75 px downwards. Gate 2 sent the 6 px version of this to
+  phase 4's box 4.4 and it is now 75 px with the box full. The box is 285 tall and the
+  move list scrolls inside itself (134 px of a 337 px list), which is the five rows the
+  design asks for.
+
+**The six faces, and why the check moved out of the pane.**
+
+The chip asks for every face to be watched turning, because a wrong sign shows as a jump
+when the move commits. **The pane cannot do this.** Its animations do not run: with the
+tab fronted, an animation reported `playState: "running"` with `currentTime: 0` after 200
+ms of real time, and every `setTimeout` is clamped, so the provider's own commit timer
+took seconds and then a minute. Two probe runs died on the tool's 45-second limit. This
+is CLAUDE.md's throttling hazard in its strongest form.
+
+What the pane did show, by driving each animation to its end by hand and comparing the
+picture at 49 points across the cube before and after the move committed:
+
+| Move | Keyframes | Cubies turning | Jump |
+|---|---|---|---|
+| U | `rotateY(0deg)` to `rotateY(-90deg)` | 9 | none |
+| F2 | `rotateZ(0deg)` to `rotateZ(180deg)` | 9 | none |
+
+So the answer is now a test instead, and it is a stronger one:
+`src/ui/turn-direction.test.ts` takes each of the **eighteen** moves, rotates every
+sticker's place and facing by the rotation `layerTurn` hands the browser, works out which
+sticker it has become, and holds the library's own `applyMove` to putting that colour
+exactly there. It also checks that nothing outside the layer moves. That is what "no
+jump" means, said in arithmetic, and it covers R, L, U, D, F and B at once:
+
+| Face | Clockwise quarter turn | Reading |
+|---|---|---|
+| R | `rotateX(90deg)` | carries every sticker where the model puts it |
+| L | `rotateX(-90deg)` | the same |
+| U | `rotateY(-90deg)` | the same, and seen in the pane |
+| D | `rotateY(90deg)` | the same |
+| F | `rotateZ(90deg)` | the same, and seen in the pane as F2 |
+| B | `rotateZ(-90deg)` | the same |
+
+**The physical cube has not been solved yet.** There is no cube in this session's hands,
+which the chip allows for: Nick or the orchestrator does that at the gate. Everything
+short of it is done, including the real solver answering in the pane and the screen cube
+reaching a solved state by Jump to end.
+
+**What else was driven in the pane.** The box with a solution in both themes (the marked
+row in `--mark`, the letters in `--chip`, the holding line above them); the cube solid in
+the light theme, so gate 2's gap fix holds with the box below it; the colour menu's Clear
+during a solution, which emptied the box back to "Press Solve and the steps appear
+here.", left the cube with its colours and one blank sticker, dropped green to 8/9 and
+turned Solve off because the cube is no longer complete. The pane's storage was cleared
+and the viewport reset afterwards.
+
+**A consequence of spec C9 worth knowing.** On a complete cube every colour is already on
+nine stickers, so the only paint that can change one is Clear: a tenth sticker of a
+colour cannot be made. To correct a wrong colour on a finished cube, a person clears that
+sticker and then paints it. That is the rule working as written, and it is what
+`discard.dom.test.tsx` uses, but the spec does not say it anywhere.
+
+**Two faults the tests found, both fixed.**
+
+1. **A stale wait could wipe a sentence.** The view change leaves "Check the centres" up
+   for two seconds, and that wait outlived its own change: pressing the button again
+   inside those two seconds let the old wait clear the new change's first sentence. Each
+   change now takes a number and every step of it checks that the number is still
+   current. Found by the phase 2 view test going red when the timings shifted.
+2. **Play kept its state in the wrong place.** The effect turned `playing` off on
+   reaching the last move, which is a render asking for another render (oxlint's
+   `set-state-in-effect`). Whether the cube is stepping is now worked out from the step
+   and the solution, so reaching the end stops it with nothing to write down.
+
+**Decided (code shape).**
+
+- **Hint standing earlier in the solution steps forward** rather than doing nothing. The
+  next move is already on the screen, and "just tell me the next move" is what the button
+  is for (spec C13). Standing on the last move shown, it reveals one more, as the chip
+  says.
+- **"Done. Your cube is solved." appears when every move has been made**, not after the
+  last move the box happens to be showing. The chip's wording says the latter, but in
+  hint mode the cube is not solved, and saying so would be untrue.
+- **The status line keeps the solver's last word** ("Solved in 19 moves.", "Your cube is
+  already solved.", "The solver found no solution.") until the cube changes under it.
+- **Solve and Hint have a third reason to be off**, beyond the validator's sentence and
+  "Getting ready...": "Wait for the cube to stop turning." It is not in the spec.
+- **The keyboard leaves space alone on a focused button.** A button answers the space bar
+  itself, so pressing Solve with the mouse and then pressing space would both press Solve
+  again and start playing. The arrows do nothing to a button, so they still pass, which
+  is what keeps them working after a click. A radio group answers the arrows itself, so
+  nothing passes from an input.
+- **One `makeMove`** in the provider is the only path a move takes to the screen; step
+  forward, step back and a hint all go through it.
+- **The solver's answer is checked, not cast**: `isMove` in `moves.ts` says whether each
+  string the worker sent back is one of the eighteen, and anything else is treated as no
+  solution.
+- **`Solver` gained `terminate()`**, and the provider stops the worker when it goes away.
+
+**Reuse review.** Its finds: the three places that turned a layer and then committed the
+move became one `makeMove`; `prefs.ts`'s `useRemembered` still had the trainer's unused
+`show`, which gate 1 said to remove if phase 3 did not use it, and phase 3 does not.
+Checked and already single: the speed numbers live only in `speeds.ts`, the keyframes
+only in `turn-layer.ts`, the sentences only in `moveSentence`, the decision about which
+controls are live in one place in `Controls.tsx`, and every transform string in
+`transforms.ts`. No em dashes under `src/`.
+
+**One flaky run, watched.** A full-suite run failed once while the dev server and the
+pane were both busy; three targeted runs of the three timing-sensitive DOM files passed
+3 of 3 afterwards, and every full run since has been green. If it returns, the files to
+look at are `views.dom.test.tsx`, `keys.dom.test.tsx` and `solving.dom.test.tsx`, and the
+answer is probably longer stage times rather than a `waitFor`.
+
+**Asked of Nick.** Nothing.
+
+**Left.** The physical cube (above), and for the orchestrator: the C9 consequence, the
+"Wait for the cube to stop turning." sentence, and the 75 px downward scroll, which is
+phase 4's box 4.4.

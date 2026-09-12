@@ -49,17 +49,28 @@ so it has the rig from the first phase.
 
 ## What is faked, and why
 
-**The solver.** The cube's provider (`src/ui/cube-context.tsx`, from phase 2) takes an
-optional `createSolver`, defaulting to the real one, which starts a web worker and spends
-about a second in `initSolver` on this machine (spec C10 estimated four to five). Tests
-pass `fakeSolver` from `src/test/fake-solver.ts` (phase 1), which is ready at once and
-answers `solve` with a fixed list of moves. A real solver in the DOM suite would mean a
-worker per test and a second's wait before the first click. From phase 3 one DOM test puts a throwing stub on
-`globalThis.Worker` and asserts it was never constructed, so this cannot rot quietly.
+**The solver.** The cube's provider (`src/ui/cube-context.tsx`) takes an optional
+`createSolver`, defaulting to the real one, which starts a web worker and spends about a
+second in `initSolver` on this machine (spec C10 estimated four to five). Tests pass
+`fakeSolver` from `src/test/fake-solver.ts`, which is ready at once and answers `solve`
+with the moves that undo the fixed scramble. A real solver in the DOM suite would mean a
+worker per test and a second's wait before the first click.
 
-**The animations.** Not faked, but shortened. The provider takes its durations (the view
-change, the pause, the layer turn) as an option, and tests pass zeros, so a step lands at
-once and `vi.waitFor` does the waiting.
+The guard has two halves, so it cannot rot quietly in either direction.
+`worker-guard.dom.test.tsx` puts a `Worker` that throws on being built on the global,
+mounts the whole app and drives it, and asserts nothing ever constructed one.
+`solver.test.ts` does the opposite with the same trick: it asserts that `createSolver`,
+given no maker of its own, does build one. Without the second half the first would
+still pass on the day the app stopped starting a worker at all.
+
+**The animations.** Not faked, but shortened. The provider takes its durations as an
+option: the view change and its pause in milliseconds, and `speedScale`, which multiplies
+the speed table's times and is 0 in tests, so a step lands at once while still going
+through the same code. `vi.waitFor` does the waiting.
+
+One test deliberately does not turn them off. `views.dom.test.tsx` gives each movement
+150 ms, because the view change is a sequence of three sentences and a sequence with no
+time in it is over before anything can look at it.
 
 Nothing else is faked. The provider, the model, the validator, the storage and the
 screen are the code that ships.
