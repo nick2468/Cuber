@@ -3,8 +3,9 @@
 Version 1. Written 2026-09-11. Status: **Active**, phases 0 to 5 built and passed
 their gates (0 on 2026-09-11, 1 to 5 on 2026-09-12), version 1.0.0. Nick solved a
 real cube by following the screen on 2026-09-12, and installed, solved and
-uninstalled the built app the same day. Version 1.0.0 is accepted. Open: phase 6,
-the iPad app, which waits for his word.
+uninstalled the built app the same day. Version 1.0.0 is accepted. Phase 6, the
+iPad app, is built at version 1.1.0 and passed gate 6 for the build; box 6.6, the
+iPad itself, is Nick's and needs the site published first (`docs/cuber-deploy.md`).
 
 Read [the specification](cuber-spec.md) first. It says what the app does. This
 document says what gets built, in what order, and how we know each part is finished.
@@ -1705,3 +1706,48 @@ the meta is parsed before any CSS runs and the manifest is JSON written at build
 time, so neither can read a variable. This is the same shape as phase 5's `Cuber
 Data` in three languages and gets the same remedy, a comment in each naming the
 others and saying what drift would look like. Nothing else new is duplicated.
+
+### Gate 6 findings (orchestrator, 2026-09-12)
+
+- **Verified from the repository.** `npx vitest run`: 36 files, 191 passed, 7.6
+  seconds. `tsc -b` clean, `npx oxlint` silent. Version 1.1.0 in all three files. No
+  em dashes. All four commits carry the trailer. `useUpdate.ts` diffs clean against
+  Conquest's with the origin line removed. `npm run build` writes the manifest and
+  `sw.js`, `index.html` links the manifest, and the precache names eleven distinct
+  files (seventeen entries, six of them twice with the same revision, as the notes
+  say), the solver's `worker-*.js` among them. The worker registers a navigation
+  route bound to `index.html`, exactly as Conquest's does. The icons are the cube,
+  the Home Screen one square-cornered. The deploy document is a faithful adaptation
+  with every account step marked as Nick's, and it starts with creating the
+  repository because there is no remote.
+- **The offline proof, in this session's pane, was two-thirds reproducible and
+  then the pane stopped cooperating.** With the worker in control (eleven cached
+  entries) and the server process killed, fetches from inside the loaded page
+  returned the main script, the stylesheet, the manifest and the solver's chunk
+  from the worker, and a `Worker` started from the cached chunk answered `ready`
+  with no server. So the mechanics that make the iPad work with no internet are
+  proven here. The page entry itself (`/index.html`) failed to fetch in that run,
+  and a reload with the server dead was refused at the pane's own level ("the last
+  page load in this tab failed"). Attempts to isolate that met the pane in a state
+  where a fresh tab registered no worker and reported itself hidden, so it is not
+  known whether the page-entry failure was the worker or the pane. Two things
+  weigh against it being the worker: the builder's session reloaded with the server
+  stopped and solved, and the configuration is Conquest's, which is proven on a
+  real iPad. **Nick's box 6.6 is the decisive test and is already the phase's "Done
+  when".** If the app does not open in aeroplane mode, the first place to look is
+  the `index.html` precache entry and its revision, and the check to make is
+  `caches.match('index.html?__WB_REVISION__=<revision from sw.js>')` from the page.
+- **A pane lesson, added to CLAUDE.md.** `preview_stop` and the pane's `navigate`
+  both refuse a dead server, so an offline check has to stop the server process
+  itself and reload from inside the page; and a pane that reports
+  `document.visibilityState` as hidden registers no worker and stalls its timers.
+- **Read as code.** One notice, one banner, one caller of the hook, rendered only
+  off the desktop with a test for both sides; the `vi.mock` of the virtual module
+  in `dom-setup.ts` with its reason; the icon resized from the one drawing and a
+  loud failure if the drawing changes shape. The banner's shadow is a black at
+  30 percent, which the phase 2 menu avoided as "a seventh colour"; accepted here,
+  because a bar over content has to read as over it, and black is not a colour of
+  the palette.
+- **Passed for the build, with box 6.6 open for Nick**, whose steps are in
+  `docs/cuber-deploy.md` in order: the repository, the Cloudflare project, the
+  domain, the Home Screen, aeroplane mode.

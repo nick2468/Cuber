@@ -161,6 +161,12 @@ and solve a cube in aeroplane mode. His steps are in
   light. A real click on the theme toggle made it capture properly. A screenshot is
   not evidence on its own: read the computed styles beside it, believe the styles
   when the two disagree, and force a repaint with a click.
+- **An offline check cannot go through the pane's tools.** `preview_stop` and the
+  pane's `navigate` both refuse a dead server, so stop the server PROCESS (find it
+  by port with `Get-NetTCPConnection`) and reload from inside the page with
+  `location.reload()`. A pane whose page reports `document.visibilityState` as
+  hidden registers no service worker and stalls its timers: check that first when
+  a registration or a cache comes back empty (gate 6).
 - **The pane's viewport emulation sends no `resize` event.** Anything that measures
   the fit rule after a `resize_window` must reload the page first, or the scene keeps
   its old size and the numbers lie.
