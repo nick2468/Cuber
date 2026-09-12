@@ -74,6 +74,33 @@ describe('the solver adapter', () => {
   })
 })
 
+describe('the real path', () => {
+  // The other half of the worker guard: the DOM suite proves no worker is ever
+  // built there, and this proves the app's own path does build one, so the
+  // guard cannot pass because the code stopped starting a worker at all.
+  it('builds a worker when it is given no maker', () => {
+    const real = (globalThis as { Worker?: unknown }).Worker
+    let built = 0
+    class Stub {
+      onmessage: unknown = null
+      constructor() {
+        built += 1
+      }
+      postMessage() {}
+      terminate() {}
+    }
+    Object.defineProperty(globalThis, 'Worker', { value: Stub, configurable: true, writable: true })
+
+    try {
+      const solver = createSolver()
+      expect(built).toBe(1)
+      solver.terminate()
+    } finally {
+      Object.defineProperty(globalThis, 'Worker', { value: real, configurable: true, writable: true })
+    }
+  })
+})
+
 describe('the fake solver', () => {
   it('is ready at once and its answer solves the scrambled cube', async () => {
     const solver = fakeSolver()

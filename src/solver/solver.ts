@@ -28,6 +28,8 @@ export type WorkerReply =
 export interface SolverWorker {
   postMessage(request: SolveRequest): void
   onmessage: ((event: { data: WorkerReply }) => void) | null
+  /** A real worker has one; a stand-in in a test need not. */
+  terminate?(): void
 }
 
 export interface Solver {
@@ -35,6 +37,8 @@ export interface Solver {
   readonly ready: Promise<void>
   /** The moves that solve these facelets, as the library writes them. */
   solve(facelets: string): Promise<string[]>
+  /** Stops the worker. The provider calls it when the app goes away. */
+  terminate(): void
 }
 
 /** The real worker. The one browser global in `src/model` and `src/solver` (spec C17). */
@@ -65,6 +69,9 @@ export function createSolver(makeWorker: () => SolverWorker = startWorker): Solv
 
   return {
     ready,
+    terminate() {
+      worker.terminate?.()
+    },
     solve(facelets) {
       // A solved cube is not sent: there is nothing to work out (spec 7.2).
       if (facelets === SOLVED_FACELETS) return Promise.resolve([])

@@ -14,5 +14,6 @@ export function fakeSolver(): Solver {
   return {
     ready: Promise.resolve(),
     solve: async () => undo(FIXED_SCRAMBLE),
+    terminate: () => {},
   }
 }

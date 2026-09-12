@@ -4,24 +4,30 @@ import type { Colour } from '../model/colours'
 import { Shell } from '../ui/App'
 import { CubeProvider } from '../ui/cube-context'
 import type { Durations } from '../ui/cube-state'
+import type { Solver } from '../solver/solver'
+import { fakeSolver } from './fake-solver'
 
 /**
- * Origin: SimpleChess src/test/dom.tsx (London's, adapted), adapted: the provider, the durations and this app's helpers.
+ * Origin: SimpleChess src/test/dom.tsx (London's, adapted), adapted: the provider, the durations, the fake solver and this app's helpers.
  * The app in jsdom, driven the way a person drives it.
  *
  * The real components inside the real provider, so the code under test is the
- * code that ships. Only the durations change: a test that waited 1.2 seconds
- * for the view to turn would be a slow test of a `setTimeout`.
+ * code that ships. Two things change: the durations, because a test that
+ * waited 1.2 seconds for the view to turn would be a slow test of a
+ * `setTimeout`, and the solver, because a real one means a worker per test
+ * (docs/testing.md).
  */
 
 /** Fast enough not to wait, slow enough that each step can be seen in turn. */
-export const QUICK: Durations = { movement: 0, pause: 0, check: 0, arm: 3000 }
+export const QUICK: Durations = { movement: 0, pause: 0, check: 0, arm: 3000, speedScale: 0 }
 
-export function renderApp(options: { durations?: Partial<Durations> } = {}) {
+export function renderApp(
+  options: { durations?: Partial<Durations>; createSolver?: () => Solver } = {},
+) {
   const user = userEvent.setup()
   const durations = { ...QUICK, ...options.durations }
   const view = render(
-    <CubeProvider durations={durations}>
+    <CubeProvider durations={durations} createSolver={options.createSolver ?? fakeSolver}>
       <Shell />
     </CubeProvider>,
   )
@@ -53,4 +59,22 @@ export function menuItem(name: string): HTMLElement {
 /** What the status line says under the cube. */
 export function status(): string {
   return screen.getByRole('status').textContent ?? ''
+}
+
+/** One of the box's controls, by the name it carries. */
+export function control(name: string): HTMLButtonElement {
+  return screen.getByRole('button', { name }) as HTMLButtonElement
+}
+
+/** The moves the box is showing, each as its row reads. */
+export function boxRows(): string[] {
+  return [...document.querySelectorAll('.move-row')].map((row) =>
+    [...row.children].map((part) => part.textContent).join(' '),
+  )
+}
+
+/** Which row the cube is standing on, or null before a solution. */
+export function markedRow(): string | null {
+  const here = document.querySelector('.move-row.here')
+  return here ? [...here.children].map((part) => part.textContent).join(' ') : null
 }

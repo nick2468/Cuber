@@ -4,7 +4,7 @@ import { fromText, toText } from '../model/cube-text'
 import { SPEEDS, type Speed } from '../model/speeds'
 
 /**
- * Origin: London src/ui/prefs.ts, adapted: the four helpers only, exported, with this app's keys and two hooks; the comments describe this app.
+ * Origin: London src/ui/prefs.ts, adapted: the four helpers only, exported, without useRemembered's unused `show`, with this app's keys and two hooks; the comments describe this app.
  * What the app remembers between sessions (spec 10): the speed and the cube
  * here, and the theme in `src/ui/theme.ts` through the same helpers.
  *
@@ -61,11 +61,12 @@ export function useRemembered<T>(initial: () => T, save: (value: T) => void) {
     },
     [save],
   )
-  // Showing a value without writing it down: for something the screen has to
-  // show that the user did not choose, so it must not become what is
-  // remembered.
-  const show = useCallback((next: T) => setStored(next), [])
-  return [value, set, show] as const
+  // The trainer's third helper, `show`, is not here: it sets the value without
+  // writing it down, for a chess game resumed at a strength the trainee did
+  // not choose. Nothing in this app shows a setting it has not been given, and
+  // an unused helper is a thing to keep working for no reason (gate 1's watch
+  // item, removed in phase 3).
+  return [value, set] as const
 }
 
 /** How fast the steps play. Normal until the user picks another. */
