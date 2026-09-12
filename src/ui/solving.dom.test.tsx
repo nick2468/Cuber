@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest'
 import { solved } from '../model/cube'
 import { toText } from '../model/cube-text'
 import { FIXED_SCRAMBLE, applyMove, applyMoves, undo } from '../model/moves'
-import { boxRows, colourAt, control, markedRow, renderApp, status } from '../test/dom'
+import { PLAY_THROUGH, boxRows, colourAt, control, markedRow, renderApp, status } from '../test/dom'
 
 /**
  * C19 item 11, with the fake solver: it always answers the moves that undo the
@@ -83,7 +83,10 @@ describe('Solve', () => {
     await solveIt(user)
 
     await user.click(control('Play'))
-    await waitFor(() => expect(screen.getByText('Done. Your cube is solved.')).toBeTruthy())
+    await waitFor(
+      () => expect(screen.getByText('Done. Your cube is solved.')).toBeTruthy(),
+      PLAY_THROUGH,
+    )
     expect(showing()).toEqual(asModel(solved()))
     // It stops by itself at the end rather than waiting to be paused.
     expect(control('Play').disabled).toBe(true)

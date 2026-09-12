@@ -4,7 +4,7 @@ import { solved } from '../model/cube'
 import { toText } from '../model/cube-text'
 import { sticker } from '../model/geometry'
 import { FIXED_SCRAMBLE, applyMoves, undo } from '../model/moves'
-import { boxRows, control, markedRow, renderApp, stickerAt } from '../test/dom'
+import { PLAY_THROUGH, boxRows, control, markedRow, renderApp, stickerAt } from '../test/dom'
 
 const SCRAMBLED = applyMoves(solved(), FIXED_SCRAMBLE)
 const SOLUTION = undo(FIXED_SCRAMBLE)
@@ -33,7 +33,10 @@ describe('the keyboard over a solution', () => {
 
     await lookAway(user)
     await user.keyboard(' ')
-    await waitFor(() => expect(screen.getByText('Done. Your cube is solved.')).toBeTruthy())
+    await waitFor(
+      () => expect(screen.getByText('Done. Your cube is solved.')).toBeTruthy(),
+      PLAY_THROUGH,
+    )
   })
 
   it('says nothing while the colour menu is open', async () => {

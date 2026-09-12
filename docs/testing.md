@@ -75,11 +75,30 @@ time in it is over before anything can look at it.
 Nothing else is faked. The provider, the model, the validator, the storage and the
 screen are the code that ships.
 
+## The scenes are not tests
+
+`src/dev/` holds the six scenes of spec 15.1, which open the app in a fixed state
+from the address bar: `?scene=scrambled&view=far&theme=light&speed=slow`. They are a
+tool for LOOKING at the app, not a way of setting it up for a test, and they exist
+only in a development build.
+
+A test never uses one to reach a state it could reach by clicking. Two things do use
+them, both honestly. `scenes.test.ts` checks each scene is still the thing it says it
+is, because a scene that quietly drifted would take every screenshot with it.
+`apply-scene.dom.test.tsx` checks the writing to storage, which is how a scene
+reaches the screen, and then renders the app to see it arrive. Neither renders `App`
+itself, because `App` builds the real solver.
+
 ## The rules this suite keeps
 
 - **No snapshots.** A snapshot records what the code did, not what it should do, and it
   is updated by pressing a key.
 - **No fake timers.** Waiting is done with `vi.waitFor`, on the thing being waited for.
+  Its default ceiling is one second, which is plenty for one state change and not
+  always enough for a chain of them. The two tests that play a whole nineteen-move
+  solution pass `PLAY_THROUGH` from `src/test/dom.tsx` instead, which says five
+  seconds and says why. A ceiling is not a wait: nothing pays it unless the machine is
+  busy, and a test that has really hung still fails.
 - **No worker in the DOM suite, ever**, per the guard above.
 - **Under twenty seconds.** The whole suite, both projects, on this machine. The rule
   exists for one reason: a bar nobody waits for is a bar nobody runs, so the suite has to
@@ -99,8 +118,9 @@ screen are the code that ships.
 ## Writing one
 
 `src/test/dom.tsx` has the helpers. Today that is `renderApp`, which renders the app and
-returns a `user-event` user. From phase 2 it puts the real provider around the screen
-with zero durations, and from phase 3 with the fake solver.
+returns a `user-event` user, plus `stickerAt`, `colourAt`, `swatch`, `menuItem`,
+`status`, `control`, `boxRows` and `markedRow`. From phase 2 `renderApp` puts the real
+provider around the screen with zero durations, and from phase 3 with the fake solver.
 
 One thing to know. `src/test/dom-setup.ts` empties `localStorage` after every test, so
 each test starts from a fresh install unless it writes storage before `renderApp`.

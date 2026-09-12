@@ -13,9 +13,12 @@ the theme toggle, the two test projects) built 2026-09-11. Phase 1 (the model, t
 validator, the vendored solver with its worker, the storage helpers) built 2026-09-12,
 with nothing new on screen. Phase 2 (the cube drawn in CSS 3D, the picker, the colour
 menu, the validation sentences, Reset and the two views) built 2026-09-12. Phase 3
-(Solve, Hint, the box, the steps and the layer animation) built 2026-09-12; a physical
-cube has not yet been solved by following the screen. Phase 4 is next: the scenes, the
-probe and the layout pass.
+(Solve, Hint, the box, the steps and the layer animation) built 2026-09-12, and Nick
+solved a real cube by following the screen the same day. Phase 4 (the scenes, the
+probe, the layout pass and painting over a filled sticker) built 2026-09-12: the
+app now fits the 800 by 1000 window with a solution in the box, and any screen
+state opens from the address bar in a development build. Phase 5 is next: the
+Windows app and the installer.
 
 ## Documents
 
@@ -125,6 +128,12 @@ probe and the layout pass.
   outright. Any number about time, and any check about motion, is taken with the
   tab fronted, and a check about motion is better asked in arithmetic
   (`turn-direction.test.ts`) than by eye.
+- **A pane screenshot can show the previous page for minutes.** At phase 4 a
+  navigation to `?theme=light` left the pane capturing the old dark frame through
+  scrolls, waits and repeated captures, while `getComputedStyle` said the page was
+  light. A real click on the theme toggle made it capture properly. A screenshot is
+  not evidence on its own: read the computed styles beside it, believe the styles
+  when the two disagree, and force a repaint with a click.
 - **The pane's viewport emulation sends no `resize` event.** Anything that measures
   the fit rule after a `resize_window` must reload the page first, or the scene keeps
   its old size and the numbers lie.

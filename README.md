@@ -10,11 +10,15 @@ code base.
 
 ## Running it
 
-Phase 0 is built: the page shows the header (the name, the version and the theme
-toggle) and nothing else yet. These commands work now:
+Phases 0 to 4 are built: the cube is on the screen, you can paint it, and Solve and
+Hint work. These commands work now:
 
 - `npm install`, then `npm run dev` and open `http://localhost:5190`. The port is
   fixed: if something else holds 5190 the command fails rather than moving.
+- In a development build the address bar can open the app in a fixed state, which is
+  how its pictures are taken: `http://localhost:5190/?scene=scrambled&view=far&theme=light&speed=slow`.
+  The six scenes are `blank`, `solved`, `scrambled`, `mirrored`, `partial` and
+  `solution` (spec 15.1). None of it is in a built app.
 - `npx vitest run` runs both kinds of test (see [docs/testing.md](docs/testing.md)).
   `npx tsc -b` type-checks. `npm run build` makes `dist/`, and `npm run preview`
   serves it on `http://localhost:5191`.

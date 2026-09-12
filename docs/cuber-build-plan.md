@@ -516,7 +516,7 @@ only build config. The iPad phase is parked by ruling.
 | 1 - the model, the validator and the solver | Done, 2026-09-12 |
 | 2 - the cube on screen, and entering the colours | Done, 2026-09-12 |
 | 3 - Solve, Hint, the box and the animation | Done, 2026-09-12 (the physical cube waits for Nick) |
-| 4 - scenes, the probe and the layout pass | Not started |
+| 4 - scenes, the probe and the layout pass | Done, 2026-09-12 |
 | 5 - the Windows app and the installer | Not started |
 | 6 - the iPad Home Screen app | Waits for Nick |
 
@@ -1154,3 +1154,165 @@ phase 4's box 4.4.
 - **Raised by Nick at the same time: a second cube with non-standard colours.**
   Recorded in spec section 16 as a later phase with a design sketch; the decision
   to wait, and why, is there.
+### Phase 4 - builder notes (2026-09-12)
+
+Boxes 4.1 to 4.6 are ticked. Four commits: `9fd1304` painting over a filled sticker,
+`86b91a2` the scenes, `cfa4aa2` the probe and London's `packaged-eval.mjs`, `a2ccebb`
+the layout pass. The bar at the end: 33 files, 182 passed and 2 skipped in about 8
+seconds, `tsc -b` clean, `npx oxlint` silent, `npm run build` clean, no em dashes
+under `src/`.
+
+**The probe, at the three viewports of spec 15.2.** Every number is
+`scripts/probes/layout.js` run in the pane with the tab in front, after the layout
+pass, on the `solution` scene (nineteen moves in the box), which is the tallest the
+page gets. Boxes are `x, y, width, height`.
+
+| | 800 by 1000 | 820 by 1180 | 1180 by 820 |
+|---|---|---|---|
+| `.app-header` | 40, 24, 720, 45 | 50, 24, 720, 45 | 254, 24, 672, 45 |
+| `.picker` | 578, 73, 182, 151 | 588, 73, 182, 151 | 729, 73, 182, 151 |
+| `.scene` | 200, 228, 400, 400 | 210, 228, 400, 400 | 443, 228, 280, 280 |
+| `.status` | 289, 674, 221, 24 | 344, 674, 133, 24 | 513, 554, 140, 24 |
+| `.box` | 40, 702, 720, 265 | 50, 702, 720, 265 | 254, 582, 657, 265 |
+| `scrollWidth` / `innerWidth` | 800 / 800 | 820 / 820 | 1180 / 1180 |
+| `scrollHeight` / `innerHeight` | 1000 / 1000 | 1180 / 1180 | 820 / 820 |
+| `sceneSquare` | true | true | true |
+
+The two numbers of C20 hold at all three: nothing scrolls sideways, and the scene is
+square and never under 280. The page does not scroll at all at 800 by 1000: the
+content comes to 991 in a 1000 window, nine to spare. At 1180 by 820 the page itself
+still does not scroll, because the tall-window rule in `app.css` pins the shell and
+lets `main` scroll inside it. `main` is 774 tall in 723, so 51 pixels scroll within
+the shell, which is what that rule is for and what spec 4.1 allows.
+
+Checked with the empty box as well (`blank`, `solved`, `mirrored`, `partial`): the box
+is 220 rather than 265 and nothing else moves, at every viewport. Both themes at 800
+by 1000, and the `scrambled` scene in both views, which load with no animation at all.
+`view=far` comes up on the far side with the button already reading "Show the first
+side", and the two cube transforms are exact opposites, as they should be.
+
+**The layout pass took steps 1 and 2, not step 3.** It needed 75 pixels and found 84.
+
+- Step 1, the gaps, 44: the header's rule 8 and 8 to 4 and 4 (8), `.screen`'s four
+  gaps 8 to 4 (16), `.box` padding 12 to 8 top and bottom (8), the control row's rule
+  8 and 8 to 4 and 4 (8), the holding line's margin 8 to 4 (4).
+- Step 2, `SCENE_MAX` 440 to 400, 40. The cubie goes 91 to 83. Spec 4.1's table, its
+  fit rule and spec 11.1 are updated.
+- Step 3 was not needed. The box keeps every row it had, which matters because of the
+  finding below.
+
+**`fit.ts` was guessing, and that is why the window did not fit.** Its budget was five
+estimates and three were wrong by a lot: the picker is 151 tall, not 92; the box with
+a solution in it is 265, not 220; the header is 45, not 56. The estimates said a 440
+scene fitted 1000 pixels of window. It did not, by 75. Every constant is now the
+probe's number with the box it came from named beside it, and `fit.test.ts` carries
+the numbers that budget now gives.
+
+| | before | after | where the number comes from |
+|---|---|---|---|
+| `HEADER` | 56 | 45 | `.app-header` |
+| `PICKER` | 92 | 151 | `.picker` |
+| `VIEW_BUTTON` | 40 | 38 | the view button |
+| `STATUS` | 24 | 24 | `.status` |
+| `BOX_MIN` | 220 | 265 | `.box` with nineteen moves |
+| `GAPS` | 40 | 20 | the header's margin and `.screen`'s four gaps |
+| `SCENE_MAX` | 440 | 400 | the pass above |
+
+**The bundle carries no scenes, and the static import was enough for most of it.**
+`?scene=`, `mirrored`, `sceneCube` and `applyDevScene` are all absent from
+`dist/assets/*.js` after `npm run build`. No dynamic import was needed for
+`apply-scene.ts`: `App` reaches it only inside `import.meta.env.DEV`, and rollup drops
+the whole module. `use-dev-scene.ts` was different, because `Shell` has to call a hook
+every render, so a caller's guard would be a conditional hook. The guard went inside
+instead, on the line the scene name is tested on, and what survives is an empty hook
+of about ninety bytes: `useCube`, a `useRef`, and a `useEffect` with an empty body. No
+scene word is in it. That is the smallest honest answer. A component rendered behind
+the same constant would remove the ninety bytes and put a component in `src/dev/`,
+which the chip does not want.
+
+**What the mirrored scene shows.** Spec 15.1 says the URF corner is "rotated the wrong
+way". A rotation is a twist: the corner is still a real corner, so on a complete cube
+it is rule 10, "One corner is twisted", whose sentence carries no stickers to outline.
+Swapping two of the three stickers instead gives the mirror image of a corner, which
+is no piece in any turn, so rule 5 fires: "That corner is not a real piece. Check its
+three colours.", with stickers 8, 9 and 20 outlined, which are exactly
+`CORNERS[0].stickers`. Seen in the pane in both themes. The outline is a 2 px solid
+rule in the theme's warning colour, and it reads clearly against every sticker colour.
+
+**Box 4.5, painting over, seen in the pane.** On the scrambled scene, red selected,
+one click on a blue sticker: the sticker went red, the status line read "There are ten
+red stickers. A cube has nine of each.", ten stickers were outlined and all ten were
+red, the picker showed red at 10/9 and blue at 8/9, and Solve went off. So
+`checkPartial`'s rule 1 is now reachable on screen, which it never was before.
+
+**A phase 2 fault, found by box 4.5's test and fixed with it.** A right click was
+arming the flag that swallows the click a long press leaves behind. A right click
+sends no click of its own, so the flag stayed armed and ate the user's next real click
+on that sticker: right click a sticker, choose a colour, then click it, and nothing
+happened. Only a press arms it now. The test that found it is in
+`entering.dom.test.tsx` and it was shown red first.
+
+**What was decided.**
+
+- The refusal sentence, "Red is already on nine stickers.", lives beside `paint` in
+  the provider rather than in `validate.ts`. `validate.ts` holds the rules about
+  whether a cube is possible; this is the rule `paint` applies about what a click may
+  do, and `paint` is the only place that refuses.
+- The notice takes the status line above the solver's word and below a view change's
+  sentence, and it is cleared by the next paint, Reset or view change.
+- A swatch at nine keeps its count, in the faint colour, rather than losing it or
+  being greyed. Grey said "you cannot have this", which is no longer true.
+- `discard.dom.test.tsx` now paints with a click rather than using Clear, because the
+  path it was written around (only Clear can change a complete cube) no longer exists.
+- The three storage keys moved into `src/storage/prefs.ts`, which owns storage, so the
+  scenes and `theme.ts` name them in one place.
+
+**Two things the orchestrator may want to rule on.**
+
+1. **Spec 4.1 promised five moves visible and the box shows 4.3.** `.moves` is capped
+   at 8.4em, which was written for a 1.68em row; a row is actually 1.94em, because the
+   move's letter is a monospace chip with a taller line box. So four rows show whole
+   and a fifth shows about a third of itself. This is left as it is, and spec 4.1 now
+   says so: the part row is a useful thing to see, because it says there is more, and
+   making it a true five would have cost 21 more pixels the window does not have.
+2. **The column is 720 wide under 900 px of window and 672 over it.** The tall-window
+   rule adds `box-sizing: border-box` to `.app`, so above 900 by 700 the 720 maximum
+   starts including the 24 padding on each side. It has been that way since phase 0
+   and nothing looks wrong either way, but it is one name for two widths.
+
+**Two smaller notes.** Solve's tooltip and the status line can describe the same cube
+with different sentences: after painting red over blue, the line said rule 1 ("ten red
+stickers") and the tooltip said rule 4 ("An edge cannot have red and orange"). Both are
+true. The line reports the first thing wrong while entering, the tooltip reports what
+`validate` says. And the nine pixels of headroom at 800 by 1000 were measured in a
+browser; the Tauri window's 1000 may not all be page, so phase 5 should measure it
+again before trusting it.
+
+**A fourth pane lesson, and it is a nasty one.** After navigating to a URL that changes
+the theme, the pane's screenshot kept showing the PREVIOUS page's frame, for minutes,
+through scrolls and waits and repeated captures, while `getComputedStyle` said the page
+was light. A real click on the theme toggle made it capture properly. So a screenshot
+from this pane is not evidence on its own: read the computed styles as well, and if the
+two disagree, believe the styles and force a repaint with a click.
+
+**Phase 3's flaky test is understood and fixed, not re-run until green.** It failed
+once here, in `keys.dom.test.tsx`, with the dev server and the pane both busy, and the
+failing run took 2.9 seconds. The cause is `waitFor`'s default one-second ceiling. The
+assertion waits for a whole nineteen-move solution to play, and although `speedScale`
+is 0, each move is still a timer the effect sets, a turn that waits, and a render
+between them: about forty turns of the event loop, a tenth of a second when the machine
+is quiet. So the two tests that play a solution through now pass `PLAY_THROUGH` from
+`src/test/dom.tsx`, which is five seconds with the reason written beside it. Nothing
+pays that unless the machine is loaded, and a test that has really hung still fails.
+Eight runs since, three of them the whole suite: all green.
+
+**What was asked of Nick.** Nothing.
+
+**The reuse and duplication review** found one fork and one judgement call. The fork:
+`sceneFromLocation` needed "one of a fixed set of words, or a fallback", which
+`readOneOf` already did for storage, so the pure half is now `oneOf` in `prefs.ts` and
+both ask it. The judgement call: `applyMoves(solved(), FIXED_SCRAMBLE)` is written out
+in six places, five of them phase 3 test files and the sixth `scenes.ts`. It was left
+alone on purpose. It is not an algorithm forking, it is one call to two named exports,
+and the only single home that would serve both would have `src/dev` importing test code
+or the tests importing dev code. Either is worse than the line.

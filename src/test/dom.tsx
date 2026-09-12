@@ -21,6 +21,19 @@ import { fakeSolver } from './fake-solver'
 /** Fast enough not to wait, slow enough that each step can be seen in turn. */
 export const QUICK: Durations = { movement: 0, pause: 0, check: 0, arm: 3000, speedScale: 0 }
 
+/**
+ * How long to wait for the cube to play a whole solution.
+ *
+ * `speedScale` is 0, so each of the nineteen moves is a zero-millisecond
+ * timer, but it is still a timer: the play effect waits, the turn waits, and
+ * React renders between them, which is about forty turns of the event loop.
+ * That is a tenth of a second on a quiet machine and was over `waitFor`'s
+ * default second on a busy one, which is the flake the phase 3 notes listed as
+ * a watch item. The ceiling is not a wait: nothing pays it unless the machine
+ * is loaded, and a test that really hangs still fails.
+ */
+export const PLAY_THROUGH = { timeout: 5000 }
+
 export function renderApp(
   options: { durations?: Partial<Durations>; createSolver?: () => Solver } = {},
 ) {
