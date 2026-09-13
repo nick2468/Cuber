@@ -27,7 +27,10 @@ banner, the icon files and the deploy document) built 2026-09-12 at version
 1.1.0: the built app opens and solves with the server stopped. What is left of it
 is Nick's box 6.6: publish to Cloudflare Pages, add it to the iPad Home Screen,
 and solve a cube in aeroplane mode. His steps are in
-[docs/cuber-deploy.md](docs/cuber-deploy.md).
+[docs/cuber-deploy.md](docs/cuber-deploy.md). **Version 1.1.1**, 2026-09-14:
+Nick saw the layer turns sliding off the cube, and they were, from phase 3
+onward. One CSS line, and a standing hazard below says what to watch for. The
+1.0.0 he installed carries the fault, so 1.1.1 has its own installer.
 
 ## Documents
 

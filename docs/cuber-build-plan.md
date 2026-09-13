@@ -6,6 +6,8 @@ real cube by following the screen on 2026-09-12, and installed, solved and
 uninstalled the built app the same day. Version 1.0.0 is accepted. Phase 6, the
 iPad app, is built at version 1.1.0 and passed gate 6 for the build; box 6.6, the
 iPad itself, is Nick's and needs the site published first (`docs/cuber-deploy.md`).
+**The current version is 1.1.1**, which fixes the layer turn's pivot: the notes
+after phase 6's say what was wrong and how it was measured.
 
 Read [the specification](cuber-spec.md) first. It says what the app does. This
 document says what gets built, in what order, and how we know each part is finished.

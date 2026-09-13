@@ -9,7 +9,7 @@ It runs as an installed Windows app and as an iPad Home Screen app, from one cod
 
 ## Running it
 
-Phases 0 to 6 are built: the app is complete, version 1.1.0, with a Windows installer
+Phases 0 to 6 are built: the app is complete, version 1.1.1, with a Windows installer
 and a Home Screen app that works with no internet. These commands work now:
 
 - `npm install`, then `npm run dev` and open `http://localhost:5190`. The port is

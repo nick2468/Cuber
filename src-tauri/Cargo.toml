@@ -1,7 +1,7 @@
 # Origin: London src-tauri/Cargo.toml, adapted: this app's names, and no plugin crates.
 [package]
 name = "cuber"
-version = "1.1.0"
+version = "1.1.1"
 description = "Solves a Rubik's Cube from its colours"
 authors = ["Nick"]
 edition = "2021"
