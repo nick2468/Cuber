@@ -179,3 +179,13 @@ and solve a cube in aeroplane mode. His steps are in
   `--prefix` in `.claude/launch.json` is safe because it comes before `run`.
 - **The uninstall hook deletes a folder.** Its guard is copied from Tauri's own block
   and is not optional. `scripts/check-uninstall-hook.mjs` proves all four cases.
+- **A rotation needs a `transform-origin`; a translation does not.** `.cube` is a
+  zero-size point at the centre and a `.cubie` has no `left` or `top`, so a cubie's
+  box starts at that point and its default origin is half a cubie down and right of
+  the cube's axes. Translations ignore the origin, so the cube at rest drew
+  correctly and the fault was invisible until a layer turned: the layer then swung
+  about a point off centre and slid off the cube (Nick, 2026-09-14). `scene.css`
+  sets `transform-origin: 0 0` and `turn-direction.test.ts` guards the rule by
+  reading the file, because jsdom has no layout and no cascade and no other test
+  can see it. Anything new that ROTATES inside the scene needs its pivot checked in
+  the pane, not reasoned about.

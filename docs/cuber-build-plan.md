@@ -1751,3 +1751,60 @@ others and saying what drift would look like. Nothing else new is duplicated.
 - **Passed for the build, with box 6.6 open for Nick**, whose steps are in
   `docs/cuber-deploy.md` in order: the repository, the Cloudflare project, the
   domain, the Home Screen, aeroplane mode.
+
+### After phase 6 - the layer turned about the wrong point (2026-09-14)
+
+**Nick, watching the solution play: "the rotating animations of the cube moves are
+out of alignment with the cube."** He was right, and it had been wrong since phase
+3. One line of CSS fixes it.
+
+**What was wrong.** `.cube` is a zero-size point at the scene's centre and a
+`.cubie` has no `left` or `top`, so a cubie's border box starts at that point and
+runs one cubie down and right. Its default `transform-origin` is the middle of
+that box, which is half a cubie away from the cube's own axes in both x and y.
+`cubieTransform` puts the layer rotation first in the chain, so the nine cubies of
+a turning layer swung about that displaced point: the layer arced off the cube and
+came back, and the picture jumped when the move committed.
+
+**Why nothing caught it.** Translations are unaffected by `transform-origin`, so
+the cube at rest was drawn perfectly and every screenshot through phases 2 to 6
+looked right. `transforms.test.ts` checks the transform STRINGS, which were
+correct. `turn-direction.test.ts` checks the DIRECTION of all eighteen moves in
+arithmetic, and it is correct too, but it turns each place about the cube's centre
+and so quietly assumed the very thing that was untrue. The gap was not in any
+file's logic: it was in a CSS default that no test in this project can see, since
+jsdom has neither layout nor a cascade. The plan's rule 7 says to look at what a
+person can see, and this is the shape of thing that rule exists for.
+
+**Measured in the pane, at a 59 px cubie.** A turn about the cube's own axis must
+map the nine places of a layer onto themselves. With the old origin the nine
+landed 26 to 34 px from any real place, and two of them nearest the same place,
+which no rotation about a real axis can do. With `transform-origin: 0 0` all three
+axes give an exact permutation: nine cubies onto nine distinct places, worst miss
+2.1 px, which is what perspective costs an axis-aligned bounding box of a
+projected 3D box (the F layer, whose cubies all share a depth, misses by 0.00).
+
+Seen as well as measured. Held at a full 90 degrees, the old origin shows the
+bottom layer slid down and left with a dark band open between it and the middle
+layer; the fix shows a solid cube, flush on every face, indistinguishable from a
+settled one. That is what the end of a turn has to look like, because the next
+thing that happens is the commit, and the commit is only invisible if the turned
+pose already matches the drawing that replaces it.
+
+**One thing that looks like a fault and is not.** Half way through a turn the
+layer looks gappy, and you can see through it. That is spec C4 working as
+designed: a cubie carries only the stickers on its OUTSIDE, so the faces that
+turn to point outwards mid-turn do not exist, and `backface-visibility: hidden`
+hides the ones now facing away. It is there with the fix and without it. Worth
+knowing before someone "fixes" it by drawing the cube's inside.
+
+**The fix.** `transform-origin: 0 0` on `.cubie` in `scene.css`, with a comment
+saying what it is load-bearing for. `turn-direction.test.ts` gains a test that
+reads `scene.css` and fails if the rule goes, because its own arithmetic depends
+on it and nothing else in the suite can. That is a weak check of a strong
+assumption, and better than the nothing that was there. Shown red against a
+mutant that removed the line before it was trusted.
+
+Nothing else changed. No direction, no sign, no transform string, and no
+behaviour the model can see: the suite was green before and after, which is
+itself the point. This was never a bug the tests could have had an opinion about.

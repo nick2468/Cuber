@@ -41,6 +41,29 @@
 .cubie {
   position: absolute;
   transform-style: preserve-3d;
+  /*
+   * Turn about the CUBE's centre, not the cubie's own.
+   *
+   * .cube above is a zero-size point at the centre, and a cubie has no left or
+   * top, so its box starts at that point and runs down and right by one cubie.
+   * The default origin is the middle of that box, which is half a cubie right
+   * and half a cubie down from where the cube's axes actually are.
+   *
+   * Translations ignore the origin, so the cube at rest was drawn correctly and
+   * this was invisible until something rotated. A layer turn then swung the
+   * nine cubies around a point about half a cubie off centre, so the layer
+   * arced away from the cube instead of spinning in place, and the picture
+   * jumped when the move committed. Measured in the pane at a 59 px cubie: the
+   * nine landed 26 to 34 px from any real place, and two of them on the same
+   * one, which no rotation about a real axis can do. With `0 0` all three axes
+   * land the nine exactly on the nine, to within the two pixels that
+   * perspective costs a projected bounding box.
+   *
+   * `turn-direction.test.ts` assumes this: it turns each place about the cube's
+   * centre and asks the model where that sticker went. The rule is load-bearing
+   * and no test can see CSS, so that file guards it by reading this one.
+   */
+  transform-origin: 0 0;
 }
 
 .sticker {

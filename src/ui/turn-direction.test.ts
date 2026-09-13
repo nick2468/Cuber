@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 import { FACES, type Face } from '../model/colours'
 import { solved } from '../model/cube'
@@ -109,5 +110,28 @@ describe('a layer turn', () => {
 
   it('agrees with the drawing about which faces exist', () => {
     expect(Object.keys(NORMALS).sort()).toEqual([...FACES].sort())
+  })
+
+  /**
+   * The one thing above that is not arithmetic: WHERE the browser turns about.
+   *
+   * Every check in this file turns a place about the cube's centre. The browser
+   * turns about the cubie's `transform-origin`, and a cubie's box starts at the
+   * cube's centre and runs down and right, so the default origin is half a
+   * cubie off in x and y and none of the answers above would hold. `scene.css`
+   * sets `0 0` to put it back, and that rule is invisible to every other test
+   * here: jsdom has no layout and no cascade.
+   *
+   * It was a real fault, not a hypothetical one. Until it was fixed the layer
+   * arced away from the cube instead of spinning, and the picture jumped when
+   * the move committed. So the rule is read as text, which is a weak check of a
+   * load-bearing line but a great deal better than none.
+   */
+  it('turns about the cube centre, which scene.css has to say', () => {
+    const css = readFileSync(new URL('./scene.css', import.meta.url), 'utf8')
+    const cubieRule = /\.cubie\s*\{([^}]*)\}/.exec(css)
+
+    expect(cubieRule, 'scene.css has no .cubie rule').not.toBeNull()
+    expect(cubieRule?.[1]).toMatch(/transform-origin:\s*0 0\s*;/)
   })
 })
