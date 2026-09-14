@@ -1,4 +1,5 @@
-import { plainAnswer, type SolveRequest, type WorkerReply } from './solver'
+import { solveFewest } from './fewest'
+import { movesOf, plainAnswer, type Answer, type SolveRequest, type WorkerReply } from './solver'
 import Cube from './vendor/cube.js'
 import './vendor/solve.js'
 
@@ -19,16 +20,24 @@ const scope = self as unknown as {
 Cube.initSolver()
 scope.postMessage({ type: 'ready' })
 
-/** The library's own answer, split into moves: "" when it found nothing. */
-function movesOf(said: string): string[] {
-  return said.split(' ').filter(Boolean)
+/** What the chosen method makes of one cube. */
+function answer(request: SolveRequest): Answer {
+  const cube = Cube.fromString(request.facelets)
+  if (request.method === 'fewest') {
+    // The worker's own clock: the budget is wall time inside this thread, and
+    // nothing on the main thread waits on it except the "Working it out..."
+    // line (spec 7.4).
+    const { moves, note } = solveFewest(cube, () => performance.now())
+    return { ...plainAnswer(moves), note }
+  }
+  return plainAnswer(movesOf(cube.solve()))
 }
 
 scope.onmessage = ({ data }) => {
   let reply: WorkerReply = { type: 'failed' }
   try {
-    const moves = movesOf(Cube.fromString(data.facelets).solve())
-    if (moves.length > 0) reply = { type: 'solution', ...plainAnswer(moves) }
+    const said = answer(data)
+    if (said.moves.length > 0) reply = { type: 'solution', ...said }
   } catch {
     // The library throws rather than answering when it finds nothing. The
     // validator makes that unreachable, and the adapter still hears "failed".

@@ -80,6 +80,16 @@ export function plainAnswer(moves: string[]): Answer {
   return { moves, stages: [], labels: [], note: null }
 }
 
+/**
+ * The library's answer split into moves. It writes them separated by spaces
+ * and gives back "" when it found nothing, which has to read as no moves
+ * rather than as one empty one. Both methods that call the library come
+ * through here.
+ */
+export function movesOf(said: string): string[] {
+  return said.split(' ').filter(Boolean)
+}
+
 /** The real worker. The one browser global in `src/model` and `src/solver` (spec C17). */
 function startWorker(): SolverWorker {
   // A Worker's own `onmessage` takes a full MessageEvent; this adapter reads only `data`.
