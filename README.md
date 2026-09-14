@@ -5,12 +5,19 @@ screen, press Solve, and follow the moves in the box under it. The cube on the s
 turns with each move so you can follow along on the real one. Hint gives you one move
 at a time instead.
 
+Three methods, chosen in the box and remembered. **Quick solve** is about twenty moves
+of computer's shorthand. **Fewest moves** is the shortest answer the same solver can
+find, so a cube scrambled with three turns comes back as those three turns undone.
+**Beginner method** is the layer-by-layer method every guide teaches, about 170 moves
+in seven named stages, so you learn the method rather than just following it.
+
 It runs as an installed Windows app and as an iPad Home Screen app, from one code base.
 
 ## Running it
 
-Phases 0 to 6 are built: the app is complete, version 1.1.1, with a Windows installer
-and a Home Screen app that works with no internet. These commands work now:
+Phases 0 to 7 are built: the app is complete, version 1.2.0, with a Windows installer,
+a Home Screen app that works with no internet, and the three methods. These commands
+work now:
 
 - `npm install`, then `npm run dev` and open `http://localhost:5190`. The port is
   fixed: if something else holds 5190 the command fails rather than moving.

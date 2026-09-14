@@ -959,14 +959,17 @@ Cuber/
       geometry.ts                 sticker index <-> (face, row, column) <-> (x, y, z); the piece tables
       facelets.ts                 colours <-> letters
       validate.ts                 checkPartial, validate (section 6.4)
-      moves.ts                    the eighteen moves, inverse(), applyMove() through the library
+      moves.ts                    the eighteen moves, inverse(), turnFacelets() and applyMove() through the library
       notation.ts                 moveSentence()
+      methods.ts                  the three methods and their words (phase 7)
       views.ts                    viewFaces('near' | 'far'), the two movements of C2
       cube-text.ts                the 54-character remembered form (section 10)
     solver/
       vendor/cube.js, solve.js, cube.d.ts, LICENSE    cubejs 1.3.2, adapted per C5
-      worker.ts                   initSolver on start, solve on request
-      solver.ts                   createSolver(): ready, solve(facelets)
+      worker.ts                   initSolver on start, solve on request, one branch per method
+      solver.ts                   the protocol, and createSolver(): ready, solve(facelets, method)
+      fewest.ts                   solveFewest(): depths 1 upward, bounded (phase 7)
+      beginner.ts                 the macros, the seven stages, solveStage() (phase 7)
     storage/
       prefs.ts                    London's read, write, readOneOf, useRemembered; this app's keys
       paths.ts                    London, cut to isDesktop and LOCAL_FOLDER
@@ -1185,6 +1188,15 @@ The app is done when every line below is true, checked and recorded in
    check with his son's cube.
 6. **Steps**: the five controls and the three speeds work as section 9.2; the cube on
    screen turns the right way for every face; the keyboard works.
+5a. **Quick solve** names today's method, is the one chosen when the app is opened for
+   the first time, and is remembered (section 7.3).
+5b. **Fewest moves** returns exactly the undo of a cube scrambled with a few turns, and
+   when it finds nothing shorter inside its budget it answers with the quick solution
+   and says so in the status line (section 7.4).
+5c. **The beginner method** solves 200 random cubes in the suite, each in under 250
+   moves, with every stage's goal holding where that stage ends; the box shows the seven
+   stages with their names and sentences and labels the named sequences; and a person
+   follows one through on a real cube to the end (section 7.5).
 7. **Hint**: reveals one move at a time; Solve reveals the rest.
 8. **Remembered**: the cube, the theme and the speed survive closing and reopening
    the app.

@@ -56,6 +56,14 @@ second in `initSolver` on this machine (spec C10 estimated four to five). Tests 
 with the moves that undo the fixed scramble. A real solver in the DOM suite would mean a
 worker per test and a second's wait before the first click.
 
+Since phase 7 it answers all three methods with those same ten moves, and gives the
+beginner method one stage over them so the box's headings have something to draw. It
+takes an optional `note`, which is how the fewest-moves fallback sentence is seen
+without waiting five seconds for a real one. What each method actually works out is the
+solver's own business and the string tests cover it: `beginner.test.ts` solves 200
+random cubes, and the fewest-moves cases live in the one slow file beside the vendored
+solver, because they need its tables.
+
 The guard has two halves, so it cannot rot quietly in either direction.
 `worker-guard.dom.test.tsx` puts a `Worker` that throws on being built on the global,
 mounts the whole app and drives it, and asserts nothing ever constructed one.

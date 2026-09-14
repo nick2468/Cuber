@@ -30,7 +30,13 @@ and solve a cube in aeroplane mode. His steps are in
 [docs/cuber-deploy.md](docs/cuber-deploy.md). **Version 1.1.1**, 2026-09-14:
 Nick saw the layer turns sliding off the cube, and they were, from phase 3
 onward. One CSS line, and a standing hazard below says what to watch for. The
-1.0.0 he installed carries the fault, so 1.1.1 has its own installer.
+1.0.0 he installed carries the fault, so 1.1.1 has its own installer. Phase 7
+(three methods: quick, fewest moves, beginner) built 2026-09-14 at **version
+1.2.0**: the method is chosen in the box and remembered, a lightly scrambled
+cube now comes back as its undo, and the beginner method solves layer by layer
+in seven named stages, about 170 moves. The cube moved up beside the picker in
+the same phase, to pay for the second line the choice needs (Nick's ruling).
+What is left is Nick's: follow one beginner solution on a real cube.
 
 ## Documents
 
@@ -92,7 +98,12 @@ onward. One CSS line, and a standing hazard below says what to watch for. The
   `src/model/geometry.ts` is the only place that says which sticker is where. Spec C7.
 - The library's `move` is the only face-turn implementation. The validator is ours
   and runs before anything reaches the library. Spec C6, section 6.4.
-- The solver runs in a web worker, warmed up when the app opens. Spec C10.
+- The solver runs in a web worker, warmed up when the app opens. Spec C10. The
+  worker answers all three methods (spec 7.3): quick through the library's
+  `solve()`, fewest through `fewest.ts`, and the beginner method through
+  `beginner.ts`, which is this app's own code and never calls the library's
+  solver at all. Only the beginner method returns stages and labels; only
+  fewest moves returns a note.
 - The screen is drawn from the provider's state. A layer turn is a web animation on
   the nine cubies (`turn-layer.ts`, cancelled in a layout effect when the move
   commits), then the model applies the move and the cube is redrawn. Spec 9.4.
@@ -104,13 +115,16 @@ onward. One CSS line, and a standing hazard below says what to watch for. The
 
 ## Code quality (applies from the first line, never as a later pass)
 
-- One implementation per algorithm. The homes: the library's `move` (every turn);
-  `geometry.ts` (every "which sticker is where"); `validate.ts` (every rule about a
-  possible cube); `moveSentence` (every sentence); `read`, `write`, `readOneOf` and
-  `useRemembered` in `prefs.ts` (every stored setting); `ColourMenu` (the right-click
-  and the long-press menu); the provider's `paint` (every way a sticker gets a
-  colour). Never fork a second copy, and give any new repeated snippet a single home
-  the moment it appears twice.
+- One implementation per algorithm. The homes: the library's `move` (every turn),
+  reached through `turnFacelets` in `moves.ts` and nowhere else; `geometry.ts` (every
+  "which sticker is where"); `validate.ts` (every rule about a possible cube);
+  `moveSentence` (every sentence); `methodWord` (the three method words); `read`,
+  `write`, `readOneOf` and `useRemembered` in `prefs.ts` (every stored setting);
+  `ColourMenu` (the right-click and the long-press menu); the provider's `paint`
+  (every way a sticker gets a colour); `solveStage` in `beginner.ts` (every search
+  the beginner method does) and the macro table beside it (every named sequence).
+  Never fork a second copy, and give any new repeated snippet a single home the
+  moment it appears twice.
 - Copied files are byte-identical to their origin plus one `Origin:` line; adapted
   files say what changed in that line. Spec C16.
 - `main.tsx` stays free of test-harness code: the dev scenes live in `src/dev/`.

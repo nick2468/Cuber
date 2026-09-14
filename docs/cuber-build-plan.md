@@ -510,34 +510,34 @@ Read first: spec 7.3 to 7.5, 9.5, 10, 8, C12 and C13; `src/solver/worker.ts` and
 `solver.ts`; `src/ui/cube-context.tsx` (`askSolver`, `solve`, `hint`, `Solution`);
 `src/ui/Box.tsx` and `Controls.tsx`; `src/model/moves.ts`, `speeds.ts`, `prefs.ts`.
 
-- [ ] 7.1 `src/model/methods.ts`: `Method` = `quick | fewest | beginner`, `METHODS`,
+- [x] 7.1 `src/model/methods.ts`: `Method` = `quick | fewest | beginner`, `METHODS`,
       `methodWord`. `prefs.ts`: `useMethod`, key `cuber.method`, default `quick`.
-- [ ] 7.2 The worker protocol grows `method` on the request and `stages`, `labels`
+- [x] 7.2 The worker protocol grows `method` on the request and `stages`, `labels`
       and `note` on the reply; `solver.ts`'s `solve(facelets, method)` returns
       `{ moves, stages, labels, note }`; `fakeSolver` answers the fixed undo for
       every method, with one stage for `beginner`.
-- [ ] 7.3 Fewest moves in the worker (spec 7.4): depths 1 upward, limit 20, five
+- [x] 7.3 Fewest moves in the worker (spec 7.4): depths 1 upward, limit 20, five
       seconds, falling back to quick with `note: 'quick'`. Tests: a 1-, 3- and
       6-move scramble return exactly the undo (string test, the slow file); the
       fallback path with a fake clock injected, not a real five seconds.
-- [ ] 7.4 `src/solver/beginner.ts` (spec 7.5): the macros as data, the seven goals,
+- [x] 7.4 `src/solver/beginner.ts` (spec 7.5): the macros as data, the seven goals,
       `solveStage`, `solveBeginner(cube)`. Tests per spec 7.5's last paragraph. The
       200-cube run stays under four seconds or the search limits are tuned and the
       numbers recorded.
-- [ ] 7.5 The provider: `method` from `useMethod`; `askSolver` sends it; the
+- [x] 7.5 The provider: `method` from `useMethod`; `askSolver` sends it; the
       solution keeps `stages`, `labels` and `note`; changing the method discards a
       showing solution (C22); the status line's fallback sentence (7.4).
-- [ ] 7.6 The box: the "Method" fieldset beside Speed; stage headings and sentences
+- [x] 7.6 The box: the "Method" fieldset beside Speed; stage headings and sentences
       between the rows for a beginner solution; label rows before a macro's moves;
       the extra holding sentence for the beginner method; "was already there" lines
       for skipped stages. Hint works over a beginner solution unchanged.
-- [ ] 7.7 DOM tests: the method is remembered; changing it discards the solution;
+- [x] 7.7 DOM tests: the method is remembered; changing it discards the solution;
       a beginner solution shows its stages and labels; the fallback sentence shows.
-- [ ] 7.8 Drive in the pane: each method on the scrambled scene; a three-turn
+- [x] 7.8 Drive in the pane: each method on the scrambled scene; a three-turn
       scramble under fewest moves gives three moves; the beginner method on a real
       cube followed to the end (Nick, or the builder with a cube if one is to hand).
       Record the beginner solution's length on ten random cubes.
-- [ ] 7.9 Version 1.2.0 in three files. Reuse review, docs sweep (spec 17 gains a
+- [x] 7.9 Version 1.2.0 in three files. Reuse review, docs sweep (spec 17 gains a
       line per method; `acceptance.md`; README; CLAUDE.md), commit.
 
 **Done when:** a lightly scrambled cube comes back as its undo under fewest moves, 200
@@ -581,7 +581,7 @@ only build config. The iPad phase is parked by ruling.
 | 4 - scenes, the probe and the layout pass | Done, 2026-09-12 |
 | 5 - the Windows app and the installer | Done, 2026-09-12, installed and uninstalled by Nick the same day |
 | 6 - the iPad Home Screen app | Done, 2026-09-12, the iPad itself waits for Nick |
-| 7 - three methods | Not started, chipped 2026-09-14 |
+| 7 - three methods | Done, 2026-09-14, version 1.2.0; following a beginner solution on a real cube waits for Nick |
 | 8 - non-standard colours | Waits for Nick |
 
 ## Phase notes
@@ -1865,3 +1865,149 @@ mutant that removed the line before it was trusted.
 Nothing else changed. No direction, no sign, no transform string, and no
 behaviour the model can see: the suite was green before and after, which is
 itself the point. This was never a bug the tests could have had an opinion about.
+
+### Phase 7 - three methods (2026-09-14, version 1.2.0)
+
+Built from `chips/phase-7-three-methods.md` on `main`, five commits on top of
+`8366511`. The suite went from 36 files and 191 tests to 40 files and 236 tests,
+and from 7.7 to about 12 seconds, of which the 200-cube beginner run is four.
+
+| Commit | What |
+|---|---|
+| `bfe707c` | Name the methods and widen the solver's reply |
+| `8ffc032` | Find the fewest moves the two-phase method can |
+| `ab1d5bf` | Solve layer by layer with the beginner method |
+| `61efb5d` | Choose the method in the box, with stages |
+| this one | Set version 1.2.0 with three solving methods |
+
+**What the methods do, measured.** On the fixed scramble, which is ten turns: quick
+19 moves, fewest 10, beginner 146. A three-turn scramble under fewest moves gives
+exactly those three turns undone, `F' U' R'`. Ten random cubes under the beginner
+method: 141 to 192 moves, 167 on average. The numbers are in `docs/acceptance.md`
+under "Three methods".
+
+**One thing the plan had wrong about the library.** The chip's verified facts said
+`solve(maxDepth)` "returns the first solution found, or `''` when none fits". It does
+not: when nothing fits it leaves its own `solution` null and then reads `.length` off
+it, so a six-turn cube asked for a one-move answer throws a TypeError out of
+`solveUpright`. The worker has caught that since phase 1 for exactly this reason, and
+`tryDepth` in `fewest.ts` now catches it at the one place that can tell an empty depth
+from a real fault: the quick call after the loop is deliberately not wrapped. The
+three undo tests were red on this before the catch went in.
+
+**Where the plan's shape did not fit: stage 7.** Spec 7.5 gives stages 4 to 7 the same
+treatment, "twelve items of the stage's macro plus the three U turns". That works for
+stages 4, 5 and 6. It cannot work for stage 7: four corners, each needing up to four
+goes of the twist move with a turn of the top between them, is a sequence of up to
+twenty items over five choices, and a breadth-first search of that does not finish in
+any time worth waiting. The guide does not search either. So stage 7 is the guide's own
+loop: twist the corner at the front-right until it is right, turn the top, and go again.
+`solveStage` still does all the searching; it is just called five times rather than once.
+
+The test for "right" is that the corner in that slot shows the top colour on top, and
+that is safe on its own rather than by luck. The twist move leaves a BOTTOM corner in
+that slot after an odd number of goes (verified: `URF<-DFR`), and no bottom corner
+carries a top-colour sticker at all, so the test can only pass after whole pairs. That
+is what the specification means by "done in pairs". The arithmetic also says why the
+first two layers come back at the end and not before: each pair twists one top corner
+and turns three of the lower edges, and the four top corners' twists add to a multiple
+of three, so the total number of goes is a multiple of six and both effects cancel
+exactly. The box's sentence, "the cube looks broken until the last corner; that is
+normal", is the same fact in words.
+
+**What made the search finish.** The first version was a plain breadth-first search
+that looked at each whole cube once. It solved every cube, but about one cube in fifty sent the
+fourth cross edge four or five moves deep, which is 18^5 sequences, and a 200-cube run
+swung between 9 and 27 seconds. Two changes fixed it, both of which say something true
+about cubes rather than being tricks:
+
+1. **A goal knows what it can tell apart.** A stage about four edges cannot see the
+   other sixteen pieces, so two cubes whose four edges sit the same way are the same
+   cube as far as that stage goes, and a face turn keeps them the same, because a turn
+   moves whole pieces and where a piece goes depends only on where it was. Marking the
+   rest out bounds the search by the places four edges can be rather than by 18 to the
+   power of the depth. 200 cubes went from 9 to 27 seconds to a steady 4.4, and the
+   worst single cube from seconds to 98 ms.
+2. **Two turns of one face in a row are one turn of that face**, so a shortest answer
+   never has them. Skipping them took 4.4 seconds to 3.7. It applies to plain moves
+   only: a named sequence beginning with the face the move before ended on is an
+   ordinary thing to do.
+
+The suite's test asserts the run is under eight seconds rather than the four it takes,
+because it is a test about solving cubes and should not fail when the machine is busy.
+The four is recorded here and in the test's own comment.
+
+**The cube moved up beside the picker (Nick, 2026-09-14).** The Method fieldset does
+not fit beside the buttons and Speed at 720 wide, so the control row wraps and the box
+grew 51 pixels, which the 800 by 1000 window did not have: with a nineteen-move
+solution the page scrolled by 42. Three ways out were put to Nick - a smaller cube, a
+shorter list of moves, or a page that scrolls - and he asked a better question than any
+of them: can the cube move up into the empty space to the left of the picker? It can.
+The picker is 151 tall and the cube is never shorter than 280, so side by side the
+picker costs the page no height at all, and `fit.ts` takes its width instead. The
+Windows window now has 113 pixels spare where it had 9, and an iPad held sideways gets
+a 333 cube and no scrolling, where before it got the smallest cube allowed and a page
+that scrolled. This is a change to spec 4's drawing and should be folded into the
+specification: the picker is still at the top right, but the cube is beside it rather
+than under it.
+
+The cube is not flush against the left edge, because `.scene` carries `margin: 0 auto`
+from phase 2 and centres itself in the space the row leaves it. It looks balanced and
+it was left alone, but it is worth knowing that the position is that margin's doing and
+not the row's.
+
+**Three gaps between the documents and what was built, none of them blocking.**
+
+1. **"in five seconds" is not how long it waits.** A fully scrambled cube under fewest
+   moves takes 7.8 seconds before the status line says "No shorter answer was found in
+   five seconds, so this is the quick one." The budget is checked BEFORE each depth, as
+   spec 7.4 says, so the depth already running when the clock passes five seconds runs
+   to its end, and there is no way inside the library to stop a search part way. The
+   sentence is the specification's words and was left as it is. If it bothers anyone,
+   the honest fix is to change the words, not the clock.
+2. **Stage 7's limit of twelve** in spec 7.5's table does not apply, for the reason
+   above. The limits that are in force: stage 1, six moves per edge; stages 2 and 3,
+   eight items per piece; stages 4 to 6, twelve items; stage 7, four goes of the twist
+   move per corner and one turn of the top at the end. No cube of the 200 has ever come
+   near any of them.
+3. **"The white cross was already there"** is the specification's one example of a
+   skipped stage's line. Generating that shape for all seven gives "The yellow corners
+   in place was already there", which is not English. Each stage carries its own
+   sentence instead: "The white corners were already in place", "The middle layer was
+   already done", and so on. The words are in `WORDS` in `beginner.ts`.
+
+**Decisions of code shape, taken here.**
+
+- `beginner.ts` works in facelets, not in coloured cubes. A sticker is in place when
+  its letter is the letter of the face it sits on, which is exactly the specification's
+  "carries the colour of that sticker's face in the scheme" once colours have become
+  letters, and `SOLVED_FACELETS` is that test one character at a time. The search turns
+  a cube a few thousand times per solve and could not afford to go through colours and
+  the validator each time.
+- So `moves.ts` gained `turnFacelets`, and `applyMoves` now goes through it too: one
+  home for turning a cube through the library (C6), with a facelet door on it. Nothing
+  else in the app reaches the library's `move`.
+- `Stage` in `src/solver/solver.ts` is the solver's stage; `Stage` in
+  `src/ui/transforms.ts` is what the cube is turned to. The two files that handle both
+  import the solver's as `SolutionStage`. The alternative was renaming a phase 2 type
+  the chip put out of scope.
+- The box's `.speeds` CSS became `.choices` and Method uses it too: the same fieldset
+  twice is one home, not two.
+- `Label` carries one string, "<name>: <letters>", as the protocol says. The box splits
+  it at the first colon so the letters get the fixed-width look the moves have, and the
+  colon is put back in CSS. A label with no colon renders as plain words.
+
+**The reuse and duplication review.** Four things were folded together while the phase
+ran rather than afterwards: `movesOf` (the library's answer split into moves) was
+written twice, in the worker and in `fewest.ts`, and moved to `solver.ts` beside
+`plainAnswer`; `turnFacelets` as above; the fieldset style as above; and the goals,
+which started as six separate closures and became `allInPlace(names)` and
+`goalOf(names, reached)`. What is left that repeats and has nowhere better to go: the
+sentences of spec 7.5 appear once in `beginner.ts` and once in the specification, which
+is the same shape as the move sentences and unavoidable; and the seven stage goals are
+stated once in `beginner.ts` and once, independently and from the specification's table
+rather than from the code, in `beginner.test.ts`, which is the point of that test.
+
+**Left for Nick.** Following one beginner solution through on a real cube to the end.
+The suite proves the moves solve the model, and the pane proves the box reads properly,
+but only a person with a cube can say whether the stages teach the method.

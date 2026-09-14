@@ -246,3 +246,87 @@ browser and not mounted inside the Tauri window, so the installed app registers 
 service worker and still updates by installer (spec C21).
 
 **Passed**, 2026-09-12.
+
+## Three methods
+
+Added at phase 7, version 1.2.0, for Nick's ruling Q18. Spec 7.3 to 7.5 and 9.5.
+Driven in the browser pane at 800 by 1000 against the real solver in its worker, with
+the tab in front, on 2026-09-14.
+
+### i. The three methods answer, and differ
+
+On the fixed scramble `R U R' U' F2 D L' B2 U2 R`, which is ten turns:
+
+| Method | Moves | Time to answer |
+|---|---|---|
+| Quick solve | 19 | 109 ms |
+| Fewest moves | 10 | 217 ms |
+| Beginner method | 146 | 109 ms |
+
+Ten more moves than the scrambling took, against exactly the scrambling undone. That
+is the thing Nick asked about, answered.
+
+A three-turn scramble (`R U F`, seeded through `cuber.cube` and reloaded) came back
+from Fewest moves as `F' U' R'`, in 137 ms.
+
+**Passed**, 2026-09-14.
+
+### ii. Fewest moves says when it gave up
+
+A fully scrambled random cube under Fewest moves: the box said "Working it out..." for
+7.8 seconds and the status line then read "Solved in 20 moves. No shorter answer was
+found in five seconds, so this is the quick one." (spec 7.4).
+
+The wait is longer than the five seconds the sentence names because the budget is
+checked BEFORE each depth, so the depth already running when the clock passes five
+seconds runs to its end. That is the specification's own design and there is no way
+inside the library to stop a search part way. Recorded in the phase 7 notes as a gap
+between the words and the clock.
+
+**Passed**, 2026-09-14.
+
+### iii. The beginner method reads as a method
+
+The box shows all seven stages with the specification's names and sentences, in order,
+each heading above its own rows: the white cross, the white corners, the middle layer,
+the yellow cross, the yellow edges, the yellow corners in place, the yellow corners
+turned. Named sequences carry a label above their moves, reading for example "The
+righty move, front-right: R U R' U', four times" with the letters in the same
+fixed-width style the moves use. The holding line carries the extra sentence, "Most
+guides start with white: hold the cube with white at the bottom before you enter it."
+
+Seen in both themes and in both views. Stepping, the marked row and the scrolling of
+the list work over a 146-row solution exactly as they do over a 19-row one.
+
+Ten random cubes: 141, 149, 151, 151, 162, 166, 180, 185, 190 and 192 moves, 167 on
+average, each answered in 51 to 72 ms. The suite's own run of 200 random cubes is in
+`src/solver/beginner.test.ts`.
+
+**Passed**, 2026-09-14.
+
+### iv. Following a beginner solution on a real cube
+
+Nick, or his son, follows one beginner solution all the way through on a physical cube
+and reaches a solved cube. The suite proves the moves solve the model; this proves the
+words and the stages make sense to a person learning the method, which no test can.
+
+**Nick: pending.**
+
+### v. The cube moved up beside the picker
+
+The Method choice needs a second line in the box, which costs 51 pixels the 800 by 1000
+window did not have. Nick ruled that the cube moves up into the empty space beside the
+picker (2026-09-14), which gives back the picker's whole height instead.
+
+The layout probe, with a nineteen-move solution showing:
+
+| Viewport | Scene | `scrollWidth` / `innerWidth` | `scrollHeight` / `innerHeight` |
+|---|---|---|---|
+| 800 by 1000 | 400 square | 800 of 800 | 1000 of 1000 |
+| 820 by 1180 | 400 square | 820 of 820 | 1180 of 1180 |
+| 1180 by 820 | 333 square | 1180 of 1180 | 820 of 820 |
+
+The sideways iPad is better than it was: 333 rather than the smallest cube allowed, and
+it no longer scrolls down at all. Both themes checked at 800 by 1000.
+
+**Passed**, 2026-09-14.
