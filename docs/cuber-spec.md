@@ -63,6 +63,7 @@ stand until he says otherwise. Every ruling is folded into the body.
 | Q15 | Repository | `git init` here. A private GitHub repository `nick2468/Cuber` when Nick wants one. The builder commits on `main` and never pushes. (Taken.) |
 | Q16 | The light bulb | **Nick, in his words: it is a Hint button.** Solve was missing from the drawing, so it goes in the header beside Reset cube (section 4). |
 | Q17 | Window shape | **Nick, in his words: the shape is not important, do what is natural.** One column as drawn, window 800 by 1000 (section 11). |
+| Q18 (2026-09-14) | Solving methods | **Nick asked what the solver follows, after a cube scrambled with a few turns came back with nineteen moves.** It follows Kociemba's two-phase method, which is short but not shortest. Nick ruled: three methods, chosen in the box and remembered. **Quick solve** (today's, named), **Fewest moves** (the same library asked for 1 move, then 2, and so on), and **Beginner method** (layer by layer, the method every guide teaches, so his son can learn it). All three in one phase, phase 7; he reviews at the end. Section 7.3 to 7.5 and 9.5. |
 
 Nick also left to the orchestrator: docs in `docs/`, ports 5190 and 5191, version
 0.1.0 during the build and 1.0.0 at acceptance, the two vitest projects and the
@@ -546,6 +547,143 @@ The moves come back exactly as the library writes them: face letter, then nothin
 
 ---
 
+### 7.3 Three methods
+
+**C22. The user chooses the method, and the default is the quick one.** Nick ruled it
+(Q18). The library's two-phase method stops at the first solution under 22 moves, so a
+cube scrambled with four turns comes back with about nineteen, and its moves are a
+computer's with no stage a person could name. A learner wants stages. A person with a
+lightly scrambled cube wants the undo. So the box offers three methods in a "Method"
+fieldset beside Speed, remembered as `cuber.method` (section 10):
+
+| On screen | Value | What it is |
+|---|---|---|
+| Quick solve | `quick` | Today's solver: the library's `solve()` at its default depth of 22. The default. |
+| Fewest moves | `fewest` | 7.4 below. |
+| Beginner method | `beginner` | 7.5 below. |
+
+Every method returns the same shape to the provider: the list of moves, and for the
+beginner method also its stages and labels (7.5). The controls, the stepping, Hint and
+the animation do not know which method made the solution. Changing the method while a
+solution is showing discards the solution, the way painting does (C12), because the
+solution no longer matches the choice.
+
+### 7.4 Fewest moves
+
+The same library, asked for a solution of at most 1 move, then at most 2, then 3, and
+so on: `Cube.fromString(facelets).solve(depth)` for `depth` from 1 upward, stopping at
+the first non-empty answer. The library's `solve(maxDepth)` returns an empty string when
+nothing fits in that depth. Because each depth is tried before the next, the first
+answer is the shortest the two-phase method can find, and for a cube scrambled with a
+few turns it is exactly the undo of those turns.
+
+The search gets slow past about 14 moves on a fully scrambled cube, so it is bounded
+two ways, both in `src/solver/worker.ts`: a depth limit of 20, and a time budget of 5
+seconds of the worker's clock, checked before each depth. When either runs out, the
+worker answers with the quick solution instead and says so: the reply carries `note:
+'quick'`, and the status line reads "Solved in 19 moves. No shorter answer was found
+in five seconds, so this is the quick one." Otherwise "Solved in 4 moves." as today.
+The box says "Working it out..." for as long as it takes.
+
+**What this promises and what it does not.** It promises the shortest solution the
+two-phase method can find within the budget. It does not promise the true minimum,
+which needs a different and much heavier solver (an optimal solver with large tables)
+and is out of scope. For the case Nick raised, a few scrambling turns, the two are the
+same.
+
+### 7.5 The beginner method
+
+The layer-by-layer method that the official Rubik's guide and nearly every "how to
+solve a cube" page teach, in seven stages, with the well-known short sequences by
+name. It is this app's own code in `src/solver/beginner.ts`, because the library has
+nothing like it. It is long (100 to 150 moves) and that is the point: a person
+following it learns the method.
+
+**No whole-cube turns.** The holding rule (C11) stands: the cube is held as it was
+entered, and every move is one of the eighteen face turns. Guides build the first
+layer on top and then say "turn the cube over"; this method builds the first layer on
+the BOTTOM face as entered, so nothing is ever turned over, and the last layer is the
+top face as entered. The box's holding line for this method adds one sentence: "Most
+guides start with white: hold the cube with white at the bottom before you enter it."
+The method itself works with any colour at the bottom; "white" and "yellow" below mean
+the bottom centre's colour and the top centre's colour.
+
+**The seven stages, each with its goal, its vocabulary and its sentence.**
+
+| Stage | Name in the box | Goal (a test on the sticker model) | Vocabulary the search uses |
+|---|---|---|---|
+| 1 | The white cross | The four bottom edges are in place with both stickers matching their centres. | All eighteen face turns, one edge at a time, with the edges already placed kept in place. |
+| 2 | The white corners | The four bottom corners are in place, all three stickers matching. | `U`, `U'`, `U2`, and the righty move for each of the four slots (below). One corner at a time, keeping the cross and the corners already placed. |
+| 3 | The middle layer | The four middle edges are in place. | `U`, `U'`, `U2`, and the eight insertion moves (below). One edge at a time, keeping the two bottom layers' finished pieces. |
+| 4 | The yellow cross | The four top edges show the top colour on top. | `U`, `U'`, `U2`, and `F R U R' U' F'`. |
+| 5 | The yellow edges | The four top edges are in place. | `U`, `U'`, `U2`, and `R U R' U R U2 R'`. |
+| 6 | The yellow corners in place | Each top corner is in its own slot (any twist). | `U`, `U'`, `U2`, and `U R U' L' U R' U' L`. |
+| 7 | The yellow corners turned | The cube is solved. | `U`, `U'`, `U2`, and `R' D' R D` (applied at the front-right top corner; twice or four times turns that corner; `U` brings the next corner there). |
+
+**The named sequences**, each a macro the box labels. The letters are the eighteen
+face turns only.
+
+| Name | Letters | Where it acts |
+|---|---|---|
+| The righty move, front-right | `R U R' U'` | The corner slot at the bottom front-right |
+| The righty move, back-right | `B U B' U'` | The bottom back-right slot |
+| The righty move, back-left | `L U L' U'` | The bottom back-left slot |
+| The righty move, front-left | `F U F' U'` | The bottom front-left slot |
+| Insert to the right, from face X | `U Y U' Y' U' X' U X` | An edge sitting on top above face X, whose top-layer sticker matches X's centre, going down to X's right-hand slot. Y is the face clockwise after X seen from above (F, R, B, L, then F). |
+| Insert to the left, from face X | `U' Z' U Z U X U' X'` | The same edge going to X's left-hand slot. Z is the face before X in that order. |
+| The cross move | `F R U R' U' F'` | The top face |
+| The edge move | `R U R' U R U2 R'` | The top face |
+| The corner move | `U R U' L' U R' U' L` | The top face |
+| The twist move | `R' D' R D` | The corner at the top front-right |
+
+The four righty moves are one shape seen from the four sides, and the eight insertions
+are two shapes seen from the four sides. The builder writes each as data (a name, the
+letters) and proves each by a test that applies it to a set-up cube and checks the goal
+it serves, rather than by trusting the table: the table is the orchestrator's reading
+of the guides, and a test is cheaper than an argument.
+
+**How the solver works: one search, seven times.** `solveStage(cube, vocabulary, goal,
+limit)` is a breadth-first search over sequences of vocabulary items, up to `limit`
+items long, returning the first sequence whose result passes `goal`. A vocabulary item
+is a single move or a named macro; the search applies it with `applyMoves`. The
+solver runs the stages in order, each stage's goal including every earlier stage's
+goal, so nothing already done is undone. Stages 1, 2 and 3 solve one piece at a time,
+each piece its own search with the goal "this piece placed and everything placed
+before it still placed". Limits: stage 1, six moves per edge; stage 2, eight items
+per corner; stage 3, eight items per edge; stages 4 to 7, twelve items. A search that
+finds nothing within its limit is a fault, not a case: the solver throws, the worker
+answers `failed`, and the test suite is built so that this never happens on 200
+random cubes.
+
+**What the solver returns.** `{ moves, stages, labels }`: the flat list of single
+moves (what the stepping and the animation use, unchanged); `stages`, one per stage
+that needed any moves, `{ name, sentence, from, to }` giving the move indices it
+covers; and `labels`, `{ at, text }` naming a macro at the move it starts on, such as
+"The righty move, front-right: R U R' U', twice". A stage whose goal already holds is
+skipped and listed as done in one line ("The white cross was already there.").
+
+**Stage sentences**, one each, shown under the stage name in the box:
+
+1. "Make a cross on the bottom face: four edges with both colours matching their
+   centres."
+2. "Put each bottom corner in place. A corner waits above its slot on the top layer,
+   then the righty move drops it in; repeat until its colours match."
+3. "Fill the middle layer. Find a top edge with no top colour, turn the top until its
+   front colour matches a centre, then insert it right or left."
+4. "Make a cross on the top face with the cross move. It may take up to three goes."
+5. "Turn the top until two edges match their centres, then the edge move puts the
+   rest right."
+6. "The corner move moves three corners round until each is in its own slot."
+7. "The twist move, done in pairs, turns the corner at the front-right until it is
+   right. Then turn the top to bring the next corner there. The cube looks broken
+   until the last corner; that is normal."
+
+**The tests it must have.** Every macro against a set-up cube; every stage's goal
+against hand-made cubes on both sides of it; the whole method on 200 random library
+cubes ending solved with `applyMoves`, every stage's goal holding at its `to` index,
+and every solution under 250 moves; and the fixed scramble's solution, with its stage
+boundaries, pinned in one test so a change to the search shows as a diff.
+
 ## 8. The instructions
 
 **C11. Every move is a letter and a sentence, and the box says how to hold the
@@ -643,6 +781,24 @@ In a solver, a hint is "just tell me the next move". So:
 Solve and Hint share one solution and one step counter. The only difference is how
 many moves the box shows.
 
+### 9.5 The method choice
+
+A "Method" fieldset in the control row beside "Speed", three radios in this order:
+Quick solve, Fewest moves, Beginner method (spec 7.3). Remembered as `cuber.method`.
+Changing it while a solution is showing discards the solution and empties the box back
+to "Press Solve and the steps appear here." (C22).
+
+With the beginner method the box changes shape: above the rows, the holding line gains
+its extra sentence (7.5); a stage's name and sentence sit as a heading before that
+stage's first row; a label row ("The righty move, front-right: R U R' U', twice") sits
+before a macro's first move; a stage that was already done is one line ("The white
+cross was already there."). The rows themselves, the marked row, the stepping, Play,
+Hint and "Done. Your cube is solved." are unchanged: a beginner solution is a longer
+list with headings in it.
+
+With fewest moves the status line's sentence is 7.4's, and the box says "Working it
+out..." for up to five seconds.
+
 ### 9.4 The animation
 
 Each move turns the nine cubies of that face's layer as one, about the axis through
@@ -672,6 +828,7 @@ browser that refuses storage still runs the app.
 | `cuber.theme` | `dark`, `light` | `dark` |
 | `cuber.speed` | `slow`, `normal`, `fast` | `normal` |
 | `cuber.cube` | 54 characters, one per sticker: `w y r o b g` or `-` for blank | the blank cube with standard centres |
+| `cuber.method` | `quick`, `fewest`, `beginner` | `quick` (phase 7) |
 
 The cube is written after every paint and every step. On start, a stored value that
 is not exactly 54 of those characters is discarded silently and the blank cube is
@@ -991,7 +1148,7 @@ not to" never gets confused with "we forgot". The first three are planned for la
 | Left out | Why, and when |
 |---|---|
 | **Entering the cube from a photo** | Nick's brief calls it a possible enhancement. Later phase: one face at a time, a 3 by 3 grid overlay on the camera image, the app reads the nine colours by nearest sticker colour, the user corrects. Needs a design of its own. |
-| **The beginner method** | Layer by layer in seven named stages, so the user learns to solve rather than copy 20 moves. Later phase if Nick wants it; a lot of code for a second solver. Q4. |
+| **The beginner method** | Ruled in on 2026-09-14 (Q18) with the fewest-moves method: section 7.3 to 7.5, phase 7. No longer left out. |
 | **The iPad Home Screen app** | Section 12. In the plan as the last phase, unticked, until Nick asks. |
 | **A cube with non-standard colours** | Raised by Nick 2026-09-12: his second cube has different colours. Two cases. (a) The same six colours in a different arrangement works TODAY: the centres are editable and the scheme is read from them (5.3, C8). (b) Different colours altogether needs a "Cube colours" setting: six colour inputs (`<input type="color">`, native on WebView2 and iPad) and six short names, one per slot, remembered as `cuber.colours`, with a "Standard colours" button. The model's six colour names become slot identifiers (they already are: `hexOf` is the one home of the hex values and the validator only needs six distinct classes), and the validator's sentences and the stickers' accessible names take the slot's name. Nothing in the solver, the validator, the geometry or the animation changes, which is why it waits until after acceptance: it is a presentation feature that reworks nothing, and doing it before the installer would delay the finished app for a change that costs the same later. Later phase 7. |
 | Scramble button | A dev scene does it for testing. A user has a real cube to scramble. |

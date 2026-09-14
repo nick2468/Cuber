@@ -498,13 +498,66 @@ Read first: `../Conquest/vite.config.ts`, `src/ui/useUpdate.ts`, `UpdateBanner.t
 
 ---
 
+## Phase 7 - three methods: quick, fewest moves, beginner
+
+**Goal: a "Method" choice in the box. Quick solve is today's solver, named. Fewest
+moves returns the undo of a light scramble. The beginner method solves layer by layer
+with named stages and named moves, so a person learns the method. Version 1.2.0.**
+
+Ruled by Nick 2026-09-14 (spec Q18): all three in one phase, and he reviews at the end.
+
+Read first: spec 7.3 to 7.5, 9.5, 10, 8, C12 and C13; `src/solver/worker.ts` and
+`solver.ts`; `src/ui/cube-context.tsx` (`askSolver`, `solve`, `hint`, `Solution`);
+`src/ui/Box.tsx` and `Controls.tsx`; `src/model/moves.ts`, `speeds.ts`, `prefs.ts`.
+
+- [ ] 7.1 `src/model/methods.ts`: `Method` = `quick | fewest | beginner`, `METHODS`,
+      `methodWord`. `prefs.ts`: `useMethod`, key `cuber.method`, default `quick`.
+- [ ] 7.2 The worker protocol grows `method` on the request and `stages`, `labels`
+      and `note` on the reply; `solver.ts`'s `solve(facelets, method)` returns
+      `{ moves, stages, labels, note }`; `fakeSolver` answers the fixed undo for
+      every method, with one stage for `beginner`.
+- [ ] 7.3 Fewest moves in the worker (spec 7.4): depths 1 upward, limit 20, five
+      seconds, falling back to quick with `note: 'quick'`. Tests: a 1-, 3- and
+      6-move scramble return exactly the undo (string test, the slow file); the
+      fallback path with a fake clock injected, not a real five seconds.
+- [ ] 7.4 `src/solver/beginner.ts` (spec 7.5): the macros as data, the seven goals,
+      `solveStage`, `solveBeginner(cube)`. Tests per spec 7.5's last paragraph. The
+      200-cube run stays under four seconds or the search limits are tuned and the
+      numbers recorded.
+- [ ] 7.5 The provider: `method` from `useMethod`; `askSolver` sends it; the
+      solution keeps `stages`, `labels` and `note`; changing the method discards a
+      showing solution (C22); the status line's fallback sentence (7.4).
+- [ ] 7.6 The box: the "Method" fieldset beside Speed; stage headings and sentences
+      between the rows for a beginner solution; label rows before a macro's moves;
+      the extra holding sentence for the beginner method; "was already there" lines
+      for skipped stages. Hint works over a beginner solution unchanged.
+- [ ] 7.7 DOM tests: the method is remembered; changing it discards the solution;
+      a beginner solution shows its stages and labels; the fallback sentence shows.
+- [ ] 7.8 Drive in the pane: each method on the scrambled scene; a three-turn
+      scramble under fewest moves gives three moves; the beginner method on a real
+      cube followed to the end (Nick, or the builder with a cube if one is to hand).
+      Record the beginner solution's length on ten random cubes.
+- [ ] 7.9 Version 1.2.0 in three files. Reuse review, docs sweep (spec 17 gains a
+      line per method; `acceptance.md`; README; CLAUDE.md), commit.
+
+**Done when:** a lightly scrambled cube comes back as its undo under fewest moves, 200
+random cubes solve under the beginner method in the suite, and Nick has followed a
+beginner solution on a real cube to the end.
+
+---
+
+## Phase 8 - a cube with non-standard colours (later, if Nick asks)
+
+Spec section 16's sketch: six colour inputs and names, `cuber.colours`, "Standard
+colours". Waits for Nick's word after phase 7.
+
 ## Later, if Nick asks
 
 Not phases yet. Each needs its own design before a chip:
 
 - **Entering the cube from a photo** (spec 16): one face at a time, a grid overlay,
   nearest-colour reading, user correction.
-- **The beginner method** (spec 16, Q4): layer by layer in seven named stages.
+- **The beginner method** became phase 7 on 2026-09-14 (spec Q18).
 
 ## The order, and why
 
@@ -528,6 +581,8 @@ only build config. The iPad phase is parked by ruling.
 | 4 - scenes, the probe and the layout pass | Done, 2026-09-12 |
 | 5 - the Windows app and the installer | Done, 2026-09-12, installed and uninstalled by Nick the same day |
 | 6 - the iPad Home Screen app | Done, 2026-09-12, the iPad itself waits for Nick |
+| 7 - three methods | Not started, chipped 2026-09-14 |
+| 8 - non-standard colours | Waits for Nick |
 
 ## Phase notes
 
