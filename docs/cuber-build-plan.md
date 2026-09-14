@@ -1944,12 +1944,20 @@ solution the page scrolled by 42. Three ways out were put to Nick - a smaller cu
 shorter list of moves, or a page that scrolls - and he asked a better question than any
 of them: can the cube move up into the empty space to the left of the picker? It can.
 The picker is 151 tall and the cube is never shorter than 280, so side by side the
-picker costs the page no height at all, and `fit.ts` takes its width instead. The
-Windows window now has 113 pixels spare where it had 9, and an iPad held sideways gets
-a 333 cube and no scrolling, where before it got the smallest cube allowed and a page
-that scrolled. This is a change to spec 4's drawing and should be folded into the
-specification: the picker is still at the top right, but the cube is beside it rather
-than under it.
+picker costs the page no height at all, and `fit.ts` takes its width instead. Seeing
+it, he then moved the "Show the other side" button from under the cube to under the
+picker, which is the same trick again: it too now costs width rather than height.
+
+Together those two give back 151 + 38 and two of the gaps. The Windows window has about
+150 pixels spare where it had 9, and the cube is bigger at every viewport than it was
+before the phase, not smaller: an iPad held sideways gets 375 where it used to get 280,
+the smallest allowed, and no longer scrolls at all. The 400 cube in the Windows window
+is now held there by spec 4.1's ceiling rather than by the room, so if anyone wants a
+bigger cube, that ceiling is the number to argue about.
+
+Spec section 4 was updated to match, drawing and all, rather than left to disagree with
+what the app does: it is Nick's ruling, and a specification that says the button is
+under the cube would send the next session to put it back.
 
 The cube is not flush against the left edge, because `.scene` carries `margin: 0 auto`
 from phase 2 and centres itself in the space the row leaves it. It looks balanced and

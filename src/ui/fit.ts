@@ -26,26 +26,25 @@ export const SCENE_MIN = 280
 /** What the scene shares the height with, top to bottom (spec 4.1). */
 /** `.app-header`, whose height carries its own padding. */
 const HEADER = 45
-/** The "Show the other side" button, which is `.status`'s neighbour. */
-const VIEW_BUTTON = 38
 /** `.status`, one line. */
 const STATUS = 24
 /** `.box` with a nineteen-move solution in it: the tallest it is asked to be. */
 const BOX_MIN = 316
-/** The header's margin, and the three gaps `.screen` puts between its children. */
-const GAPS = 4 + 3 * 4
+/** The header's margin, and the two gaps `.screen` puts between its children. */
+const GAPS = 4 + 2 * 4
 
 /**
- * The picker, which since phase 7 sits BESIDE the cube rather than above it
- * (Nick, 2026-09-14). So it takes width from the scene instead of height, and
- * it is 151 tall, which is shorter than the scene ever is: the row is as tall
- * as the cube and the picker costs the page nothing.
+ * The picker, which since phase 7 sits BESIDE the cube rather than above it,
+ * with the "Show the other side" button under it (Nick, 2026-09-14). So the
+ * two of them take width from the scene instead of height: together they are
+ * 197 tall, which is shorter than the scene ever is, so the row is as tall as
+ * the cube and neither costs the page anything.
  */
 const PICKER_WIDTH = 182
 /** `.cube-row`'s gap, between the cube and the picker. */
 const BESIDE = 16
 
-const HEIGHT_TAKEN = 2 * PAGE_PADDING + HEADER + VIEW_BUTTON + STATUS + BOX_MIN + GAPS
+const HEIGHT_TAKEN = 2 * PAGE_PADDING + HEADER + STATUS + BOX_MIN + GAPS
 
 /** The scene's side, in pixels, for a viewport. */
 export function sceneSize(viewportWidth: number, viewportHeight: number): number {

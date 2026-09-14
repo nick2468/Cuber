@@ -35,7 +35,8 @@ onward. One CSS line, and a standing hazard below says what to watch for. The
 1.2.0**: the method is chosen in the box and remembered, a lightly scrambled
 cube now comes back as its undo, and the beginner method solves layer by layer
 in seven named stages, about 170 moves. The cube moved up beside the picker in
-the same phase, to pay for the second line the choice needs (Nick's ruling).
+the same phase, and the view button under the picker, to pay for the second
+line the choice needs (Nick's rulings; spec 4 was updated to match).
 What is left is Nick's: follow one beginner solution on a real cube.
 
 ## Documents

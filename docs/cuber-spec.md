@@ -108,21 +108,15 @@ There is one screen. It never navigates anywhere. It follows the drawing:
 +---------------------------------------------------------------+
 | Cuber  v0.1.0      [Reset cube] [Solve]  (bulb)      [Light]  |  header
 +---------------------------------------------------------------+
-|                                        +--------------------+ |
-|                                        |  [r] [g] [y] [w]   | |  the picker
-|                                        |  [b] [o]   Colours | |
-|                                        +--------------------+ |
+|      +----------------+                +--------------------+ |
+|     /  top face      /|               |  [r] [g] [y] [w]   | |  the picker
+|    /                / |               |  [b] [o]   Colours | |
+|   +----------------+  |               +--------------------+ |
+|   |                |  +               [Show the other side]  |
+|   |  front face    | /  right                                |
+|   |                |/   face            the cube             |
+|   +----------------+                                         |
 |                                                               |
-|                    +----------------+                         |
-|                   /  top face      /|                         |
-|                  /                / |                         |
-|                 +----------------+  |        the cube         |
-|                 |                |  +                         |
-|                 |  front face    | /  right                   |
-|                 |                |/   face                    |
-|                 +----------------+                            |
-|                                                               |
-|              [Show the other side]                            |
 |      Fill in the stickers. 12 of 48 done.                     |  the status line
 +---------------------------------------------------------------+
 | [|<] [<] [play] [>] [>|]   Speed: (o) slow ( ) normal ( ) fast |
@@ -148,10 +142,16 @@ There is one screen. It never navigates anywhere. It follows the drawing:
   selected swatch has a ring. A swatch whose colour is used nine times shows its
   count in the faint style and stays selectable: it can still repaint a filled
   sticker, and a blank sticker refuses it (C9, as ruled at gate 3).
-- **The cube** (`.scene`): the 3D cube, centred, corner-on, drawn with CSS 3D (C4).
-  Under it the **Show the other side** button, which reads **Show the first side**
-  while the far view is showing.
-- **The status line** (`.status`): one line under the button. While entering: "Fill
+- **The cube** (`.scene`): the 3D cube, corner-on, drawn with CSS 3D (C4). It sits
+  BESIDE the picker rather than under it, in the space to the picker's left, and the
+  **Show the other side** button sits under the picker rather than under the cube,
+  reading **Show the first side** while the far view is showing. (Ruled by Nick on
+  2026-09-14, at phase 7. The drawing has the cube under the picker and the button
+  under the cube, and that is how phases 2 to 6 built it. The Method choice needs a
+  second line in the box, which the 800 by 1000 window had no room for; beside the
+  cube, the picker and the button cost the page no height at all, which is more than
+  enough to pay for it. The cube is bigger at every viewport than it was, not smaller.)
+- **The status line** (`.status`): one line under the cube. While entering: "Fill
   in the stickers. 12 of 48 done." When something is wrong: the validator's sentence
   (section 6.4). When the cube is complete and possible: "Ready. Press Solve." During
   the view change: the orientation sentences (C3). After Solve: "Solved in 19 moves."

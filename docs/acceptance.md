@@ -315,18 +315,25 @@ words and the stages make sense to a person learning the method, which no test c
 ### v. The cube moved up beside the picker
 
 The Method choice needs a second line in the box, which costs 51 pixels the 800 by 1000
-window did not have. Nick ruled that the cube moves up into the empty space beside the
-picker (2026-09-14), which gives back the picker's whole height instead.
+window did not have. Nick ruled two changes on 2026-09-14: the cube moves up into the
+empty space beside the picker, and the "Show the other side" button moves from under
+the cube to under the picker. Neither of them costs the page any height now, because
+the picker and the button together are 197 tall and the cube is never shorter than 280,
+so the row is as tall as the cube and nothing else.
 
-The layout probe, with a nineteen-move solution showing:
+The layout probe, with a solution showing:
 
 | Viewport | Scene | `scrollWidth` / `innerWidth` | `scrollHeight` / `innerHeight` |
 |---|---|---|---|
 | 800 by 1000 | 400 square | 800 of 800 | 1000 of 1000 |
 | 820 by 1180 | 400 square | 820 of 820 | 1180 of 1180 |
-| 1180 by 820 | 333 square | 1180 of 1180 | 820 of 820 |
+| 1180 by 820 | 375 square | 1180 of 1180 | 820 of 820 |
 
-The sideways iPad is better than it was: 333 rather than the smallest cube allowed, and
-it no longer scrolls down at all. Both themes checked at 800 by 1000.
+The cube is bigger at every viewport than it was before this phase, not smaller. The
+sideways iPad gets 375 where it used to get 280, the smallest allowed, and it no longer
+scrolls down at all. The 800 by 1000 window has about 150 pixels spare at the bottom,
+where it had 15: the cube is held at 400 by spec 4.1's ceiling, not by the room.
+
+Both themes checked at 800 by 1000, in both views.
 
 **Passed**, 2026-09-14.

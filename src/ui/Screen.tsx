@@ -8,8 +8,8 @@ import { useKeys } from './useKeys'
 
 /**
  * The one screen, in the drawing's order (spec 4, C1): the picker at the top
- * right with the cube beside it, the button that turns it round, the status
- * line, and the box across the bottom.
+ * right with the button that turns the cube round under it, the cube beside
+ * them, the status line, and the box across the bottom.
  */
 export function Screen() {
   const { view, changeView, viewChanging, turning } = useCube()
@@ -24,17 +24,23 @@ export function Screen() {
           the Method choice, which needs a second line in the box. */}
       <div className="cube-row">
         <Scene />
-        <Picker />
-      </div>
 
-      <button
-        type="button"
-        className="view-button"
-        onClick={changeView}
-        disabled={viewChanging || turning !== null}
-      >
-        {view === 'near' ? 'Show the other side' : 'Show the first side'}
-      </button>
+        {/* The picker, and the button that turns the cube round under it
+            (Nick, 2026-09-14). It was centred under the cube; beside it, it
+            costs the page no height of its own either. */}
+        <div className="picker-column">
+          <Picker />
+
+          <button
+            type="button"
+            className="view-button"
+            onClick={changeView}
+            disabled={viewChanging || turning !== null}
+          >
+            {view === 'near' ? 'Show the other side' : 'Show the first side'}
+          </button>
+        </div>
+      </div>
 
       <StatusLine />
 
