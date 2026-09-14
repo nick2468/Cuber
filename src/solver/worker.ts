@@ -1,3 +1,4 @@
+import { solveBeginner } from './beginner'
 import { solveFewest } from './fewest'
 import { movesOf, plainAnswer, type Answer, type SolveRequest, type WorkerReply } from './solver'
 import Cube from './vendor/cube.js'
@@ -22,6 +23,12 @@ scope.postMessage({ type: 'ready' })
 
 /** What the chosen method makes of one cube. */
 function answer(request: SolveRequest): Answer {
+  if (request.method === 'beginner') {
+    // The only method that is this app's own code, and the only one with
+    // anything to say beyond the moves (spec 7.5). It never calls the library's
+    // solver, so it needs none of its tables.
+    return { ...solveBeginner(request.facelets), note: null }
+  }
   const cube = Cube.fromString(request.facelets)
   if (request.method === 'fewest') {
     // The worker's own clock: the budget is wall time inside this thread, and

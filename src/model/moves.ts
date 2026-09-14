@@ -41,6 +41,19 @@ export function undo(moves: readonly Move[]): Move[] {
 export const FIXED_SCRAMBLE: readonly Move[] = ['R', 'U', "R'", "U'", 'F2', 'D', "L'", 'B2', 'U2', 'R']
 
 /**
+ * The facelets after some moves, written the way the library writes them and
+ * separated by spaces. The one place in the app that turns a cube (spec C6).
+ *
+ * It takes facelets rather than a cube because the beginner method works in
+ * facelets and turns a cube thousands of times to find one solution: going
+ * through colours and the validator each time would cost more than the search
+ * itself. The caller has already proved the cube is a possible one.
+ */
+export function turnFacelets(facelets: string, letters: string): string {
+  return Library.fromString(facelets).move(letters).asString()
+}
+
+/**
  * The cube after some moves. The cube must be a possible one: a cube the
  * validator refuses throws here, with its sentence, so a mistake fails in a
  * test rather than reaching a library that assumes a real cube.
@@ -48,8 +61,7 @@ export const FIXED_SCRAMBLE: readonly Move[] = ['R', 'U', "R'", "U'", 'F2', 'D',
 export function applyMoves(cube: Cube, moves: readonly Move[]): Cube {
   const verdict = validate(cube)
   if (!verdict.ok) throw new Error(`Only a possible cube can be turned. ${verdict.message}`)
-  const letters = Library.fromString(verdict.facelets).move(moves.join(' ')).asString()
-  return fromFacelets(letters, schemeOf(cube)!)
+  return fromFacelets(turnFacelets(verdict.facelets, moves.join(' ')), schemeOf(cube)!)
 }
 
 export function applyMove(cube: Cube, move: Move): Cube {
