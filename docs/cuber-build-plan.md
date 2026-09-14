@@ -581,7 +581,7 @@ only build config. The iPad phase is parked by ruling.
 | 4 - scenes, the probe and the layout pass | Done, 2026-09-12 |
 | 5 - the Windows app and the installer | Done, 2026-09-12, installed and uninstalled by Nick the same day |
 | 6 - the iPad Home Screen app | Done, 2026-09-12, the iPad itself waits for Nick |
-| 7 - three methods | Done, 2026-09-14, version 1.2.0; following a beginner solution on a real cube waits for Nick |
+| 7 - three methods | Done, 2026-09-14, version 1.2.0, gate 7 passed and the installer built; Nick follows a beginner solution on a real cube |
 | 8 - non-standard colours | Waits for Nick |
 
 ## Phase notes
@@ -2019,3 +2019,38 @@ rather than from the code, in `beginner.test.ts`, which is the point of that tes
 **Left for Nick.** Following one beginner solution through on a real cube to the end.
 The suite proves the moves solve the model, and the pane proves the box reads properly,
 but only a person with a cube can say whether the stages teach the method.
+
+### Gate 7 findings (orchestrator, 2026-09-14)
+
+- **Verified from the repository.** `npx vitest run`: 39 files, 236 passed, 12
+  seconds, four of them the 200-cube beginner run. `tsc -b` clean, `npx oxlint`
+  silent, `npm run build` clean with the worker chunk now 25 kB. Version 1.2.0 in
+  all three files. No em dashes. All six commits carry the trailer. Every phase 7
+  box is ticked.
+- **Driven in the pane at 800 by 1000 on the scrambled scene.** Quick solve 19 moves
+  in 38 ms, fewest moves 10 in 126 ms, beginner method 146 in 59 ms, each with
+  `scrollHeight` 1000 against 1000. The Method fieldset sits under Speed, the
+  choice is remembered, and the beginner box shows the extra holding sentence, the
+  stage heading with its sentence, and the rows under it. The cube beside the
+  picker with the view button under it reads well and is Nick's own ruling.
+- **The 1.1.1 hotfix of the same morning is reviewed with this gate**: one line,
+  `transform-origin: 0 0` on `.cubie`, so a layer turns about the cube's centre
+  and not the cubie's own, guarded by a test that reads the stylesheet. Correct,
+  and the reason it was invisible until phase 3 is in its comment.
+- **Read as code.** `fewest.ts` with its injected clock and the one caught call;
+  `beginner.ts` working in facelets with `turnFacelets` as the single door to the
+  library's `move`, the macros as data checked at import, the goals as
+  `allInPlace` and `goalOf` with a `mark` that bounds the search by what the stage
+  can tell apart. The builder was right that the chip's "returns an empty string"
+  fact was wrong, right that stage 7 is the guide's loop rather than a search, and
+  right that the skipped-stage sentences had to be written per stage. Spec 7.4's
+  "in five seconds" describes the check and not the wait; left as the builder left
+  it, with the builder's note as the record.
+- **The installer for 1.2.0 was built at this gate**, by Nick's request:
+  `src-tauri/target/release/bundle/nsis/Cuber_1.2.0_x64-setup.exe`, 1,223,151 bytes,
+  the Rust side compiling in 1 minute 39 seconds. The built window driven over the
+  debug port: `v1.2.0`, the remembered method Fewest moves, a solve of the scrambled
+  cube in 93 ms with ten rows, the page 1000 in 1000, storage cleared afterwards.
+- **Passed.** Nick reviews the whole of 1.2.0 himself and follows a beginner
+  solution on a real cube, which is the last line of `docs/acceptance.md`'s "Three
+  methods" section.
