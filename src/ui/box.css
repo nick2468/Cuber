@@ -1,9 +1,13 @@
-/* The box across the bottom: the controls, the holding line and the moves. */
+﻿/* The box across the bottom: the controls, the holding line and the moves. */
 
 .controls {
   display: flex;
   align-items: center;
-  gap: 16px;
+  /* Method does not fit beside the buttons and Speed at 720, so the row wraps
+     and the second line is the one Method sits on. A tight gap down the page,
+     because every pixel the box takes is a pixel off the cube (spec 4.1's fit
+     rule), and a wide one across, where there is room. */
+  gap: 6px 16px;
   flex-wrap: wrap;
   /* 4 rather than 8 on each side of the rule, from phase 4's layout pass. */
   padding-bottom: 4px;
@@ -26,18 +30,19 @@
   min-width: 64px;
 }
 
-/* Inline in the control row, the trainer's fieldset style. */
-.speeds {
+/* Inline in the control row, the trainer's fieldset style. Speed and Method
+   are the same thing twice: a legend and a row of radios. */
+.choices {
   display: flex;
   align-items: center;
   gap: 12px;
   margin: 0;
-  padding: 2px 10px 4px;
+  padding: 0 10px 3px;
   border: 1px solid var(--line);
   border-radius: 6px;
 }
 
-.speeds legend {
+.choices legend {
   padding: 0 6px;
   color: var(--text-faint);
   font-size: 0.85rem;
@@ -45,14 +50,14 @@
   letter-spacing: 0.05em;
 }
 
-.speeds label {
+.choices label {
   display: flex;
   align-items: center;
   gap: 6px;
   cursor: pointer;
 }
 
-.speeds input[type='radio'] {
+.choices input[type='radio'] {
   accent-color: var(--accent);
 }
 
@@ -108,6 +113,58 @@
   border-radius: 3px;
   font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
   text-align: center;
+}
+
+/* The beginner method's headings, between the rows (spec 9.5). A stage's name
+   in the app's own colour, what it is for beside it, dimmer. */
+.stage-row {
+  padding: 8px 4px 2px;
+  line-height: 1.5;
+}
+
+/* The first one has the holding line right above it. */
+.stage-row:first-child {
+  padding-top: 2px;
+}
+
+.stage-name {
+  color: var(--text);
+  font-weight: 600;
+  margin-right: 6px;
+}
+
+/* In the mark-up the name and the sentence are neighbours with nothing
+   between them, so the full stop that ends the name lives here. */
+.stage-name::after {
+  content: ".";
+}
+
+.stage-sentence {
+  color: var(--text-dim);
+}
+
+/* A stage that was already done is one dim line, with no name in front of it. */
+.stage-row.already .stage-sentence {
+  font-style: italic;
+}
+
+/* A named sequence, above the moves that make it up. */
+.label-row {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  padding: 2px 4px 0 4.2em;
+  color: var(--text-soft);
+}
+
+/* The colon the solver wrote is taken out of the text when the letters are
+   split off it, so it is put back here. */
+.label-name::after {
+  content: ":";
+}
+
+.label-letters {
+  font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
 }
 
 .done {

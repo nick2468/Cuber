@@ -122,11 +122,23 @@ button:disabled {
   gap: 4px;
 }
 
-/* The picker sits at the top right, above the cube's own corner (the drawing). */
-.picker-row {
+/* The cube and the picker, side by side: the picker at the top right as the
+   drawing has it, and the cube in the space beside it, which used to be empty
+   (Nick, 2026-09-14). It gives the page back the picker's whole height, and
+   that is what the Method choice in the box is paid for with.
+
+   `flex-start` so the picker keeps its place at the top even though the cube
+   beside it is much taller. It wraps only on a viewport narrower than any this
+   app is used at, where the cube is already down to its smallest and the two
+   no longer fit across; then the picker drops below the cube and the page
+   scrolls, which is what it did before this row existed. */
+.cube-row {
   display: flex;
+  flex-wrap: wrap;
   width: 100%;
-  justify-content: flex-end;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
 }
 
 .picker {

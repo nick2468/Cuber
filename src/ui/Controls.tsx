@@ -1,9 +1,10 @@
+import { METHODS, methodWord } from '../model/methods'
 import { SPEEDS, speedWord } from '../model/speeds'
 import { useCube } from './cube-state'
 
 /**
- * The row at the top of the box: five buttons that walk the solution, and the
- * three speeds (spec 9.2).
+ * The row at the top of the box: five buttons that walk the solution, the
+ * three speeds and the three methods (spec 9.2, 9.5).
  *
  * The arrows are shapes, so each carries a written name for a screen reader
  * and for its tooltip, the way the trainer's stepping arrows do.
@@ -17,6 +18,8 @@ export function Controls() {
     viewChanging,
     speed,
     setSpeed,
+    method,
+    setMethod,
     jumpToStart,
     stepBack,
     play,
@@ -80,7 +83,7 @@ export function Controls() {
         </button>
       </div>
 
-      <fieldset className="speeds">
+      <fieldset className="choices">
         <legend>Speed</legend>
         {SPEEDS.map((each) => (
           <label key={each}>
@@ -91,6 +94,21 @@ export function Controls() {
               onChange={() => setSpeed(each)}
             />
             {speedWord(each)}
+          </label>
+        ))}
+      </fieldset>
+
+      <fieldset className="choices">
+        <legend>Method</legend>
+        {METHODS.map((each) => (
+          <label key={each}>
+            <input
+              type="radio"
+              name="method"
+              checked={method === each}
+              onChange={() => setMethod(each)}
+            />
+            {methodWord(each)}
           </label>
         ))}
       </fieldset>

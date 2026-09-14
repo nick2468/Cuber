@@ -8,8 +8,8 @@ import { useKeys } from './useKeys'
 
 /**
  * The one screen, in the drawing's order (spec 4, C1): the picker at the top
- * right, the cube, the button that turns it round, the status line, and the
- * box across the bottom.
+ * right with the cube beside it, the button that turns it round, the status
+ * line, and the box across the bottom.
  */
 export function Screen() {
   const { view, changeView, viewChanging, turning } = useCube()
@@ -17,11 +17,15 @@ export function Screen() {
 
   return (
     <div className="screen">
-      <div className="picker-row">
+      {/* The cube and the picker share a row (Nick, 2026-09-14). The drawing
+          has the picker at the top right with the cube under it, and the space
+          to the picker's left was empty: the cube moved up into it, which gives
+          the page back the whole height of the picker. That is what pays for
+          the Method choice, which needs a second line in the box. */}
+      <div className="cube-row">
+        <Scene />
         <Picker />
       </div>
-
-      <Scene />
 
       <button
         type="button"
