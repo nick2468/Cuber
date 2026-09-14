@@ -1,9 +1,14 @@
 import { createContext, useContext } from 'react'
 import type { Colour } from '../model/colours'
 import type { Cube } from '../model/cube'
+import type { Method } from '../model/methods'
 import type { Move } from '../model/moves'
 import type { Speed } from '../model/speeds'
 import type { View } from '../model/views'
+// The solver's stages are the seven of the beginner method; `Stage` on its own
+// already means what the cube is turned to, so the longer name is the imported
+// one and the older meaning keeps the short word it has had since phase 2.
+import type { Label, Stage as SolutionStage } from '../solver/solver'
 import type { Stage } from './transforms'
 
 /**
@@ -57,6 +62,12 @@ export interface Solution {
   readonly start: Cube
   readonly moves: readonly Move[]
   readonly revealed: number
+  /** The beginner method's stages, in order. Empty for the other two (spec 7.5). */
+  readonly stages: readonly SolutionStage[]
+  /** The named sequences inside it, at the move each starts on. Empty for the other two. */
+  readonly labels: readonly Label[]
+  /** `'quick'` when fewest moves fell back, which the status line says (spec 7.4). */
+  readonly note: 'quick' | null
 }
 
 /** The move turning on screen right now, and how long its turn lasts. */
@@ -94,6 +105,8 @@ export interface CubeState {
   /** True while the solver is working one out. */
   solving: boolean
   speed: Speed
+  /** Which method Solve and Hint use (spec 7.3). */
+  method: Method
   /** Why Solve and Hint are off, or null when they are on. */
   whyNotSolve: string | null
   paint: (index: number, colour: Colour | null) => void
@@ -111,6 +124,7 @@ export interface CubeState {
   play: () => void
   pause: () => void
   setSpeed: (speed: Speed) => void
+  setMethod: (method: Method) => void
 }
 
 export const CubeContext = createContext<CubeState | null>(null)

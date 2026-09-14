@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react'
 import { blank, type Cube } from '../model/cube'
 import { fromText, toText } from '../model/cube-text'
+import { METHODS, type Method } from '../model/methods'
 import { SPEEDS, type Speed } from '../model/speeds'
 
 /**
@@ -21,13 +22,14 @@ import { SPEEDS, type Speed } from '../model/speeds'
  */
 
 /**
- * The three keys, together, because they are what storage is keyed by and
+ * The four keys, together, because they are what storage is keyed by and
  * this is the module that owns storage. `src/ui/theme.ts` reads the theme
- * through the helpers below, and the dev scenes write all three.
+ * through the helpers below, and the dev scenes write the first three.
  */
 export const THEME_KEY = 'cuber.theme'
 export const SPEED_KEY = 'cuber.speed'
 export const CUBE_KEY = 'cuber.cube'
+export const METHOD_KEY = 'cuber.method'
 
 export function read(key: string): string | null {
   try {
@@ -92,6 +94,15 @@ export function useSpeed(): { speed: Speed; setSpeed: (speed: Speed) => void } {
     useCallback((next: Speed) => write(SPEED_KEY, next), []),
   )
   return { speed, setSpeed }
+}
+
+/** Which method solves the cube. The quick one until the user picks another (spec 7.3). */
+export function useMethod(): { method: Method; setMethod: (method: Method) => void } {
+  const [method, setMethod] = useRemembered<Method>(
+    () => readOneOf(METHOD_KEY, METHODS, 'quick'),
+    useCallback((next: Method) => write(METHOD_KEY, next), []),
+  )
+  return { method, setMethod }
 }
 
 /**

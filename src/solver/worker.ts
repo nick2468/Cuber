@@ -1,4 +1,4 @@
-import type { SolveRequest, WorkerReply } from './solver'
+import { plainAnswer, type SolveRequest, type WorkerReply } from './solver'
 import Cube from './vendor/cube.js'
 import './vendor/solve.js'
 
@@ -19,11 +19,16 @@ const scope = self as unknown as {
 Cube.initSolver()
 scope.postMessage({ type: 'ready' })
 
+/** The library's own answer, split into moves: "" when it found nothing. */
+function movesOf(said: string): string[] {
+  return said.split(' ').filter(Boolean)
+}
+
 scope.onmessage = ({ data }) => {
   let reply: WorkerReply = { type: 'failed' }
   try {
-    const moves = Cube.fromString(data.facelets).solve().split(' ').filter(Boolean)
-    if (moves.length > 0) reply = { type: 'solution', moves }
+    const moves = movesOf(Cube.fromString(data.facelets).solve())
+    if (moves.length > 0) reply = { type: 'solution', ...plainAnswer(moves) }
   } catch {
     // The library throws rather than answering when it finds nothing. The
     // validator makes that unreachable, and the adapter still hears "failed".

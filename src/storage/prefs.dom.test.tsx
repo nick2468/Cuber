@@ -2,7 +2,7 @@ import { act, renderHook } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
 import { blank, solved } from '../model/cube'
 import { toText } from '../model/cube-text'
-import { useRememberedCube, useSpeed } from './prefs'
+import { useMethod, useRememberedCube, useSpeed } from './prefs'
 
 describe('the speed', () => {
   it('is normal at first, and a choice is written down and read back on the next mount', () => {
@@ -19,6 +19,23 @@ describe('the speed', () => {
   it('falls back to normal when storage says something else', () => {
     window.localStorage.setItem('cuber.speed', 'warp')
     expect(renderHook(() => useSpeed()).result.current.speed).toBe('normal')
+  })
+})
+
+describe('the method', () => {
+  it('is the quick one at first, and a choice is written down and read back', () => {
+    const first = renderHook(() => useMethod())
+    expect(first.result.current.method).toBe('quick')
+    act(() => first.result.current.setMethod('beginner'))
+    expect(window.localStorage.getItem('cuber.method')).toBe('beginner')
+    first.unmount()
+
+    expect(renderHook(() => useMethod()).result.current.method).toBe('beginner')
+  })
+
+  it('falls back to the quick one when storage says something else', () => {
+    window.localStorage.setItem('cuber.method', 'telepathy')
+    expect(renderHook(() => useMethod()).result.current.method).toBe('quick')
   })
 })
 

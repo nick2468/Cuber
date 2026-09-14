@@ -12,8 +12,9 @@ import { applyMove, applyMoves, inverse, isMove, type Move } from '../model/move
 import { SPEED_TIMES } from '../model/speeds'
 import { checkPartial, validate } from '../model/validate'
 import { VIEW_MOVEMENTS, type View } from '../model/views'
-import { createSolver as startRealSolver, type Solver } from '../solver/solver'
-import { useRememberedCube, useSpeed } from '../storage/prefs'
+import type { Method } from '../model/methods'
+import { createSolver as startRealSolver, type Answer, type Solver } from '../solver/solver'
+import { useMethod, useRememberedCube, useSpeed } from '../storage/prefs'
 import {
   CubeContext,
   DEFAULT_DURATIONS,
@@ -44,6 +45,25 @@ function alreadyNine(colour: Colour): string {
   return `${colour[0].toUpperCase()}${colour.slice(1)} is already on nine stickers.`
 }
 
+/**
+ * What the status line says once a solution is in the box.
+ *
+ * Fewest moves gives up after five seconds and answers with the quick
+ * solution instead, and a person who asked for the fewest deserves to be told
+ * that this is not it (spec 7.4). The solver says whether it fell back; this
+ * only reads what it said.
+ */
+function solvedSentence(count: number, note: 'quick' | null): string {
+  const solved = `Solved in ${count} moves.`
+  if (note !== 'quick') return solved
+  return `${solved} No shorter answer was found in five seconds, so this is the quick one.`
+}
+
+/** The parts of the solver's answer that the solution carries, apart from the moves. */
+function parts(said: Answer): Pick<Solution, 'stages' | 'labels' | 'note'> {
+  return { stages: said.stages, labels: said.labels, note: said.note }
+}
+
 export function CubeProvider({
   children,
   durations = DEFAULT_DURATIONS,
@@ -63,6 +83,7 @@ export function CubeProvider({
 }) {
   const { cube, setCube } = useRememberedCube()
   const { speed, setSpeed } = useSpeed()
+  const { method, setMethod: rememberMethod } = useMethod()
   const [view, setView] = useState<View>(initialView)
   const [stage, setStage] = useState<Stage>(initialView)
   const [selected, setSelected] = useState<Colour>('red')
@@ -282,6 +303,25 @@ export function CubeProvider({
     setStep(solution.revealed)
   }, [cube, setCube, solution, step, turning, viewChanging])
 
+  /**
+   * Choosing another method throws the solution away (spec C22).
+   *
+   * The moves in the box were worked out by the method that was chosen before,
+   * so they are no longer the answer to the question on the screen. This is
+   * the same rule `paint` applies for the same reason.
+   */
+  const setMethod = useCallback(
+    (next: Method) => {
+      if (next === method) return
+      rememberMethod(next)
+      setSolution(null)
+      setStep(0)
+      setPlaying(false)
+      setSolverSaid(null)
+    },
+    [method, rememberMethod],
+  )
+
   const play = useCallback(() => setPlaying(true), [])
   const pause = useCallback(() => setPlaying(false), [])
 
@@ -315,7 +355,7 @@ export function CubeProvider({
    * flag however the promise ends.
    */
   const askSolver = useCallback(
-    (whenSolved: (moves: Move[], from: Cube) => void) => {
+    (whenSolved: (moves: Move[], from: Cube, said: Answer) => void) => {
       const solver = solverRef.current
       if (!solver) return
       const answer = validate(cube)
@@ -324,10 +364,10 @@ export function CubeProvider({
       setSolving(true)
       setSolverSaid(null)
       solver
-        .solve(answer.facelets)
+        .solve(answer.facelets, method)
         .then((said) => {
-          const moves = said.filter(isMove)
-          if (moves.length !== said.length) {
+          const moves = said.moves.filter(isMove)
+          if (moves.length !== said.moves.length) {
             setSolverSaid('The solver found no solution.')
             return
           }
@@ -335,14 +375,14 @@ export function CubeProvider({
             setSolverSaid('Your cube is already solved.')
             return
           }
-          whenSolved(moves, from)
+          whenSolved(moves, from, said)
         })
         .catch((trouble: unknown) => {
           setSolverSaid(trouble instanceof Error ? trouble.message : 'The solver found no solution.')
         })
         .finally(() => setSolving(false))
     },
-    [cube],
+    [cube, method],
   )
 
   /** Shows one more move and steps into it, which is what a hint is (spec C13). */
@@ -360,13 +400,13 @@ export function CubeProvider({
     if (solution) {
       // A solution is already there, from Hint: show the rest of it.
       setSolution({ ...solution, revealed: solution.moves.length })
-      setSolverSaid(`Solved in ${solution.moves.length} moves.`)
+      setSolverSaid(solvedSentence(solution.moves.length, solution.note))
       return
     }
-    askSolver((moves, from) => {
-      setSolution({ start: from, moves, revealed: moves.length })
+    askSolver((moves, from, said) => {
+      setSolution({ start: from, moves, revealed: moves.length, ...parts(said) })
       setStep(0)
-      setSolverSaid(`Solved in ${moves.length} moves.`)
+      setSolverSaid(solvedSentence(moves.length, said.note))
     })
   }, [askSolver, solution, solving, turning, viewChanging])
 
@@ -380,8 +420,8 @@ export function CubeProvider({
       else stepForward()
       return
     }
-    askSolver((moves, from) => {
-      const fresh: Solution = { start: from, moves, revealed: 0 }
+    askSolver((moves, from, said) => {
+      const fresh: Solution = { start: from, moves, revealed: 0, ...parts(said) }
       setSolution(fresh)
       setStep(0)
       revealOne(fresh)
@@ -436,6 +476,7 @@ export function CubeProvider({
     solverReady,
     solving,
     speed,
+    method,
     whyNotSolve,
     paint,
     select,
@@ -452,6 +493,7 @@ export function CubeProvider({
     play,
     pause,
     setSpeed,
+    setMethod,
   }
 
   return <CubeContext.Provider value={value}>{children}</CubeContext.Provider>
