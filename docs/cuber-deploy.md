@@ -95,8 +95,9 @@ Private is fine. Cloudflare can read a private repository once you grant it.
 and the build fails with a version error. The repository holds a `.node-version`
 file saying `24.21.0`. Set a `NODE_VERSION` build variable to the same value as
 a belt and braces, and check the build log says it installed 24.21.0. Conquest
-needed both. Keep the two equal: Cloudflare does not document which one wins
-when they differ.
+needed both. Keep the two equal. **When they differ, the variable wins**:
+Conquest's build on 2026-09-19 installed 22.12.0 from its variable although the
+file said 24.21.0. So a Node change is only done once the variable is changed too.
 
 The pin was 22.12.0 until 2026-09-19, when Conquest's build log warned that
 Node 22 was nearing the end of its life. It moved to 24.21.0, the long-term-support
