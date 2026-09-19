@@ -21,7 +21,7 @@ repository, domain and update banner.
 | Address | `cuber.datacrafter.net` |
 | Build command | `npm run build` |
 | Output directory | `dist` |
-| Node version | 22.12.0, from `.node-version` and a `NODE_VERSION` variable |
+| Node version | 24.21.0, from `.node-version` and a `NODE_VERSION` variable |
 
 Steps 1 to 3 set that up, once. After them, **every push to `main` rebuilds and
 republishes** and there is nothing else to run.
@@ -93,13 +93,14 @@ Private is fine. Cloudflare can read a private repository once you grant it.
 
 **The Node version matters.** Cloudflare's default is older than Vite 8 accepts,
 and the build fails with a version error. The repository holds a `.node-version`
-file saying `22.12.0`. Set a `NODE_VERSION` build variable to the same value as
-a belt and braces, and check the build log says it installed 22.12.0. Conquest
-needed both.
+file saying `24.21.0`. Set a `NODE_VERSION` build variable to the same value as
+a belt and braces, and check the build log says it installed 24.21.0. Conquest
+needed both. Keep the two equal: Cloudflare does not document which one wins
+when they differ.
 
-That log also warns that Node 22 is in maintenance mode and nearing the end of
-its life. Nothing is broken, but the version is worth raising the next time this
-is touched.
+The pin was 22.12.0 until 2026-09-19, when Conquest's build log warned that
+Node 22 was nearing the end of its life. It moved to 24.21.0, the long-term-support
+line, after the tests, `tsc -b` and the build all passed on it.
 
 The first build takes a couple of minutes. It ends with a URL like
 `cuber-abc.pages.dev`. Open it and check the app runs and solves a cube.

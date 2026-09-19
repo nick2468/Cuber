@@ -73,9 +73,11 @@ What is left is Nick's: follow one beginner solution on a real cube.
 
 ## Toolchain
 
-- Node 22.12.0 (`.node-version`), npm. `.node-version` is what Cloudflare Pages will
-  read in phase 6 and matches the trainer's; the node on this machine is 20.20.2 and
-  everything is green on it (ruled at gate 5: leave both as they are). The Rust
+- Node 24.21.0 (`.node-version`), npm. `.node-version` is what Cloudflare Pages will
+  read in phase 6 and matches the trainer's. It was raised from 22.12.0 on 2026-09-19,
+  with every sibling app, after the tests, `tsc -b` and the build all passed on 24.21.0.
+  That replaces gate 5's "leave both as they are". The machine's own node may still be
+  20.20.2 until Nick upgrades it, and everything is green on that too. The Rust
   toolchain (`cargo 1.98`) is at `%USERPROFILE%\.cargo\bin` and is NOT on the shell's
   PATH: put it there before any `npm run tauri` command.
 - `npm run dev` on port 5190 (`--strictPort`; 5173 is dc.web, 5175 is London, 5180
