@@ -13,6 +13,21 @@ in seven named stages, so you learn the method rather than just following it.
 
 It runs as an installed Windows app and as an iPad Home Screen app, from one code base.
 
+## Download
+
+Windows: get `Cuber_<version>_x64-setup.exe` from the
+[latest release](https://github.com/nick2468/Cuber/releases/latest) and run it. It installs
+for the current user with no administrator prompt. The installer is not signed with a code
+signing certificate, so Windows SmartScreen will say the publisher is unknown: choose
+**More info**, then **Run anyway**. The source is all here if you would rather build it
+yourself. Each release lists its SHA-256 checksum.
+
+## Licence
+
+Cuber is copyright (c) 2026 Nick Walker and is free software under the
+[MIT licence](LICENSE). The solver it contains, cubejs, is MIT too, under its own authors'
+copyright (`src/solver/vendor/LICENSE`). The About screen in the app shows both texts.
+
 ## Running it
 
 Phases 0 to 7 are built: the app is complete, version 1.2.0, with a Windows installer,

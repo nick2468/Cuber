@@ -56,7 +56,7 @@ builds from a Git repository, so it needs one it can read.
 **Nick's step.** From `C:\Users\nick2\Code\Cuber`:
 
 ```bash
-gh repo create Cuber --private --source . --remote origin --push
+gh repo create Cuber --public --source . --remote origin --push
 ```
 
 Or make an empty repository on github.com and then:
@@ -69,7 +69,7 @@ git remote add origin https://github.com/nick2468/Cuber.git
 git push -u origin main
 ```
 
-Private is fine. Cloudflare can read a private repository once you grant it.
+Public, by Nick's ruling of 2026-10-24: the code is MIT and the installer is a public release. (Done that day by the orchestrator session; the remote is `origin`.)
 
 ---
 

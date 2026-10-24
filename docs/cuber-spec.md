@@ -60,7 +60,7 @@ stand until he says otherwise. Every ruling is folded into the body.
 | Q12 | Reset | **Nick, in his words: Reset discards the cube and shows a new uncoloured one.** So Reset is the blank cube with the centres kept. No separate Clear button. Scramble is a dev scene, not a button (section 15). |
 | Q13 | The photo feature | Out of version 1. Recorded as a later phase (section 16). (Taken.) |
 | Q14 | Look | Dark by default with a light toggle, the trainer's palette. The stickers keep fixed bright colours in both themes. (Taken.) |
-| Q15 | Repository | `git init` here. A private GitHub repository `nick2468/Cuber` when Nick wants one. The builder commits on `main` and never pushes. (Taken.) |
+| Q15 | Repository | `git init` here. A GitHub repository `nick2468/Cuber` when Nick wants one. The builder commits on `main` and never pushes. (Taken.) **Made PUBLIC on 2026-10-24 by Nick's ruling**, with an MIT licence, a release download, an About screen, and entries on his showcase and landing page, the path PDFluffer and Tabiya took. |
 | Q16 | The light bulb | **Nick, in his words: it is a Hint button.** Solve was missing from the drawing, so it goes in the header beside Reset cube (section 4). |
 | Q17 | Window shape | **Nick, in his words: the shape is not important, do what is natural.** One column as drawn, window 800 by 1000 (section 11). |
 | Q18 (2026-09-14) | Solving methods | **Nick asked what the solver follows, after a cube scrambled with a few turns came back with nineteen moves.** It follows Kociemba's two-phase method, which is short but not shortest. Nick ruled: three methods, chosen in the box and remembered. **Quick solve** (today's, named), **Fewest moves** (the same library asked for 1 move, then 2, and so on), and **Beginner method** (layer by layer, the method every guide teaches, so his son can learn it). All three in one phase, phase 7; he reviews at the end. Section 7.3 to 7.5 and 9.5. |
@@ -219,6 +219,21 @@ is near-black (`#111`) and the six sticker colours are fixed in both themes:
 
 A blank sticker is the cube body colour with a faint dotted border, so it reads as
 "not filled in" rather than as black.
+
+### 4.4 The About view
+
+**C23. About is a view in place of the cube, reached from the nav.** Ruled by Nick on
+2026-10-24 when Cuber went public, the shape Tabiya's About has. An "About" link sits in
+the nav beside the theme toggle; pressing it replaces the cube and the box with a page of
+prose, and the link then reads "Cube" to go back. The cube and any solution stay as they
+were, because the provider holds them. The page says who made it (Nick Walker, from his
+son's drawing), where the source is (`github.com/nick2468/Cuber`, a link in a browser and
+plain text in the desktop window, since Cuber ships no opener plugin and a `_blank`
+anchor inside the window is blocked), how the three methods solve, and the licence: Cuber
+is MIT, and the solver library is MIT under its own authors' copyright. "View the
+licences" shows both texts in full, read from the two licence files at build time and
+never typed in (`src/ui/licences.ts`). The texts scroll inside their own boxes and never
+the page (C20).
 
 ---
 

@@ -1,0 +1,53 @@
+/* The About view (spec 4.6): prose at a reading width, in place of the cube. */
+
+.about {
+  max-width: 62ch;
+  margin: 16px auto 0;
+  color: var(--text-soft);
+}
+
+.about h2 {
+  margin: 0 0 12px;
+  color: var(--text);
+}
+
+.about h3 {
+  margin: 20px 0 6px;
+  color: var(--text);
+  font-size: 1.05rem;
+}
+
+.about a {
+  color: var(--link);
+}
+
+/* The address in the desktop window, where it is typed rather than clicked. */
+.about-address {
+  color: var(--text);
+  font-family: ui-monospace, Consolas, monospace;
+}
+
+/* The licence texts break their own lines at about 78 columns, so each box is
+   as wide as its text and scrolls sideways inside itself if the window is
+   narrower; the page never does (spec C20). */
+.licences {
+  max-width: none;
+}
+
+.licences h4 {
+  margin: 20px 0 6px;
+  color: var(--text);
+  font-size: 0.95rem;
+}
+
+.licences pre {
+  max-height: 16em;
+  overflow: auto;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--text-dim);
+  font-size: 0.8rem;
+  line-height: 1.4;
+}

@@ -3,6 +3,7 @@ import { applyDevScene } from '../dev/apply-scene'
 import type { Scene } from '../dev/scenes'
 import { useDevScene } from '../dev/use-dev-scene'
 import { isDesktop } from '../storage/paths'
+import { About } from './About'
 import { CubeProvider } from './cube-context'
 import { HeaderButtons } from './HeaderButtons'
 import { Screen } from './Screen'
@@ -23,6 +24,9 @@ export function Shell({ scene = null }: { scene?: Scene | null }) {
   const { theme, toggle } = useTheme()
   useDevScene(scene)
   const switchTo = theme === 'dark' ? 'Switch to the light theme' : 'Switch to the dark theme'
+  // About is the one other thing `main` can show (spec 4.6). The cube and its
+  // solution live in the provider, so switching views loses nothing.
+  const [about, setAbout] = useState(false)
 
   return (
     <div className="app">
@@ -36,6 +40,14 @@ export function Shell({ scene = null }: { scene?: Scene | null }) {
         <nav className="app-nav">
           <button
             type="button"
+            className={about ? 'nav-link current' : 'nav-link'}
+            aria-current={about ? 'page' : undefined}
+            onClick={() => setAbout(!about)}
+          >
+            {about ? 'Cube' : 'About'}
+          </button>
+          <button
+            type="button"
             className="nav-link theme-toggle"
             onClick={toggle}
             title={switchTo}
@@ -46,9 +58,7 @@ export function Shell({ scene = null }: { scene?: Scene | null }) {
         </nav>
       </header>
 
-      <main>
-        <Screen />
-      </main>
+      <main>{about ? <About /> : <Screen />}</main>
 
       {/* Only off the desktop. The Tauri window updates by installer, so it
           registers no service worker at all (spec C21, and UpdateWatch says

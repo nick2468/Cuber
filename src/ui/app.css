@@ -64,6 +64,11 @@
   cursor: pointer;
 }
 
+.nav-link.current {
+  color: var(--text);
+  border-bottom-color: var(--accent);
+}
+
 .nav-link:hover {
   background: var(--surface-hover);
   color: var(--text);
