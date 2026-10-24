@@ -337,3 +337,15 @@ where it had 15: the cube is held at 400 by spec 4.1's ceiling, not by the room.
 Both themes checked at 800 by 1000, in both views.
 
 **Passed**, 2026-09-14.
+
+---
+
+## Public release, 2026-10-24
+
+Version 1.2.1 went public on Nick's ruling, the path PDFluffer and Tabiya took: an MIT
+licence (`LICENSE`), licence fields in `package.json` and `Cargo.toml`, an About view
+(spec C23) that shows both MIT texts, a public repository at
+`github.com/nick2468/Cuber`, release `v1.2.1` with `Cuber_1.2.1_x64-setup.exe` and a
+`SHA256SUMS.txt`, an entry at nick2468.github.io/cuber with three screenshots from the
+installed window, and a mention on the nick2468 landing page. The suite: 40 files, 238
+tests. **Passed**, 2026-10-24.

@@ -37,7 +37,12 @@ cube now comes back as its undo, and the beginner method solves layer by layer
 in seven named stages, about 170 moves. The cube moved up beside the picker in
 the same phase, and the view button under the picker, to pay for the second
 line the choice needs (Nick's rulings; spec 4 was updated to match).
-What is left is Nick's: follow one beginner solution on a real cube.
+What is left is Nick's: follow one beginner solution on a real cube. **Public from 2026-10-24**, at
+**version 1.2.1**: the repository is `github.com/nick2468/Cuber` (remote `origin`), MIT
+licensed, with a release download, an About screen (spec C23), an entry on the showcase
+at nick2468.github.io and a mention on the nick2468 landing page, the path PDFluffer and
+Tabiya took. A release is cut by the orchestrator: build the installer, tag `vX.Y.Z`,
+`gh release create` with the installer and a `SHA256SUMS.txt`, the checksum in the notes.
 
 ## Documents
 
@@ -153,7 +158,8 @@ What is left is Nick's: follow one beginner solution on a real cube.
   `git commit -F` when in doubt.
 - Never change anything under `../London`, `../SimpleChess` or `../Conquest`. Read
   and copy only.
-- Never push. Nick pushes.
+- Builders never push. The orchestrator pushes `main` and tags at Nick's request, as it
+  did for the public release on 2026-10-24; Nick pushes otherwise.
 
 ## Standing hazards
 
