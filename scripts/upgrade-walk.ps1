@@ -87,7 +87,6 @@ function State($label) {
   $data = "$env:LOCALAPPDATA\Cuber Data\WebView2"
   if (Test-Path $data) { L ("data folder Cuber Data\WebView2: present, {0} items" -f (Get-ChildItem $data -Recurse -File | Measure-Object).Count) } else { L "data folder Cuber Data\WebView2: MISSING" }
 }
-}
 
 function WaitFor($procId, $pattern, $seconds) {
   for ($i = 0; $i -lt $seconds * 2; $i++) {
