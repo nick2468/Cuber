@@ -41,8 +41,13 @@ What is left is Nick's: follow one beginner solution on a real cube. **Public fr
 **version 1.2.1**: the repository is `github.com/nick2468/Cuber` (remote `origin`), MIT
 licensed, with a release download, an About screen (spec C23), an entry on the showcase
 at nick2468.github.io and a mention on the nick2468 landing page, the path PDFluffer and
-Tabiya took. A release is cut by the orchestrator: build the installer, tag `vX.Y.Z`,
-`gh release create` with the installer and a `SHA256SUMS.txt`, the checksum in the notes.
+Tabiya took. **Signed from 1.2.2 (2026-10-28)** with Nick's Certum certificate, publisher "Nicholas
+Walker" for good: `docs/releasing.md` is the recipe (`npm run build:signed`, the upgrade
+walk, tag, `gh release create` with the installer and `SHA256SUMS.txt`, the checksum in
+the notes). The session's shell cannot install on the real machine (its registry and
+LocalAppData writes land in a private copy) and the permission layer refuses
+`Start-Process explorer.exe`, so Nick double-clicks `scripts\upgrade-walk.cmd` himself,
+twice: a fresh install, then a reinstall, and the session reads the log.
 
 ## Documents
 
