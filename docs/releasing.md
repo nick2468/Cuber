@@ -43,7 +43,11 @@ signs.
    is `%TEMP%\cuber-upgrade-walk.log`.
    **A Claude Code session must start it through Explorer**:
    `Start-Process explorer.exe '"<repo>\scripts\upgrade-walk.cmd"'`, then wait for the log's
-   `.finished` file before reading the log. The session's own shell runs in a sandbox whose
+   `.finished` file before reading the log. The permission layer refused that command at the
+   1.2.2 release, so `.claude/settings.local.json` (personal, not in git) now allows it:
+   `"PowerShell(Start-Process explorer.exe *)"` under `permissions.allow`. If the file is
+   missing, recreate it with that one rule; if the command is still refused, Nick
+   double-clicks the `.cmd` himself. The session's own shell runs in a sandbox whose
    writes to the registry and LocalAppData go to a private copy. An install run from it changes
    nothing on the real machine, and its upgrade tests see its own earlier installs. That is how
    1.10.9 and 1.10.10 shipped an upgrade that failed (phase 53). A silent `/S` install is no

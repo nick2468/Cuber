@@ -45,9 +45,12 @@ Tabiya took. **Signed from 1.2.2 (2026-10-28)** with Nick's Certum certificate, 
 Walker" for good: `docs/releasing.md` is the recipe (`npm run build:signed`, the upgrade
 walk, tag, `gh release create` with the installer and `SHA256SUMS.txt`, the checksum in
 the notes). The session's shell cannot install on the real machine (its registry and
-LocalAppData writes land in a private copy) and the permission layer refuses
-`Start-Process explorer.exe`, so Nick double-clicks `scripts\upgrade-walk.cmd` himself,
-twice: a fresh install, then a reinstall, and the session reads the log.
+LocalAppData writes land in a private copy), so the walk is started through Explorer:
+`Start-Process explorer.exe '"<repo>\scripts\upgrade-walk.cmd"'`, twice (a fresh install, then
+a reinstall), and the session reads the log. `.claude/settings.local.json` (personal, not in
+git) allows that one command, since the permission layer refused it at the 1.2.2 release and
+Nick had to double-click the `.cmd` himself. Releases before 1.2.2 carried publisher "nick":
+1.2.1 was deleted on 2026-10-28 (its tag stays), and nothing older was ever a release.
 
 ## Documents
 
