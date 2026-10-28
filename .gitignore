@@ -27,3 +27,6 @@ npm-debug.log*
 # Tauri (phase 5)
 src-tauri/target/
 src-tauri/gen/
+
+# Personal Claude Code settings (permission rules for this machine)
+.claude/settings.local.json
