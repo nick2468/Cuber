@@ -17,14 +17,16 @@ It runs as an installed Windows app and as an iPad Home Screen app, from one cod
 
 Windows: get `Cuber_<version>_x64-setup.exe` from the
 [latest release](https://github.com/nick2468/Cuber/releases/latest) and run it. It installs
-for the current user with no administrator prompt. The installer is not signed with a code
-signing certificate, so Windows SmartScreen will say the publisher is unknown: choose
-**More info**, then **Run anyway**. The source is all here if you would rather build it
-yourself. Each release lists its SHA-256 checksum.
+for the current user with no administrator prompt. From 1.2.2 the installer is signed with a
+code signing certificate, so Windows names the publisher as **Open Source Developer
+Nicholas Walker**. SmartScreen may still warn on a new file while it builds up a reputation
+for it: choose **More info**, then **Run anyway**. The source is all here if you would
+rather build it yourself. Each release lists its SHA-256 checksum, and
+[docs/releasing.md](docs/releasing.md) says how a release is signed.
 
 ## Licence
 
-Cuber is copyright (c) 2026 Nick Walker and is free software under the
+Cuber is copyright (c) 2026 Nicholas Walker and is free software under the
 [MIT licence](LICENSE). The solver it contains, cubejs, is MIT too, under its own authors'
 copyright (`src/solver/vendor/LICENSE`). The About screen in the app shows both texts.
 
@@ -76,7 +78,7 @@ To see it work offline: `npm run build`, then `npm run preview`, open
 server and reload again. The app opens and solves.
 
 [docs/cuber-deploy.md](docs/cuber-deploy.md) has the rest, which is Nick's: GitHub,
-Cloudflare Pages, the `cuber.datacrafter.net` domain, adding it to the Home Screen, and
+Cloudflare Pages at its own `pages.dev` address, adding it to the Home Screen, and
 the aeroplane-mode check.
 
 ## Documents

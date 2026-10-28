@@ -1,6 +1,6 @@
 {
   "name": "cuber",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "private": true,
   "license": "MIT",
   "type": "module",
@@ -8,6 +8,7 @@
   "scripts": {
     "dev": "vite --port 5190 --strictPort",
     "build": "tsc -b && vite build",
+    "build:signed": "node scripts/build-signed.mjs",
     "preview": "vite preview --port 5191 --strictPort",
     "test": "vitest run",
     "test:watch": "vitest",

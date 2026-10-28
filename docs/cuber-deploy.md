@@ -18,12 +18,12 @@ repository, domain and update banner.
 |---|---|
 | Cloudflare project | `cuber` |
 | Built from | `nick2468/Cuber`, branch `main` |
-| Address | `cuber.datacrafter.net` |
+| Address | Cloudflare's own, `cuber-<letters>.pages.dev`, shown when the first build ends. No custom domain (Nick, 2026-10-28). |
 | Build command | `npm run build` |
 | Output directory | `dist` |
 | Node version | 24.21.0, from `.node-version` and a `NODE_VERSION` variable |
 
-Steps 1 to 3 set that up, once. After them, **every push to `main` rebuilds and
+Steps 1 and 2 set that up, once. After them, **every push to `main` rebuilds and
 republishes** and there is nothing else to run.
 
 ---
@@ -108,30 +108,11 @@ The first build takes a couple of minutes. It ends with a URL like
 
 ---
 
-## 3. Point cuber.datacrafter.net at it
+## 3. No custom domain
 
-**Nick's step.**
-
-1. In the Pages project, open **Custom domains**, then **Set up a custom
-   domain**.
-2. Enter `cuber.datacrafter.net`.
-3. Cloudflare already runs DNS for `datacrafter.net`, so it offers to add the
-   record itself. Accept.
-
-**One thing that looks wrong but is not.** While the domain says "Verifying",
-Cloudflare shows a panel headed "Complete DNS setup", telling you to add the
-CNAME by hand at your DNS provider. Ignore it. That text appears for everyone,
-including people whose DNS Cloudflare already runs. The record has in fact
-already been created. Check the DNS records list before adding anything, or you
-will end up with two.
-
-The certificate takes a few minutes. **HTTPS is not optional here**: a service
-worker only runs on a secure page. Without it the app still loads, but never
-works offline. Cloudflare provides the certificate, so there is nothing to do
-beyond waiting.
-
-`localhost` is the one exception to that rule, which is why the offline test
-worked on this machine with no certificate.
+Nick ruled on 2026-10-28 that Cuber does not get a `datacrafter.net` address. The site
+lives at the address Cloudflare gave the project in step 2, which is already `https`, so
+the service worker runs and the app works offline. Nothing to do here.
 
 ---
 
@@ -139,7 +120,7 @@ worked on this machine with no certificate.
 
 **Nick's step.**
 
-1. Open `https://cuber.datacrafter.net` in **Safari**. It must be Safari. Chrome
+1. Open the project's `pages.dev` address from step 2 in **Safari**. It must be Safari. Chrome
    on iPadOS cannot add a Home Screen app.
 2. Press the Share button.
 3. Choose **Add to Home Screen**.
@@ -191,7 +172,7 @@ version before it can offer it. If it has not appeared, close the app and open
 it again.
 
 If a version is truly stubborn, open the site in Safari, then Settings, Safari,
-Advanced, Website Data, and remove `cuber.datacrafter.net`. That clears the
+Advanced, Website Data, and remove the `pages.dev` address. That clears the
 stored copy and the next visit fetches everything fresh.
 
 **The Windows app is not updated this way.** It has no service worker at all, on

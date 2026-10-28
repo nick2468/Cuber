@@ -64,6 +64,7 @@ stand until he says otherwise. Every ruling is folded into the body.
 | Q16 | The light bulb | **Nick, in his words: it is a Hint button.** Solve was missing from the drawing, so it goes in the header beside Reset cube (section 4). |
 | Q17 | Window shape | **Nick, in his words: the shape is not important, do what is natural.** One column as drawn, window 800 by 1000 (section 11). |
 | Q18 (2026-09-14) | Solving methods | **Nick asked what the solver follows, after a cube scrambled with a few turns came back with nineteen moves.** It follows Kociemba's two-phase method, which is short but not shortest. Nick ruled: three methods, chosen in the box and remembered. **Quick solve** (today's, named), **Fewest moves** (the same library asked for 1 move, then 2, and so on), and **Beginner method** (layer by layer, the method every guide teaches, so his son can learn it). All three in one phase, phase 7; he reviews at the end. Section 7.3 to 7.5 and 9.5. |
+| Q19 (2026-10-28) | Signing | **Nick, through the Tabiya reviewer session: sign the installer with his Certum code signing certificate, set the publisher to "Nicholas Walker", and republish.** Done at 1.2.2: section 11.2, `docs/releasing.md`, `scripts/build-signed.mjs`. The LICENSE holder became "Nicholas Walker" to match, and a test holds the publisher to it. Release 1.2.1 and earlier carry the publisher "nick". |
 
 Nick also left to the orchestrator: docs in `docs/`, ports 5190 and 5191, version
 0.1.0 during the build and 1.0.0 at acceptance, the two vitest projects and the
@@ -881,8 +882,21 @@ Nothing about the approach changes.
 
 ### 11.2 The installer
 
-- Tauri's NSIS bundler, `installMode: currentUser`, as the trainer. Unsigned, so
-  SmartScreen warns on first run; accepted, as in the trainer and Simple Chess.
+- Tauri's NSIS bundler, `installMode: currentUser`, as the trainer, with zlib compression
+  (the default LZMA module carries licence conditions of its own, which Tabiya found).
+- **Signed from 1.2.2** (Q19) with Nicholas Walker's Certum open-source code signing
+  certificate, whose private key lives in Certum's SimplySign cloud and is reachable only
+  while Nick is logged in: `npm run build:signed` checks, builds and verifies
+  (`scripts/build-signed.mjs`; the public certificate is `src-tauri/signing/code-signing.cer`
+  and the thumbprint is in `src-tauri/tauri.signing.conf.json`, merged for a signed build
+  only). Windows names the publisher "Open Source Developer Nicholas Walker"; SmartScreen may
+  still warn on a new file. `docs/releasing.md` has the steps, and the upgrade walk
+  (`scripts/upgrade-walk.cmd`, started through Explorer) proves an install and a reinstall
+  through the installer's own windows.
+- **The publisher is "Nicholas Walker" and never changes.** Tauri names the registry key an
+  upgrade reads the old install's folder from after it, so a change breaks every upgrade from
+  an older install (Tabiya, 1.10.9). It was "nick" up to 1.2.1, changed at 1.2.2 while only
+  Nick had an install; `src/version.test.ts` holds it to the LICENSE holder.
 - The version is one number in three files (`package.json`, `tauri.conf.json`,
   `Cargo.toml`), shown in the header as `__APP_VERSION__` from Vite's `define`, and
   held together by the trainer's `version.test.ts`, copied.
@@ -921,7 +935,7 @@ What waits for the phase: `vite-plugin-pwa` in Conquest's shape (`registerType:
 'prompt'`, `injectRegister: null`), Conquest's `useUpdate` and `UpdateBanner` called
 only when `!isDesktop()`, the manifest (name "Cuber", `display: standalone`, dark
 ground `#16181c`), the icons from `tools/make-icons.mjs`, Cloudflare Pages project
-`cuber` from `nick2468/Cuber` at `cuber.datacrafter.net`, and `docs/cuber-deploy.md`
+`cuber` from `nick2468/Cuber` at the `pages.dev` address Cloudflare gives it (no custom domain, Nick 2026-10-28), and `docs/cuber-deploy.md`
 adapted from Conquest's. The solver is 51 KB of JavaScript, so Simple Chess's
 precache size limit does not apply.
 

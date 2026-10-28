@@ -44,7 +44,7 @@ export function About() {
 
       <h3>Licence</h3>
       <p>
-        Cuber is copyright (c) 2026 Nick Walker and is free software under the MIT licence:
+        Cuber is copyright (c) 2026 Nicholas Walker and is free software under the MIT licence:
         you may use it, copy it, change it and share it, and it comes with no warranty. The
         solver library it contains is MIT too, under its own authors' copyright.
       </p>

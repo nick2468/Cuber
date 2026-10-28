@@ -485,7 +485,7 @@ Read first: `../Conquest/vite.config.ts`, `src/ui/useUpdate.ts`, `UpdateBanner.t
 - [x] 6.4 Offline proof: `npm run build`, `npm run preview` on 5191, open it in the
       pane, stop the server, reload, enter and solve the `scrambled` scene's cube.
 - [x] 6.5 `docs/cuber-deploy.md`: Conquest's deploy document adapted for project
-      `cuber`, repository `nick2468/Cuber`, domain `cuber.datacrafter.net`, with the
+      `cuber`, repository `nick2468/Cuber`, at its `pages.dev` address (no custom domain, Nick 2026-10-28), with the
       Home Screen and aeroplane-mode steps. These are Nick's steps.
 - [ ] 6.6 Nick: publish, add to the Home Screen, solve a cube in aeroplane mode.
       Record the date here.
@@ -1749,7 +1749,7 @@ assumed.
 
 **What is left.** Box 6.6, which is his, and it needs the site published first.
 `docs/cuber-deploy.md` has his five steps in order: create the GitHub repository,
-make the Cloudflare Pages project, point `cuber.datacrafter.net` at it, add it to
+make the Cloudflare Pages project, add it to
 the Home Screen, then aeroplane mode and a real cube. The date goes in box 6.6
 and in `docs/acceptance.md` under "The iPad walk".
 

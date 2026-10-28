@@ -223,7 +223,7 @@ is the one file a size limit or a wrong glob would have left out.
 
 ### ii. The Home Screen and aeroplane mode
 
-Nick opens `https://cuber.datacrafter.net` in Safari, adds it to the Home Screen, turns
+Nick opens the project's `pages.dev` address in Safari, adds it to the Home Screen, turns
 on Aeroplane Mode, closes the app fully, opens it again and solves a real cube. That is
 plan box 6.6, and it needs the site to be published first (deploy steps 1 to 3).
 

@@ -24,7 +24,7 @@ describe('About', () => {
     await user.click(screen.getByRole('button', { name: 'View the licences' }))
     const texts = document.querySelectorAll('#about-licences pre')
     expect(texts).toHaveLength(2)
-    expect(texts[0].textContent).toContain('Copyright (c) 2026 Nick Walker')
+    expect(texts[0].textContent).toContain('Copyright (c) 2026 Nicholas Walker')
     expect(texts[1].textContent).toContain('Petri Lehtinen')
 
     await user.click(screen.getByRole('button', { name: 'Cube' }))

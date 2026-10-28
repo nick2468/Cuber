@@ -44,3 +44,25 @@ describe('the version', () => {
     expect(__APP_VERSION__).toBe(declared)
   })
 })
+
+describe('the name the installer writes', () => {
+  // Origin: Tabiya src/ui/licences.test.ts, "the name the installer writes".
+  // Tauri uses `bundle.publisher` twice: as the publisher Apps and Features
+  // shows and the executable's company name, and as the name of the registry
+  // key an upgrade reads the old install's folder from. So it is set once and
+  // never changed: Tabiya changed it at 1.10.9 and broke every upgrade. It
+  // names the LICENSE's holder, and this holds it there (set at 1.2.2, when
+  // nobody but Nick had an install).
+  const holder = read('LICENSE').match(/^Copyright \(c\) \d{4} (.+)$/m)?.[1]
+  const bundle = (
+    JSON.parse(read('src-tauri/tauri.conf.json')) as {
+      bundle: { publisher: string; copyright: string }
+    }
+  ).bundle
+
+  it('is the copyright holder in LICENSE', () => {
+    expect(holder).toBe('Nicholas Walker')
+    expect(bundle.publisher).toBe(holder)
+    expect(bundle.copyright).toBe(`Copyright (c) 2026 ${holder}`)
+  })
+})
