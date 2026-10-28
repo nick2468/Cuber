@@ -349,3 +349,19 @@ licence (`LICENSE`), licence fields in `package.json` and `Cargo.toml`, an About
 `SHA256SUMS.txt`, an entry at nick2468.github.io/cuber with three screenshots from the
 installed window, and a mention on the nick2468 landing page. The suite: 40 files, 238
 tests. **Passed**, 2026-10-24.
+
+---
+
+## Signed release, 2026-10-28
+
+Version 1.2.2 is the first signed installer: Nicholas Walker's Certum open-source code
+signing certificate, sha256, timestamped by `http://time.certum.pl`, with the publisher
+"Nicholas Walker" set in the bundle for good and NSIS compressing with zlib. Proved on
+Nick's real machine by `scripts/upgrade-walk.cmd`, which he started himself: a fresh
+install (nothing before; 1.2.2 after, publisher Nicholas Walker, the install-folder key
+under that publisher, `cuber.exe` and `uninstall.exe` both signed, the app opened and
+closed), then a reinstall over 1.2.2 through "Uninstall Cuber" (the old uninstaller was
+given `_?=C:\Users\nick2\AppData\Local\Cuber`, "Delete the application data" left
+unticked, the 160-file WebView2 profile untouched, the reinstall signed). Released as
+`v1.2.2` with `SHA256SUMS.txt`; the downloaded asset's SHA-256 matched the walked file.
+**Passed**, 2026-10-28.
